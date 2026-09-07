@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WAVE STAY-G · 양양
 
-## Getting Started
+제공된 Figma `7GQ2ihw8K70UklPTEQfD1X`, 페이지 `0:1`을 구현한 Next.js 16 / React 19 / TypeScript 프로젝트입니다.
 
-First, run the development server:
+## 실행
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+로컬 주소: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`next build`는 `out/`에 정적 사이트를 생성합니다. `out/`을 정적 호스팅으로 제공할 수 있습니다. 개발 서버는 `npm run dev`로 실행합니다.
 
-## Learn More
+## 화면
 
-To learn more about Next.js, take a look at the following resources:
+- `/`: 해변 사진 전환, 날짜/인원 검색, 객실·부대시설·위치·갤러리
+- `/rooms/`: 객실 유형 필터, 상세 보기, 예약 화면 이동
+- `/facilities/`: 부대시설 안내
+- `/location/`: 위치, 연락처, 교통, 주변 명소
+- `/notice/`: 분류 필터와 공지 펼치기
+- `/contact/`: 원본 연락처를 활용한 문의 안내
+- `/reservation/`: 예약·조회 선택
+- `/reservation/book/`: 날짜·인원 → 객실 → 예약자 정보 → 결제 확인 → 완료
+- `/reservation/lookup/`: 미리보기 예약 조회·인쇄·취소
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 원본 재현과 구현 범위
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Figma의 사진, 로고, 아이콘을 다운로드해 `public/assets/`에서 제공합니다. Pretendard 가변 글꼴도 로컬에 포함하며 라이선스는 같은 디렉터리에 있습니다. 원본의 회색 이미지 영역은 사진이 배치되지 않은 디자인이므로 회색으로 유지했습니다. 데스크톱 레이아웃을 기준으로 모바일에서 한 열로 재배치합니다.
 
-## Deploy on Vercel
+원본에는 반복된 객실/부대시설 내용, 다른 숙소 이름의 공지, 임시 연락처, 서로 일치하지 않는 가격이 있습니다. 해당 화면의 문구는 대부분 유지했고, 예약 계산은 선택한 객실의 1박 요금 × 숙박 수에 세금 10%를 더하도록 일관되게 처리했습니다. 공지는 제공된 실제 샘플 7건만 표시합니다. 문의 전용 Figma 프레임은 없어 기존 연락처 카드로 구성했습니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+현재는 프런트엔드 미리보기입니다. **실제 객실 재고, 숙소 예약, 결제, 이메일 발송, 환불은 연동되어 있지 않습니다.** 예약 화면의 4개 이용 가능 객실은 디자인 샘플입니다. `SUMMER25`는 미리보기에서만 15% 할인을 확인하는 예시 코드입니다.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+예약 미리보기 내역은 현재 탭의 `sessionStorage`에 저장합니다. 동일 탭에서 발급된 `DEMO-WS-...` 번호와 입력한 성+이름으로 조회할 수 있습니다. 창을 닫거나 세션 저장소를 비우면 삭제됩니다. 카드 번호, CVC 등의 입력란은 비활성화되어 있으며 결제 정보는 수집/전송/저장하지 않습니다. 실제 운영 전에는 예약·재고 API, 결제 제공사의 호스팅 결제창, 이메일 발송, 사업자 정보 및 약관 연결이 필요합니다.
+
+`npm test`는 날짜 경계, 인원 제한, 쿼리 검증과 금액 계산을 검사합니다. 배포 설정은 `.openai/hosting.json`에 있으며 소유자만 보는 비공개 Sites로 구성됩니다.
