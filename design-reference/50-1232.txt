@@ -1,0 +1,326 @@
+const imgImage4 = "https://www.figma.com/api/mcp/asset/b3985de0-0d29-41f7-8242-b32da8b741aa.png";
+const imgImage3 = "https://www.figma.com/api/mcp/asset/620ebc6f-1690-4580-8611-141bf4ed04ae.png";
+const imgRectangle29 = "https://www.figma.com/api/mcp/asset/0678f6b2-63cf-4794-90e3-e24cb4f9545c.png";
+const imgVector35 = "https://www.figma.com/api/mcp/asset/292e8dad-5e66-4c37-ad3e-24414cacbd92.svg";
+
+export default function Getting() {
+  return (
+    <div className="bg-white relative size-full" data-node-id="50:1232" data-name="Getting">
+      <div className="-translate-x-1/2 absolute contents left-[calc(25%+480px)] top-[calc(50%+1182px)]" data-node-id="53:1409" data-name="FOOTER">
+        <div className="absolute bg-[#1a2e3f] h-[392px] left-0 top-[calc(50%+1182px)] w-[1920px]" data-node-id="53:1410" />
+        <div className="absolute contents left-[211px] top-[calc(50%+1242px)]" data-node-id="53:1411">
+          <div className="absolute contents left-[211px] top-[calc(50%+1242px)]" data-node-id="53:1412">
+            <div className="absolute h-[26px] left-[211px] top-[calc(50%+1317px)] w-[189px]" data-node-id="53:1413" data-name="image 4">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-[265.2%] left-[-4.11%] max-w-none top-[-132.6%] w-[107.47%]" src={imgImage4} />
+              </div>
+            </div>
+            <div className="absolute contents left-[269px] top-[calc(50%+1242px)]" data-node-id="53:1414">
+              <div className="absolute h-[70px] left-[269px] top-[calc(50%+1242px)] w-[73px]" data-node-id="53:1415" data-name="image 3">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <img alt="" className="absolute h-[102.8%] left-[-124.48%] max-w-none top-[-2.8%] w-[235.64%]" src={imgImage3} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[211px] not-italic text-[#899199] text-[20px] top-[calc(50%+1362px)] whitespace-nowrap" data-node-id="53:1416">
+            양양 죽도해변, 파도 소리와 함께 시작하는 편안한 스테이.
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:ExtraLight'] leading-[20px] left-[211px] not-italic text-[#555c63] text-[20px] top-[calc(50%+1517px)] whitespace-nowrap" data-node-id="53:1417">
+            © 2026 Wave STAYG. All rights reserved
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1290px)] whitespace-nowrap" data-node-id="53:1418">
+            010-0000-0000
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1290px)] whitespace-nowrap" data-node-id="53:1419">
+            <p className="leading-[20px]">객실</p>
+          </a>
+          <a className="[word-break:break-word] absolute block font-['Pretendard:Regular'] leading-[0] left-[calc(50%+380px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1290px)] whitespace-nowrap" href="https://naver.me/FhUgubIv" data-node-id="53:1420" target="_blank">
+            <p className="cursor-pointer leading-[20px]">강원 양양군 현남면 동산큰길 17-5</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1322px)] whitespace-nowrap" data-node-id="53:1421">
+            010-0000-0000
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1322px)] whitespace-nowrap" data-node-id="53:1422">
+            <p className="leading-[20px]">부대시설</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1354px)] whitespace-nowrap" data-node-id="53:1423">
+            오시는 길
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1386px)] whitespace-nowrap" data-node-id="53:1424">
+            <p className="leading-[20px]">공지사항</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1418px)] whitespace-nowrap" data-node-id="53:1425">
+            문의하기
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1450px)] whitespace-nowrap" data-node-id="53:1426">
+            <p className="leading-[20px]">예약 및 조회</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[826px] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1247px)] whitespace-nowrap" data-node-id="53:1427">
+            연락처
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1247px)] whitespace-nowrap" data-node-id="53:1428">
+            바로가기
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+380px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1247px)] whitespace-nowrap" data-node-id="53:1429">
+            주소
+          </p>
+        </div>
+        <div className="-translate-x-1/2 absolute h-0 left-[calc(25%+480px)] top-[calc(50%+1497px)] w-[1498px]" data-node-id="53:1430">
+          <div className="absolute inset-[-0.25px_0]">
+            <img alt="" className="block max-w-none size-full" src={imgVector35} />
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[169px] top-[calc(50%+765px)]" data-node-id="53:1241" data-name="sights">
+        <div className="absolute bg-[#f0f6fa] h-[324px] left-[169px] rounded-[20px] top-[calc(50%+765px)] w-[1583px]" data-node-id="53:125" />
+        <div className="absolute contents left-[226px] top-[calc(50%+896px)]" data-node-id="53:126">
+          <div className="absolute bg-white h-[163px] left-[226px] rounded-[20px] top-[calc(50%+896px)] w-[279.19px]" data-node-id="53:127" />
+          <div className="absolute bg-white h-[163px] left-[523.2px] rounded-[20px] top-[calc(50%+896px)] w-[280.191px]" data-node-id="53:128" />
+          <div className="absolute bg-white h-[163px] left-[820.4px] rounded-[20px] top-[calc(50%+896px)] w-[279.19px]" data-node-id="53:129" />
+          <div className="absolute bg-white h-[163px] left-[calc(50%+157.61px)] rounded-[20px] top-[calc(50%+896px)] w-[280.191px]" data-node-id="53:130" />
+          <div className="absolute bg-white h-[163px] left-[calc(50%+455.81px)] rounded-[20px] top-[calc(50%+896px)] w-[279.19px]" data-node-id="53:174" />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[226px] not-italic text-[#1a2e3f] text-[35px] top-[calc(50%+813px)] whitespace-nowrap" data-node-id="53:131">
+          주변 명소
+        </p>
+        <p className="-translate-x-full [word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[calc(50%+734px)] not-italic text-[#8a9ba9] text-[20px] text-right top-[calc(50%+856px)] whitespace-nowrap" data-node-id="53:132">
+          도보 · 차량 거리 기준
+        </p>
+        <div className="absolute contents left-[255px] top-[calc(50%+925px)]" data-node-id="53:155">
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[255px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1011px)] whitespace-nowrap" data-node-id="53:149">
+            도보 2분
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[45px] left-[255px] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+964px)] whitespace-nowrap" data-node-id="53:150">
+            죽도해변
+          </p>
+          <div className="absolute contents left-[255px] top-[calc(50%+925px)]" data-node-id="53:151">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[255px] rounded-[20px] top-[calc(50%+925px)] w-[82px]" data-node-id="53:152" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[275px] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+929px)] whitespace-nowrap" data-node-id="53:153">
+              Beach
+            </p>
+          </div>
+        </div>
+        <div className="absolute contents left-[552px] top-[calc(50%+925px)]" data-node-id="53:156">
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[552px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1011px)] whitespace-nowrap" data-node-id="53:157">
+            도보 3분
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[45px] left-[552px] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+964px)] whitespace-nowrap" data-node-id="53:158">
+            서핑 스팟
+          </p>
+          <div className="absolute contents left-[552px] top-[calc(50%+925px)]" data-node-id="53:159">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[552px] rounded-[20px] top-[calc(50%+925px)] w-[82px]" data-node-id="53:160" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[578px] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+929px)] whitespace-nowrap" data-node-id="53:161">
+              Surf
+            </p>
+          </div>
+        </div>
+        <div className="absolute contents left-[849px] top-[calc(50%+925px)]" data-node-id="53:162">
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[849px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1011px)] whitespace-nowrap" data-node-id="53:163">
+            차량 15분
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[45px] left-[849px] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+964px)] whitespace-nowrap" data-node-id="53:164">
+            하조대
+          </p>
+          <div className="absolute contents left-[849px] top-[calc(50%+925px)]" data-node-id="53:165">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[849px] rounded-[20px] top-[calc(50%+925px)] w-[82px]" data-node-id="53:166" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[873px] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+929px)] whitespace-nowrap" data-node-id="53:167">
+              View
+            </p>
+          </div>
+        </div>
+        <div className="absolute contents left-[calc(50%+485px)] top-[calc(50%+925px)]" data-node-id="53:168">
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+485px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1011px)] whitespace-nowrap" data-node-id="53:169">
+            차량 25분
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[45px] left-[calc(50%+485px)] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+964px)] whitespace-nowrap" data-node-id="53:170">
+            낙산사
+          </p>
+          <div className="absolute contents left-[calc(50%+485px)] top-[calc(50%+925px)]" data-node-id="53:171">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[calc(50%+485px)] rounded-[20px] top-[calc(50%+925px)] w-[82px]" data-node-id="53:172" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[calc(50%+501px)] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+929px)] whitespace-nowrap" data-node-id="53:173">
+              Culture
+            </p>
+          </div>
+        </div>
+        <div className="absolute contents left-[calc(50%+187px)] top-[calc(50%+925px)]" data-node-id="53:182">
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+187px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1011px)] whitespace-nowrap" data-node-id="53:183">
+            차량 20분
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[45px] left-[calc(50%+187px)] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+964px)] whitespace-nowrap" data-node-id="53:184">
+            송이밸리 자연휴양림
+          </p>
+          <div className="absolute contents left-[calc(50%+187px)] top-[calc(50%+925px)]" data-node-id="53:185">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[calc(50%+187px)] rounded-[20px] top-[calc(50%+925px)] w-[82px]" data-node-id="53:186" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[calc(50%+204px)] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+929px)] whitespace-nowrap" data-node-id="53:187">
+              Nature
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[169px] top-[calc(50%+292px)]" data-node-id="53:1240" data-name="method">
+        <div className="absolute bg-[#f0f6fa] h-[403px] left-[169px] rounded-[20px] top-[calc(50%+292px)] w-[1583px]" data-node-id="53:40" />
+        <div className="absolute contents left-[226px] top-[calc(50%+423px)]" data-node-id="53:46">
+          <div className="absolute bg-white h-[244px] left-[226px] rounded-[20px] top-[calc(50%+423px)] w-[350.869px]" data-node-id="53:42" />
+          <div className="absolute bg-white h-[244px] left-[599.06px] rounded-[20px] top-[calc(50%+423px)] w-[350.869px]" data-node-id="53:43" />
+          <div className="absolute bg-white h-[244px] left-[calc(50%+11.07px)] rounded-[20px] top-[calc(50%+423px)] w-[350.869px]" data-node-id="53:44" />
+          <div className="absolute bg-white h-[244px] left-[calc(50%+384.13px)] rounded-[20px] top-[calc(50%+423px)] w-[350.869px]" data-node-id="53:45" />
+        </div>
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[226px] not-italic text-[#1a2e3f] text-[35px] top-[calc(50%+341px)] whitespace-nowrap" data-node-id="53:47">
+          오시는 방법
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[calc(50%+660px)] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+383px)] whitespace-nowrap" data-node-id="53:48">
+          서울 기준
+        </p>
+        <div className="[word-break:break-word] absolute contents left-[269px] not-italic top-[calc(50%+473px)] whitespace-nowrap" data-node-id="53:61">
+          <p className="absolute font-['Pretendard:Bold'] leading-[normal] left-[269px] text-[#2d7ba3] text-[40px] top-[calc(50%+473px)]" data-node-id="53:49">
+            01
+          </p>
+          <p className="absolute font-['Pretendard:SemiBold'] leading-[normal] left-[269px] text-[#2d7ba3] text-[20px] top-[calc(50%+530px)]" data-node-id="53:53">
+            자동차
+          </p>
+          <div className="absolute font-['Pretendard:Regular'] leading-[0] left-[269px] text-[#526475] text-[20px] top-[calc(50%+569px)]" data-node-id="53:54">
+            <p className="leading-[normal] mb-0 whitespace-pre">{`서울 → 양양 IC → `}</p>
+            <p className="leading-[normal] whitespace-pre">죽도해변 (약 2시간 40분)</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] absolute contents left-[642px] not-italic top-[calc(50%+473px)] whitespace-nowrap" data-node-id="53:63">
+          <p className="absolute font-['Pretendard:Bold'] leading-[normal] left-[642px] text-[#2d7ba3] text-[40px] top-[calc(50%+473px)]" data-node-id="53:58">
+            02
+          </p>
+          <p className="absolute font-['Pretendard:SemiBold'] leading-[normal] left-[642px] text-[#2d7ba3] text-[20px] top-[calc(50%+530px)]" data-node-id="53:59">
+            고속버스
+          </p>
+          <div className="absolute font-['Pretendard:Regular'] leading-[0] left-[642px] text-[#526475] text-[20px] top-[calc(50%+569px)]" data-node-id="53:60">
+            <p className="leading-[normal] mb-0 whitespace-pre">{`동서울 → 양양터미널 (2시간 30분) `}</p>
+            <p className="leading-[normal] whitespace-pre">→ 택시 15분</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] absolute contents left-[calc(50%+54px)] not-italic top-[calc(50%+473px)] whitespace-nowrap" data-node-id="53:68">
+          <p className="absolute font-['Pretendard:Bold'] leading-[normal] left-[calc(50%+54px)] text-[#2d7ba3] text-[40px] top-[calc(50%+473px)]" data-node-id="53:69">
+            03
+          </p>
+          <p className="absolute font-['Pretendard:SemiBold'] leading-[normal] left-[calc(50%+54px)] text-[#2d7ba3] text-[20px] top-[calc(50%+530px)]" data-node-id="53:70">
+            KTX
+          </p>
+          <div className="absolute font-['Pretendard:Regular'] leading-[0] left-[calc(50%+54px)] text-[#526475] text-[20px] top-[calc(50%+569px)]" data-node-id="53:71">
+            <p className="leading-[normal] mb-0 whitespace-pre">{`청량리 → 강릉역 `}</p>
+            <p className="leading-[normal] whitespace-pre">→ 렌터카 40분</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] absolute contents leading-[normal] left-[calc(50%+427px)] not-italic top-[calc(50%+473px)] whitespace-nowrap" data-node-id="53:80">
+          <p className="absolute font-['Pretendard:Bold'] left-[calc(50%+427px)] text-[#2d7ba3] text-[40px] top-[calc(50%+473px)]" data-node-id="53:81">
+            04
+          </p>
+          <p className="absolute font-['Pretendard:SemiBold'] left-[calc(50%+427px)] text-[#2d7ba3] text-[20px] top-[calc(50%+530px)]" data-node-id="53:82">
+            항공
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] left-[calc(50%+427px)] text-[#526475] text-[20px] top-[calc(50%+569px)]" data-node-id="53:83">
+            양양국제공항에서 차량 30분
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[calc(50%+293px)] top-[1572px]" data-node-id="53:1237" data-name="EMAIL">
+        <div className="absolute bg-[#f0f6fa] h-[222px] left-[calc(50%+293px)] rounded-[20px] top-[1572px] w-[499px]" data-node-id="53:39" />
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[calc(50%+356px)] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+44px)] whitespace-nowrap" data-node-id="53:92">
+          EMAIL
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+356px)] not-italic text-[#1a2e3f] text-[25px] top-[calc(50%+97px)] whitespace-nowrap" data-node-id="53:93">
+          stay@wave-stayg.kr
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Light'] leading-[normal] left-[calc(50%+356px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+138px)] w-[103px]" data-node-id="53:94">
+          24시간 이내 회신
+        </p>
+      </div>
+      <div className="absolute contents left-[711px] top-[1572px]" data-node-id="53:1238" data-name="PHONE">
+        <div className="absolute bg-[#f0f6fa] h-[222px] left-[711px] rounded-[20px] top-[1572px] w-[499px]" data-node-id="53:38" />
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[774px] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+44px)] whitespace-nowrap" data-node-id="53:89">
+          PHONE
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[774px] not-italic text-[#2d7ba3] text-[35px] top-[calc(50%+85px)] whitespace-nowrap" data-node-id="53:90">
+          033-672-0000
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Light'] leading-[normal] left-[774px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+138px)] whitespace-nowrap" data-node-id="53:91">
+          연중무휴 · 09:00 – 22:00
+        </p>
+      </div>
+      <div className="absolute contents left-[169px] top-[1572px]" data-node-id="53:1239" data-name="ADDRESS">
+        <div className="absolute bg-[#f0f6fa] h-[222px] left-[169px] rounded-[20px] top-[1572px] w-[499px]" data-node-id="53:36" />
+        <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[normal] left-[226px] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+44px)] whitespace-nowrap" data-node-id="53:84">
+          ADDRESS
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[226px] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+103px)] whitespace-nowrap" data-node-id="53:87">
+          강원 양양군 현남면 동산큰길 17-5
+        </p>
+        <div className="[word-break:break-word] absolute font-['Pretendard:Light'] leading-[0] left-[226px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+138px)] whitespace-nowrap" data-node-id="53:88">
+          <p className="leading-[normal] mb-0 whitespace-pre">{`17-5, Dongsankeun-gil, Hyeonnam-myeon, `}</p>
+          <p className="leading-[normal] whitespace-pre">Yangyang-gun, Gangwon-do</p>
+        </div>
+      </div>
+      <div className="absolute bg-[#d9d9d9] h-[804px] left-[169px] rounded-[20px] top-[696px] w-[1583px]" data-node-id="50:1336" data-name="MAP" />
+      <div className="absolute contents left-0 top-[204px]" data-node-id="53:1236" data-name="header PH">
+        <div className="absolute h-[420px] left-0 top-[204px] w-[1920px]" data-node-id="50:1265">
+          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRectangle29} />
+        </div>
+        <div className="-translate-x-1/2 absolute bg-[rgba(212,247,255,0.41)] h-[420px] left-[calc(25%+480px)] top-[204px] w-[1920px]" data-node-id="53:1219" />
+        <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute contents left-[calc(25%-157px)] not-italic top-[calc(25%-314.5px)]" data-node-id="50:1266">
+          <p className="absolute font-['Pretendard:SemiBold'] h-[85px] leading-[80px] left-[calc(25%-311px)] text-[80px] text-white top-[calc(25%-337px)] w-[308px]" data-node-id="50:1267">
+            오시는 길
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] h-[30px] leading-[30px] left-[calc(25%-311px)] text-[#808080] text-[20px] top-[calc(25%-377px)] w-[143px]" data-node-id="50:1269">
+            Getting Here
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[123px] top-[70px]" data-node-id="53:1235" data-name="header">
+        <div className="absolute contents left-[625px] top-[107px]" data-node-id="50:1233">
+          <div className="[word-break:break-word] absolute contents font-['Pretendard:Regular'] left-[625px] not-italic text-[25px] top-[107px] whitespace-nowrap" data-node-id="50:1234">
+            <a className="absolute block cursor-pointer leading-[0] left-[625px] text-[#546676] top-[107px]" data-node-id="50:1235">
+              <p className="leading-[normal]">홈</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[697px] text-[#546676] top-[107px]" data-node-id="50:1236">
+              <p className="leading-[normal]">객실</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[791px] text-[#546676] top-[107px]" data-node-id="50:1237">
+              <p className="leading-[normal]">부대시설</p>
+            </a>
+            <p className="absolute leading-[normal] left-[928px] text-[#1a2e3f] top-[107px]" data-node-id="50:1238">
+              오시는 길
+            </p>
+            <a className="absolute block cursor-pointer leading-[0] left-[calc(50%+111px)] text-[#546676] top-[107px]" data-node-id="50:1239">
+              <p className="leading-[normal]">공지사항</p>
+            </a>
+            <p className="absolute leading-[normal] left-[calc(50%+248px)] text-[#546676] top-[107px]" data-node-id="53:194">
+              문의사항
+            </p>
+          </div>
+        </div>
+        <div className="absolute contents left-[calc(50%+696px)] top-[92px]" data-node-id="50:1240">
+          <a className="absolute bg-[#2d7ba3] block cursor-pointer h-[61px] left-[calc(50%+696px)] rounded-[100px] top-[92px] w-[179px]" data-node-id="50:1241" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+735px)] not-italic text-[25px] text-white top-[108px] whitespace-nowrap" data-node-id="50:1242">{`예약&조회`}</p>
+        </div>
+        <div className="absolute contents left-[123px] top-[70px]" data-node-id="50:1243">
+          <div className="absolute h-[70px] left-[182px] top-[70px] w-[72px]" data-node-id="50:1244" data-name="image 2">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[102.53%] left-[-11.34%] max-w-none top-[-2.58%] w-[239.7%]" src={imgImage3} />
+            </div>
+          </div>
+          <div className="absolute h-[27px] left-[123px] top-[147px] w-[189px]" data-node-id="50:1245" data-name="image 5">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[250.52%] left-[-3.89%] max-w-none top-[-18.69%] w-[107%]" src={imgImage4} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

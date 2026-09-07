@@ -1,0 +1,519 @@
+const imgEllipse5 = "https://www.figma.com/api/mcp/asset/4c87f33c-03d9-453e-ad4b-d1456d64f779.svg";
+const imgEllipse6 = "https://www.figma.com/api/mcp/asset/98245499-8e99-4110-bd8c-cfd1f7adfea0.svg";
+const imgImage4 = "https://www.figma.com/api/mcp/asset/ee8e5200-700f-4aa8-987f-55211b2a6bf7.png";
+const imgImage3 = "https://www.figma.com/api/mcp/asset/a8fac97b-9057-4f79-8f90-7b291c9202e7.png";
+const imgRectangle29 = "https://www.figma.com/api/mcp/asset/b49ae247-3626-4a5b-9f36-205ccd6ac28f.png";
+const imgVector35 = "https://www.figma.com/api/mcp/asset/8ca3eba1-b42b-4fb9-a516-9704ed5df607.svg";
+const imgEllipse1 = "https://www.figma.com/api/mcp/asset/053e0151-5dc8-4cf1-910c-71b3451d0ec0.svg";
+const imgEllipse2 = "https://www.figma.com/api/mcp/asset/99fe5579-0d87-4ecd-bfec-59932e2191e4.svg";
+const imgVector38 = "https://www.figma.com/api/mcp/asset/662ab590-e4b8-4b51-b9a6-1c282b7e9f51.svg";
+const imgSubtract = "https://www.figma.com/api/mcp/asset/92297561-7c22-49e7-845b-d0b13ebb2988.svg";
+const imgSubtract1 = "https://www.figma.com/api/mcp/asset/ded8f10b-63fb-4274-bef2-8dcc9828be67.svg";
+
+type ComponentProps = {
+  className?: string;
+  prop1?: "신용카드";
+  prop2?: "새로운 값";
+  prop3?: "새로운 값";
+  prop4?: "새로운 값";
+  prop5?: "새로운 값";
+};
+
+function Component({ className, prop1 = "신용카드", prop2 = "새로운 값", prop3 = "새로운 값", prop4 = "새로운 값", prop5 = "새로운 값" }: ComponentProps) {
+  return (
+    <div className={className || "h-[996px] relative w-[843px]"} data-node-id="67:208">
+      <div className="-translate-x-1/2 absolute bg-[#f0f6fa] h-[496px] left-1/2 rounded-[20px] top-0 w-[843px]" data-node-id="67:174" />
+      <div className="-translate-x-1/2 absolute bg-[#f0f6fa] h-[474px] left-1/2 rounded-[20px] top-[522px] w-[843px]" data-node-id="69:851" />
+      <div className="-translate-x-1/2 absolute contents left-[calc(50%+3px)] top-[41px]" data-node-id="69:853">
+        <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] h-[35px] leading-[30px] left-[calc(50%-368.5px)] not-italic text-[#1a2e3f] text-[25px] top-[41px] w-[119px]" data-node-id="67:175">
+          결제 방법
+        </p>
+        <div className="-translate-x-1/2 absolute bg-white border border-[#2d7ba3] border-solid h-[94px] left-[calc(50%-185.5px)] rounded-[10px] top-[109px] w-[366px]" data-node-id="60:3551" />
+        <div className="-translate-x-1/2 absolute bg-white border border-[#b2cbdb] border-solid h-[236px] left-[calc(50%+3px)] rounded-[10px] top-[219px] w-[743px]" data-node-id="67:193" />
+        <div className="-translate-x-1/2 absolute contents left-[calc(50%-250px)] top-[127px]" data-node-id="67:180">
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[30px] left-[calc(50%-298.5px)] not-italic text-[#1a2e3f] text-[20px] top-[127px] whitespace-nowrap" data-node-id="67:177">
+            신용카드
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[16px] left-[calc(50%-298.5px)] not-italic text-[#a8acaf] text-[15px] top-[161px] whitespace-nowrap" data-node-id="67:179">
+            Visa · Master · Amex
+          </p>
+          <div className="-translate-x-1/2 absolute left-[calc(50%-327px)] size-[21px] top-[132px]" data-node-id="67:178">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse5} />
+          </div>
+        </div>
+        <button className="-translate-x-1/2 absolute contents cursor-pointer left-[calc(50%+191.5px)] top-[109px]" data-node-id="69:1121">
+          <div className="-translate-x-1/2 absolute bg-white border border-[#b2cbdb] border-solid h-[94px] left-[calc(50%+191.5px)] rounded-[10px] top-[109px] w-[366px]" data-node-id="60:3552" />
+          <div className="-translate-x-1/2 absolute contents left-[calc(50%+109px)] top-[127px]" data-node-id="67:182">
+            <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[30px] left-[calc(50%+76.5px)] not-italic text-[#1a2e3f] text-[20px] top-[127px] whitespace-nowrap" data-node-id="67:183">
+              무통장입금
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[16px] left-[calc(50%+76.5px)] not-italic text-[#a8acaf] text-[15px] top-[161px] whitespace-nowrap" data-node-id="67:184">
+              24시간 이내 입금
+            </p>
+            <div className="-translate-x-1/2 absolute left-[calc(50%+48px)] size-[21px] top-[132px]" data-node-id="67:185">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse6} />
+            </div>
+          </div>
+        </button>
+        <div className="-translate-x-1/2 absolute contents left-[calc(50%+3.5px)] top-[306px]" data-node-id="69:405">
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Medium'] leading-[15px] left-[calc(50%-311.5px)] not-italic text-[15px] text-[rgba(26,46,63,0.8)] text-center top-[306px] whitespace-nowrap" data-node-id="67:200">
+            유효기간
+          </p>
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Medium'] leading-[15px] left-[calc(50%+30px)] not-italic text-[15px] text-[rgba(26,46,63,0.8)] text-center top-[306px] whitespace-nowrap" data-node-id="67:205">
+            CVC
+          </p>
+          <div className="-translate-x-1/2 absolute bg-white border border-[rgba(178,203,219,0.5)] border-solid h-[33px] left-[calc(50%-172.5px)] rounded-[5px] top-[329px] w-[330px]" data-node-id="67:201" />
+          <div className="-translate-x-1/2 absolute bg-white border border-[rgba(178,203,219,0.5)] border-solid h-[33px] left-[calc(50%+179.5px)] rounded-[5px] top-[329px] w-[330px]" data-node-id="67:203" />
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Light'] leading-[15px] left-[calc(50%-302px)] not-italic text-[15px] text-[rgba(26,46,63,0.5)] text-center top-[338px] whitespace-nowrap" data-node-id="67:202">
+            MM/YY
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Light'] leading-[15px] left-[calc(50%+23.5px)] not-italic text-[15px] text-[rgba(26,46,63,0.5)] top-[338px] whitespace-nowrap" data-node-id="67:206">
+            000
+          </p>
+        </div>
+        <div className="-translate-x-1/2 absolute contents left-[calc(50%+3.5px)] top-[238px]" data-node-id="96:331">
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Medium'] leading-[15px] left-[calc(50%-309.5px)] not-italic text-[15px] text-[rgba(26,46,63,0.8)] text-center top-[238px] whitespace-nowrap" data-node-id="67:194">
+            카드 번호
+          </p>
+          <div className="-translate-x-1/2 absolute bg-white border border-[rgba(178,203,219,0.5)] border-solid h-[33px] left-[calc(50%+3.5px)] rounded-[5px] top-[261px] w-[682px]" data-node-id="67:196" />
+          <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Light'] leading-[15px] left-[calc(50%-251px)] not-italic text-[15px] text-[rgba(26,46,63,0.5)] text-center top-[270px] whitespace-nowrap" data-node-id="67:198">
+            0000 0000 0000 0000
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[53px] top-[563px]" data-node-id="69:882">
+        <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] leading-[30px] left-[calc(50%-368.5px)] not-italic text-[#1a2e3f] text-[25px] top-[563px] whitespace-nowrap" data-node-id="69:883">
+          최종 확인
+        </p>
+        <div className="-translate-x-1/2 absolute bg-white h-[268px] left-[calc(50%+3px)] rounded-[10px] top-[631px] w-[743px]" data-node-id="69:885" />
+        <div className="-translate-x-1/2 absolute bg-[#e3eef5] h-[36px] left-[calc(50%+3px)] rounded-[10px] top-[919px] w-[743px]" data-node-id="69:995" />
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[652px] whitespace-nowrap" data-node-id="69:959">
+          예약자
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[652px] whitespace-nowrap" data-node-id="69:960">
+          000
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[685px] whitespace-nowrap" data-node-id="69:962">
+          연락처
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[718px] whitespace-nowrap" data-node-id="69:975">
+          객실
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[751px] whitespace-nowrap" data-node-id="69:979">
+          일정
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[784px] whitespace-nowrap" data-node-id="69:983">
+          인원
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[817px] whitespace-nowrap" data-node-id="69:987">
+          도착 시간
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[84px] not-italic text-[#8a9ba9] text-[15px] top-[850px] whitespace-nowrap" data-node-id="69:991">
+          결제 수단
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[685px] whitespace-nowrap" data-node-id="69:963">
+          010-0000-0000
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[718px] whitespace-nowrap" data-node-id="69:976">
+          Pool Villa · Private Pool · Ocean
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[751px] whitespace-nowrap" data-node-id="69:980">
+          8월 20일 (목) → 8월 22일 (토) · 2박
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[784px] whitespace-nowrap" data-node-id="69:984">
+          성인 2
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[817px] whitespace-nowrap" data-node-id="69:988">
+          15:00
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[223px] not-italic text-[#1a2e3f] text-[15px] top-[850px] whitespace-nowrap" data-node-id="69:992">
+          신용카드
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[0] left-[84px] not-italic text-[#0f5677] text-[0px] top-[930px] whitespace-nowrap" data-node-id="69:1001">
+          <span className="font-['Pretendard:Bold'] leading-[normal] text-[12px]">취소 정책</span>
+          <span className="leading-[normal] text-[12px]">: 체크인 3일 전까지 무료 취소 가능 · 이후 첫날 숙박료의 100% 부과</span>
+        </p>
+      </div>
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Medium'] leading-[15px] left-[calc(50%-309.5px)] not-italic text-[15px] text-[rgba(26,46,63,0.8)] text-center top-[374px] whitespace-nowrap" data-node-id="94:229">
+        쿠폰 번호
+      </p>
+      <div className="-translate-x-1/2 absolute bg-white border border-[rgba(178,203,219,0.5)] border-solid h-[33px] left-[calc(50%-32px)] rounded-[5px] top-[397px] w-[611px]" data-node-id="94:230" />
+      <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Light'] leading-[15px] left-[calc(50%-274.5px)] not-italic text-[15px] text-[rgba(26,46,63,0.5)] text-center top-[406px] whitespace-nowrap" data-node-id="94:231">
+        예 : SUMMER25
+      </p>
+      <button className="-translate-x-1/2 absolute contents cursor-pointer left-[calc(50%+313px)] top-[397px]" data-node-id="94:232">
+        <div className="-translate-x-1/2 absolute bg-[#2d7ba3] h-[33px] left-[calc(50%+313px)] rounded-[5px] top-[397px] w-[63px]" data-node-id="94:233" />
+        <p className="-translate-x-1/2 [word-break:break-word] absolute font-['Pretendard:Medium'] leading-[15px] left-[calc(50%+313.5px)] not-italic text-[15px] text-center text-white top-[406px] whitespace-nowrap" data-node-id="94:234">
+          적용
+        </p>
+      </button>
+    </div>
+  );
+}
+
+type Component1Props = {
+  className?: string;
+  prop1?: "기본";
+};
+
+function Component1({ className, prop1 = "기본" }: Component1Props) {
+  return (
+    <div className={className || "h-[30px] relative w-[148px]"} data-node-id="53:2262">
+      <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] inset-[0_0.68%_0_0] leading-[30px] not-italic text-[#5a6b7b] text-[20px] whitespace-nowrap" data-node-id="53:2261">
+        ← 예약 · 조회 선택
+      </p>
+    </div>
+  );
+}
+
+export default function Component4() {
+  return (
+    <div className="bg-white relative size-full" data-node-id="60:3387" data-name="예약하기-4">
+      <div className="-translate-x-1/2 absolute contents left-[calc(25%+480px)] top-[calc(50%+883px)]" data-node-id="60:3388" data-name="FOOTER">
+        <div className="absolute bg-[#1a2e3f] h-[392px] left-0 top-[calc(50%+883px)] w-[1920px]" data-node-id="60:3389" />
+        <div className="absolute contents left-[211px] top-[calc(50%+943px)]" data-node-id="60:3390">
+          <div className="absolute contents left-[211px] top-[calc(50%+943px)]" data-node-id="60:3391">
+            <div className="absolute h-[26px] left-[211px] top-[calc(50%+1018px)] w-[189px]" data-node-id="60:3392" data-name="image 4">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-[265.2%] left-[-4.11%] max-w-none top-[-132.6%] w-[107.47%]" src={imgImage4} />
+              </div>
+            </div>
+            <div className="absolute contents left-[269px] top-[calc(50%+943px)]" data-node-id="60:3393">
+              <div className="absolute h-[70px] left-[269px] top-[calc(50%+943px)] w-[73px]" data-node-id="60:3394" data-name="image 3">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <img alt="" className="absolute h-[102.8%] left-[-124.48%] max-w-none top-[-2.8%] w-[235.64%]" src={imgImage3} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[211px] not-italic text-[#899199] text-[20px] top-[calc(50%+1063px)] whitespace-nowrap" data-node-id="60:3395">
+            양양 죽도해변, 파도 소리와 함께 시작하는 편안한 스테이.
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:ExtraLight'] leading-[20px] left-[211px] not-italic text-[#555c63] text-[20px] top-[calc(50%+1218px)] whitespace-nowrap" data-node-id="60:3396">
+            © 2026 Wave STAYG. All rights reserved
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+991px)] whitespace-nowrap" data-node-id="60:3397">
+            010-0000-0000
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+991px)] whitespace-nowrap" data-node-id="60:3398">
+            <p className="leading-[20px]">객실</p>
+          </a>
+          <a className="[word-break:break-word] absolute block font-['Pretendard:Regular'] leading-[0] left-[calc(50%+380px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+991px)] whitespace-nowrap" href="https://naver.me/FhUgubIv" data-node-id="60:3399" target="_blank">
+            <p className="cursor-pointer leading-[20px]">강원 양양군 현남면 동산큰길 17-5</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1023px)] whitespace-nowrap" data-node-id="60:3400">
+            010-0000-0000
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1023px)] whitespace-nowrap" data-node-id="60:3401">
+            <p className="leading-[20px]">부대시설</p>
+          </a>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1055px)] whitespace-nowrap" data-node-id="60:3402">
+            <p className="leading-[20px]">오시는 길</p>
+          </a>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1087px)] whitespace-nowrap" data-node-id="60:3403">
+            <p className="leading-[20px]">공지사항</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1119px)] whitespace-nowrap" data-node-id="60:3404">
+            문의하기
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1151px)] whitespace-nowrap" data-node-id="60:3405">
+            <p className="leading-[20px]">예약 및 조회</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[826px] not-italic text-[#a2bace] text-[20px] top-[calc(50%+948px)] whitespace-nowrap" data-node-id="60:3406">
+            연락처
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+948px)] whitespace-nowrap" data-node-id="60:3407">
+            바로가기
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+380px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+948px)] whitespace-nowrap" data-node-id="60:3408">
+            주소
+          </p>
+        </div>
+        <div className="-translate-x-1/2 absolute h-0 left-[calc(25%+480px)] top-[calc(50%+1198px)] w-[1498px]" data-node-id="60:3409">
+          <div className="absolute inset-[-0.25px_0]">
+            <img alt="" className="block max-w-none size-full" src={imgVector35} />
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-0 top-[204px]" data-node-id="60:3410" data-name="header PH">
+        <div className="absolute h-[420px] left-0 top-[204px] w-[1920px]" data-node-id="60:3411">
+          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRectangle29} />
+        </div>
+        <div className="-translate-x-1/2 absolute bg-[rgba(212,247,255,0.41)] h-[420px] left-[calc(25%+480px)] top-[204px] w-[1920px]" data-node-id="60:3412" />
+        <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute contents left-[calc(25%-12.5px)] not-italic top-[calc(25%-130px)]" data-node-id="60:3413">
+          <p className="absolute font-['Pretendard:SemiBold'] h-[85px] leading-[80px] left-[calc(25%-311px)] text-[80px] text-white top-[calc(25%-171.5px)] w-[308px]" data-node-id="60:3414">
+            예약하기
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] h-[30px] leading-[30px] left-[calc(25%-311px)] text-[#808080] text-[20px] top-[calc(25%-211.5px)] w-[143px]" data-node-id="60:3415">
+            Reservation
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] h-[30px] leading-[30px] left-[calc(25%-311px)] text-[#808080] text-[20px] top-[calc(25%-78.5px)] w-[597px]" data-node-id="60:3416">
+            원하는 날짜를 먼저 정하고, 가능한 객실을 골라 예약합니다.
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[123px] top-[70px]" data-node-id="60:3417" data-name="header">
+        <div className="absolute contents left-[625px] top-[107px]" data-node-id="60:3418">
+          <div className="[word-break:break-word] absolute contents font-['Pretendard:Regular'] left-[625px] not-italic text-[#546676] text-[25px] top-[107px] whitespace-nowrap" data-node-id="60:3419">
+            <a className="absolute block cursor-pointer leading-[0] left-[625px] top-[107px]" data-node-id="60:3420">
+              <p className="leading-[normal]">홈</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[697px] top-[107px]" data-node-id="60:3421">
+              <p className="leading-[normal]">객실</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[791px] top-[107px]" data-node-id="60:3422">
+              <p className="leading-[normal]">부대시설</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[928px] top-[107px]" data-node-id="60:3423">
+              <p className="leading-[normal]">오시는 길</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[calc(50%+111px)] top-[107px]" data-node-id="60:3424">
+              <p className="leading-[normal]">공지사항</p>
+            </a>
+            <p className="absolute leading-[normal] left-[calc(50%+248px)] top-[107px]" data-node-id="60:3425">
+              문의사항
+            </p>
+          </div>
+        </div>
+        <a className="absolute contents cursor-pointer left-[calc(50%+696px)] top-[92px]" data-node-id="60:3426">
+          <div className="absolute bg-[#2d7ba3] h-[61px] left-[calc(50%+696px)] rounded-[100px] top-[92px] w-[179px]" data-node-id="60:3427" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+735px)] not-italic text-[25px] text-white top-[108px] whitespace-nowrap" data-node-id="60:3428">{`예약&조회`}</p>
+        </a>
+        <div className="absolute contents left-[123px] top-[70px]" data-node-id="60:3429">
+          <div className="absolute h-[70px] left-[182px] top-[70px] w-[72px]" data-node-id="60:3430" data-name="image 2">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[102.53%] left-[-11.34%] max-w-none top-[-2.58%] w-[239.7%]" src={imgImage3} />
+            </div>
+          </div>
+          <div className="absolute h-[27px] left-[123px] top-[147px] w-[189px]" data-node-id="60:3431" data-name="image 5">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[250.52%] left-[-3.89%] max-w-none top-[-18.69%] w-[107%]" src={imgImage4} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <Component1 className="absolute block cursor-pointer h-[30px] left-[169px] top-[638px] w-[148px]" />
+      <div className="absolute contents left-[169px] top-[698px]" data-node-id="60:3433">
+        <div className="absolute bg-[#ecf3f7] h-[97px] left-[169px] rounded-[50px] top-[698px] w-[1583px]" data-node-id="60:3434" />
+        <div className="absolute contents left-[295px] top-[709px]" data-node-id="60:3435">
+          <div className="absolute contents left-[295px] top-[728px]" data-node-id="60:3436">
+            <div className="absolute contents left-[295px] top-[728px]" data-node-id="60:3437">
+              <div className="absolute left-[295px] size-[37px] top-[728px]" data-node-id="60:3438">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+              </div>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[308.71px] not-italic text-[#8a9ba9] text-[20px] top-[732px] w-[10.175px]" data-node-id="60:3439">
+                1
+              </p>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[353.94px] not-italic text-[#8a9ba9] text-[20px] top-[732px] w-[96.101px]" data-node-id="60:3440">
+                날짜 · 인원
+              </p>
+            </div>
+          </div>
+          <div className="absolute contents left-[687px] top-[728px]" data-node-id="60:3441">
+            <div className="absolute contents left-[687px] top-[728px]" data-node-id="60:3442">
+              <div className="absolute left-[687px] size-[37px] top-[728px]" data-node-id="60:3443">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+              </div>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[700px] not-italic text-[#8a9ba9] text-[20px] top-[732px] whitespace-nowrap" data-node-id="60:3444">
+                2
+              </p>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[746px] not-italic text-[#8a9ba9] text-[20px] top-[732px] w-[76px]" data-node-id="60:3445">
+                객실 선택
+              </p>
+            </div>
+          </div>
+          <div className="absolute bg-white h-[76px] left-[calc(50%+410.15px)] rounded-[50px] top-[709px] w-[364.051px]" data-node-id="60:3449" />
+          <div className="absolute contents left-[calc(50%+119px)] top-[728px]" data-node-id="60:3450">
+            <div className="absolute contents left-[calc(50%+119px)] top-[728px]" data-node-id="60:3451">
+              <div className="absolute left-[calc(50%+119px)] size-[37px] top-[728px]" data-node-id="60:3452">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse1} />
+              </div>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[calc(50%+131px)] not-italic text-[#8a9ba9] text-[20px] top-[732px] whitespace-nowrap" data-node-id="60:3453">
+                3
+              </p>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[calc(50%+178px)] not-italic text-[#8a9ba9] text-[20px] top-[732px] w-[93px]" data-node-id="60:3454">
+                예약자 정보
+              </p>
+            </div>
+            <div className="absolute contents left-[calc(50%+512px)] top-[728px]" data-node-id="60:3455">
+              <div className="absolute left-[calc(50%+512px)] size-[37px] top-[728px]" data-node-id="60:3456">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgEllipse2} />
+              </div>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[calc(50%+524px)] not-italic text-[20px] text-white top-[732px] whitespace-nowrap" data-node-id="60:3457">
+                4
+              </p>
+              <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[30px] left-[calc(50%+571px)] not-italic text-[#1a2e3f] text-[20px] top-[732px] whitespace-nowrap" data-node-id="60:3458">
+                결제 · 확인
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[calc(50%+131px)] top-[872px]" data-node-id="60:3480" data-name="진행요약">
+        <div className="absolute bg-white border-2 border-[#e2eef6] border-solid h-[961px] left-[calc(50%+131px)] rounded-[20px] shadow-[-2px_5px_32.3px_0px_rgba(0,0,0,0.08)] top-[872px] w-[661px]" data-node-id="60:3481" />
+        <div className="absolute bg-[#e3eef5] h-[25px] left-[calc(50%+635px)] rounded-[15px] top-[919px] w-[112px]" data-node-id="60:3482" />
+        <div className="absolute bg-[#d9d9d9] h-[330px] left-[calc(50%+178px)] rounded-[20px] top-[976px] w-[569px]" data-node-id="60:3483" />
+        <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] inset-[36.08%_36.88%_62.98%_59.27%] leading-[normal] not-italic text-[#2d7ba3] text-[20px] whitespace-nowrap" data-node-id="60:3484">
+          예약 요약
+        </p>
+        <p className="[word-break:break-word] absolute font-['Pretendard:Bold'] inset-[36.2%_11.77%_63.1%_83.85%] leading-[normal] not-italic text-[#2d7ba3] text-[15px] whitespace-nowrap" data-node-id="60:3485">
+          Step 4 · 결제
+        </p>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+196px)] whitespace-nowrap" data-node-id="60:3486">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+199px)]" data-node-id="60:3487">
+            숙박
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+196px)]" data-node-id="60:3488">
+            2박
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+230px)] whitespace-nowrap" data-node-id="60:3489">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+230px)]" data-node-id="60:3490">
+            인원
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+230px)]" data-node-id="60:3491">
+            성인 2
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+349px)] whitespace-nowrap" data-node-id="60:3492">
+          <p className="absolute left-[calc(50%+178px)] top-[calc(50%+349px)]" data-node-id="60:3493">
+            ₩420,000 × 2박
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-right top-[calc(50%+349px)]" data-node-id="60:3494">
+            ₩84,000
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+279px)] whitespace-nowrap" data-node-id="60:3542">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+279px)]" data-node-id="60:3543">
+            예약자
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+279px)]" data-node-id="60:3544">
+            000
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+378px)] whitespace-nowrap" data-node-id="60:3495">
+          <p className="absolute left-[calc(50%+178px)] top-[calc(50%+378px)]" data-node-id="60:3496">
+            세금 · 봉사료
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-right top-[calc(50%+378px)]" data-node-id="60:3497">
+            ₩8,400
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+308px)] whitespace-nowrap" data-node-id="60:3545">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+308px)]" data-node-id="60:3546">
+            연락처
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+308px)]" data-node-id="60:3547">
+            010-0000-0000
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents leading-[normal] left-[calc(50%+178px)] not-italic text-[#1a2e3f] top-[calc(50%+415px)] whitespace-nowrap" data-node-id="60:3498">
+          <p className="absolute font-['Pretendard:Medium'] left-[calc(50%+178px)] text-[15px] top-[calc(50%+418px)]" data-node-id="60:3499">
+            총액
+          </p>
+          <p className="-translate-x-full absolute font-['Pretendard:SemiBold'] left-[calc(50%+747px)] text-[20px] text-right top-[calc(50%+415px)]" data-node-id="60:3500">
+            ₩92,400
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+165px)] whitespace-nowrap" data-node-id="60:3501">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+165px)]" data-node-id="60:3502">
+            체크아웃
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+165px)]" data-node-id="60:3503">
+            8월 22일 (토)
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+178px)] not-italic text-[15px] top-[calc(50%+134px)] whitespace-nowrap" data-node-id="60:3504">
+          <p className="absolute left-[calc(50%+178px)] text-[#8a9ba9] top-[calc(50%+134px)]" data-node-id="60:3505">
+            체크인
+          </p>
+          <p className="-translate-x-full absolute left-[calc(50%+747px)] text-[#1a2e3f] text-right top-[calc(50%+134px)]" data-node-id="60:3506">
+            8월 20일 (목)
+          </p>
+        </div>
+        <div className="absolute flex h-[0.993px] items-center justify-center left-[calc(50%+178px)] top-[calc(50%+109px)] w-[569px]" data-node-id="60:3507">
+          <div className="flex-none rotate-[-0.1deg]">
+            <div className="h-0 relative w-[569.001px]">
+              <div className="absolute inset-[-0.25px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector38} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute flex h-[0.993px] items-center justify-center left-[calc(50%+178px)] top-[calc(50%+269px)] w-[569px]" data-node-id="60:3508">
+          <div className="flex-none rotate-[-0.1deg]">
+            <div className="h-0 relative w-[569.001px]">
+              <div className="absolute inset-[-0.25px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector38} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute flex h-[0.993px] items-center justify-center left-[calc(50%+178px)] top-[calc(50%+337px)] w-[569px]" data-node-id="60:3541">
+          <div className="flex-none rotate-[-0.1deg]">
+            <div className="h-0 relative w-[569.001px]">
+              <div className="absolute inset-[-0.25px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector38} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute flex h-[0.993px] items-center justify-center left-[calc(50%+178px)] top-[calc(50%+405px)] w-[569px]" data-node-id="60:3509">
+          <div className="flex-none rotate-[-0.1deg]">
+            <div className="h-0 relative w-[569.001px]">
+              <div className="absolute inset-[-0.25px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector38} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute contents left-[calc(50%+177px)] top-[calc(50%+452px)]" data-node-id="60:3510">
+          <div className="absolute bg-[#c5dbe9] h-[42px] left-[calc(50%+177px)] rounded-[10px] top-[calc(50%+452px)] w-[569px]" data-node-id="60:3511" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[22px] left-[calc(50%+199px)] not-italic text-[#0f4c6b] text-[15px] top-[calc(50%+462px)] whitespace-nowrap" data-node-id="60:3512">
+            무료 취소 · 체크인 3일 전까지
+          </p>
+        </div>
+        <div className="[word-break:break-word] absolute contents left-[calc(50%+178px)] not-italic top-[calc(50%+43px)] whitespace-nowrap" data-node-id="60:3513">
+          <p className="absolute font-['Pretendard:SemiBold'] leading-[35px] left-[calc(50%+178px)] text-[#1a2e3f] text-[25px] top-[calc(50%+43px)]" data-node-id="60:3514">
+            Ocean Suite
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] leading-[25px] left-[calc(50%+178px)] text-[#989ba9] text-[15px] top-[calc(50%+75px)]" data-node-id="60:3515">
+            Ocean Suite
+          </p>
+        </div>
+      </div>
+      <div className="absolute h-[961px] left-[169px] overflow-x-clip overflow-y-auto top-[872px] w-[843px]" data-node-id="69:1141">
+        <div className="absolute content-stretch flex flex-col gap-[31px] items-start left-0 top-0 w-[843px]" data-node-id="69:1120">
+          <Component className="h-[996px] relative shrink-0 w-full" />
+          <div className="cursor-pointer grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0" data-node-id="69:1119">
+            <a className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-[157px] mt-0 place-items-start relative row-1" data-node-id="60:3459" data-name="다음">
+              <div className="col-1 h-[52px] ml-0 mt-0 relative row-1 w-[686px]" data-node-id="60:3460" data-name="Subtract">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgSubtract} />
+              </div>
+              <p className="[word-break:break-word] col-1 font-['Pretendard:Bold'] leading-[30px] ml-[272px] mt-[11px] not-italic relative row-1 text-[15px] text-center text-white w-[143px]" data-node-id="60:3462">
+                예약 확정하기 →
+              </p>
+            </a>
+            <a className="col-1 grid-cols-[max-content] grid-rows-[max-content] inline-grid ml-0 mt-0 place-items-start relative row-1" data-node-id="60:3463" data-name="이전">
+              <div className="col-1 h-[52px] ml-0 mt-0 relative row-1 w-[136px]" data-node-id="60:3464" data-name="Subtract">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgSubtract1} />
+              </div>
+              <p className="[word-break:break-word] col-1 font-['Pretendard:Bold'] leading-[30px] ml-[45px] mt-[11px] not-italic relative row-1 text-[#1a2e3f] text-[15px] text-center whitespace-nowrap" data-node-id="60:3466">
+                ← 이전
+              </p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

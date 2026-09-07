@@ -1,0 +1,93 @@
+const img1 = "https://www.figma.com/api/mcp/asset/8a44d4c8-d349-4ab9-803a-54b8f634b1f4.png";
+const img14 = "https://www.figma.com/api/mcp/asset/d6f6f4ca-d4ac-4e70-b1bf-46e7faed280d.png";
+const img12 = "https://www.figma.com/api/mcp/asset/43b8ec63-27c5-47af-b5ee-01d1abbd6f7c.png";
+const imgVector4 = "https://www.figma.com/api/mcp/asset/ffb358e1-b471-4005-b7c7-ee4212eb3f75.svg";
+const imgVector5 = "https://www.figma.com/api/mcp/asset/7172ffda-3a6e-40ec-85e2-a1ae3a6548b7.svg";
+const imgVector6 = "https://www.figma.com/api/mcp/asset/bc0a0ba2-de65-4d77-8d80-e51cbb46e9e2.svg";
+
+type ComponentProps = {
+  className?: string;
+  prop1?: "기본" | "베리언트2" | "베리언트4";
+};
+
+export default function Component({ className, prop1 = "기본" }: ComponentProps) {
+  const is = prop1 === "기본";
+  const is2 = prop1 === "베리언트2";
+  const is4 = prop1 === "베리언트4";
+  const is4Or2 = ["베리언트4", "베리언트2"].includes(prop1);
+  return (
+    <div className={className || "h-[1087px] relative w-[1920px]"} id={is2 ? "node-3_26" : is4 ? "node-3_30" : "node-3_24"}>
+      <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={is2 ? img12 : is4 ? img14 : img1} />
+      <div className={`absolute contents ${is4Or2 ? "inset-[68.45%_66.71%_8.24%_4.84%]" : "inset-[68.45%_66.71%_8.24%_4.86%]"}`} id={is2 ? "node-7_47" : is4 ? "node-7_54" : "node-7_28"}>
+        {is4Or2 && (
+          <>
+            <p className={`[word-break:break-word] absolute font-["Pretendard:SemiBold"] leading-[80px] not-italic text-[80px] text-white ${is2 ? "inset-[68.45%_67.92%_16.1%_4.84%]" : "inset-[68.45%_68.75%_16.1%_4.84%]"}`} id={is2 ? "node-7_48" : "node-7_55"}>
+              {is2 ? "건축으로 담아낸 바다의 결" : is4 ? "바다를 구경하는 편안한 휴식" : ""}
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] inset-[85.65%_66.71%_11.59%_4.86%] leading-[30px] not-italic text-[#e8eff3] text-[20px]" id={is2 ? "node-7_49" : "node-7_56"}>
+              {is2 ? "유리와 흰 콘크리트로 이어지는 호텔" : is4 ? "동해의 저녁, 오늘 하루의 일상을 내려놓고 휴식을 즐깁니다." : ""}
+            </p>
+          </>
+        )}
+        <div className={`absolute ${is2 ? "inset-[91.76%_90.66%_8.24%_6.56%]" : is4 ? "inset-[91.76%_89.04%_8.24%_8.17%]" : '[word-break:break-word] font-["Pretendard:SemiBold"] inset-[68.45%_70.98%_16.1%_4.86%] leading-[0] not-italic text-[80px] text-white whitespace-pre-wrap'}`} id={is2 ? "node-7_50" : is4 ? "node-7_57" : "node-7_9"}>
+          {is4Or2 && (
+            <div className="absolute inset-[-1px_0]">
+              <img alt="" className="block max-w-none size-full" src={imgVector4} />
+            </div>
+          )}
+          {is && (
+            <>
+              <p className="leading-[80px] mb-0">{`파도가 머무는 `}</p>
+              <p className="leading-[80px]">조용한 시간</p>
+            </>
+          )}
+        </div>
+        {is4Or2 && (
+          <>
+            <div className={`absolute ${is2 ? "inset-[91.76%_93.6%_8.24%_4.9%]" : "inset-[91.76%_91.98%_8.24%_6.51%]"}`} id={is2 ? "node-7_63" : "node-7_58"}>
+              <div className="absolute inset-[-1px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector5} />
+              </div>
+            </div>
+            <div className={`absolute ${is2 ? "inset-[91.76%_89.03%_8.24%_9.5%]" : "inset-[91.76%_93.64%_8.24%_4.9%]"}`} id={is2 ? "node-7_52" : "node-7_64"}>
+              <div className="absolute inset-[-1px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector6} />
+              </div>
+            </div>
+          </>
+        )}
+        {is && (
+          <>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] inset-[85.65%_66.71%_11.59%_4.86%] leading-[30px] not-italic text-[#e8eff3] text-[20px]" data-node-id="7:10">
+              동해의 새벽, 바람과 파도만이 인사하는 자리에서 하루가 시작됩니다.
+            </p>
+            <div className="absolute inset-[91.76%_92.32%_8.24%_4.89%]" data-node-id="7:11">
+              <div className="absolute inset-[-1px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector4} />
+              </div>
+            </div>
+            <div className="absolute inset-[91.76%_90.66%_8.24%_7.83%]" data-node-id="7:12">
+              <div className="absolute inset-[-1px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector5} />
+              </div>
+            </div>
+            <div className="absolute inset-[91.76%_89.04%_8.24%_9.49%]" data-node-id="7:13">
+              <div className="absolute inset-[-1px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector6} />
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.

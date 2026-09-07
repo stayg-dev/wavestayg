@@ -1,0 +1,324 @@
+const imgImage4 = "https://www.figma.com/api/mcp/asset/d263da97-888d-4a36-bf8f-135e8f7f12c5.png";
+const imgImage3 = "https://www.figma.com/api/mcp/asset/cddf5340-8f80-4928-89da-2f8c55166f66.png";
+const imgRectangle29 = "https://www.figma.com/api/mcp/asset/00108bfd-6224-4609-8f11-25da9ba92d20.png";
+const imgVector35 = "https://www.figma.com/api/mcp/asset/1a3a810d-2cbc-4778-a69c-2a4284f8630e.svg";
+const imgVector13 = "https://www.figma.com/api/mcp/asset/52d32621-4691-470d-8c56-965e67db5e18.svg";
+
+export default function Facilities() {
+  return (
+    <div className="bg-white relative size-full" data-node-id="50:924" data-name="Facilities">
+      <div className="-translate-x-1/2 absolute contents left-[calc(25%+480px)] top-[calc(50%+1477.5px)]" data-node-id="53:1432" data-name="FOOTER">
+        <div className="absolute bg-[#1a2e3f] h-[392px] left-0 top-[calc(50%+1477.5px)] w-[1920px]" data-node-id="53:1433" />
+        <div className="absolute contents left-[211px] top-[calc(50%+1537.5px)]" data-node-id="53:1434">
+          <div className="absolute contents left-[211px] top-[calc(50%+1537.5px)]" data-node-id="53:1435">
+            <div className="absolute h-[26px] left-[211px] top-[calc(50%+1612.5px)] w-[189px]" data-node-id="53:1436" data-name="image 4">
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <img alt="" className="absolute h-[265.2%] left-[-4.11%] max-w-none top-[-132.6%] w-[107.47%]" src={imgImage4} />
+              </div>
+            </div>
+            <div className="absolute contents left-[269px] top-[calc(50%+1537.5px)]" data-node-id="53:1437">
+              <div className="absolute h-[70px] left-[269px] top-[calc(50%+1537.5px)] w-[73px]" data-node-id="53:1438" data-name="image 3">
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <img alt="" className="absolute h-[102.8%] left-[-124.48%] max-w-none top-[-2.8%] w-[235.64%]" src={imgImage3} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[211px] not-italic text-[#899199] text-[20px] top-[calc(50%+1657.5px)] whitespace-nowrap" data-node-id="53:1439">
+            양양 죽도해변, 파도 소리와 함께 시작하는 편안한 스테이.
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:ExtraLight'] leading-[20px] left-[211px] not-italic text-[#555c63] text-[20px] top-[calc(50%+1812.5px)] whitespace-nowrap" data-node-id="53:1440">
+            © 2026 Wave STAYG. All rights reserved
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1585.5px)] whitespace-nowrap" data-node-id="53:1441">
+            010-0000-0000
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1585.5px)] whitespace-nowrap" data-node-id="53:1442">
+            <p className="leading-[20px]">객실</p>
+          </a>
+          <a className="[word-break:break-word] absolute block font-['Pretendard:Regular'] leading-[0] left-[calc(50%+380px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1585.5px)] whitespace-nowrap" href="https://naver.me/FhUgubIv" data-node-id="53:1443" target="_blank">
+            <p className="cursor-pointer leading-[20px]">강원 양양군 현남면 동산큰길 17-5</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[826px] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1617.5px)] whitespace-nowrap" data-node-id="53:1444">
+            010-0000-0000
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1617.5px)] whitespace-nowrap" data-node-id="53:1445">
+            부대시설
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1649.5px)] whitespace-nowrap" data-node-id="53:1446">
+            <p className="leading-[20px]">오시는 길</p>
+          </a>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1681.5px)] whitespace-nowrap" data-node-id="53:1447">
+            <p className="leading-[20px]">공지사항</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1713.5px)] whitespace-nowrap" data-node-id="53:1448">
+            문의하기
+          </p>
+          <a className="[word-break:break-word] absolute block cursor-pointer font-['Pretendard:Regular'] leading-[0] left-[calc(50%+147px)] not-italic text-[#cad0d7] text-[20px] top-[calc(50%+1745.5px)] whitespace-nowrap" data-node-id="53:1449">
+            <p className="leading-[20px]">예약 및 조회</p>
+          </a>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[826px] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1542.5px)] whitespace-nowrap" data-node-id="53:1450">
+            연락처
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+147px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1542.5px)] whitespace-nowrap" data-node-id="53:1451">
+            바로가기
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:SemiBold'] leading-[20px] left-[calc(50%+380px)] not-italic text-[#a2bace] text-[20px] top-[calc(50%+1542.5px)] whitespace-nowrap" data-node-id="53:1452">
+            주소
+          </p>
+        </div>
+        <div className="-translate-x-1/2 absolute h-0 left-[calc(25%+480px)] top-[calc(50%+1792.5px)] w-[1498px]" data-node-id="53:1453">
+          <div className="absolute inset-[-0.25px_0]">
+            <img alt="" className="block max-w-none size-full" src={imgVector35} />
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[169px] top-[calc(50%+858.5px)]" data-node-id="50:1214" data-name="Facilities 4">
+        <div className="absolute bg-[#d9d9d9] h-[568px] left-[814px] rounded-[30px] top-[calc(50%+858.5px)] w-[938px]" data-node-id="50:1215" />
+        <div className="absolute contents left-[169px] top-[calc(50%+1014.5px)]" data-node-id="50:1231">
+          <div className="absolute contents left-[169px] top-[calc(50%+1053.5px)]" data-node-id="50:1216">
+            <div className="absolute h-0 left-[169px] top-[calc(50%+1222.5px)] w-[593px]" data-node-id="50:1217">
+              <div className="absolute inset-[-0.5px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector13} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[169px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1104.5px)] whitespace-nowrap" data-node-id="50:1218">
+              코스탈 다이닝
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[169px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1236.5px)] whitespace-nowrap" data-node-id="50:1219">
+              운영 시간
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[351px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1236.5px)] whitespace-nowrap" data-node-id="50:1220">
+              위치
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[476px] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+1236.5px)] whitespace-nowrap" data-node-id="50:1221">
+              예약
+            </p>
+            <div className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[0] left-[169px] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+1163.5px)] whitespace-nowrap" data-node-id="50:1222">
+              <p className="leading-[25px] mb-0">동해의 해산물과 계절의 재료</p>
+              <p className="leading-[25px]">파노라마 오션 뷰와 함께</p>
+            </div>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[169px] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+1259.5px)] whitespace-nowrap" data-node-id="50:1223">
+              Breakfast · Dinner
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[351px] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+1259.5px)] whitespace-nowrap" data-node-id="50:1224">
+              본관 · 로비층
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[476px] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+1259.5px)] whitespace-nowrap" data-node-id="50:1225">
+              자유 이용
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[45px] left-[169px] not-italic text-[#1a2e3f] text-[40px] top-[calc(50%+1053.5px)] whitespace-nowrap" data-node-id="50:1226">
+              Coastal Dining
+            </p>
+          </div>
+          <div className="absolute contents left-[169px] top-[calc(50%+1014.5px)]" data-node-id="50:1227">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[169px] rounded-[20px] top-[calc(50%+1014.5px)] w-[124px]" data-node-id="50:1228" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[189px] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+1018.5px)] whitespace-nowrap" data-node-id="50:1229">
+              Ocean Front
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[169px] top-[calc(50%+190.5px)]" data-node-id="50:1198" data-name="Facilities 3">
+        <div className="absolute bg-[#d9d9d9] h-[568px] left-[169px] rounded-[30px] top-[calc(50%+190.5px)] w-[938px]" data-node-id="50:1199" />
+        <div className="absolute contents left-[calc(50%+199px)] top-[calc(50%+385.5px)]" data-node-id="50:1200">
+          <div className="absolute h-0 left-[calc(50%+199px)] top-[calc(50%+554.5px)] w-[593px]" data-node-id="50:1201">
+            <div className="absolute inset-[-0.5px_0]">
+              <img alt="" className="block max-w-none size-full" src={imgVector13} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+436.5px)] whitespace-nowrap" data-node-id="50:1202">
+            코스탈 다이닝
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+568.5px)] whitespace-nowrap" data-node-id="50:1203">
+            운영 시간
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+381px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+568.5px)] whitespace-nowrap" data-node-id="50:1204">
+            위치
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+506px)] not-italic text-[#8a9ba9] text-[15px] top-[calc(50%+568.5px)] whitespace-nowrap" data-node-id="50:1205">
+            예약
+          </p>
+          <div className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[0] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[20px] top-[calc(50%+495.5px)] whitespace-nowrap" data-node-id="50:1206">
+            <p className="leading-[25px] mb-0">동해의 해산물과 계절의 재료</p>
+            <p className="leading-[25px]">파노라마 오션 뷰와 함께</p>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+591.5px)] whitespace-nowrap" data-node-id="50:1207">
+            Breakfast · Dinner
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+381px)] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+591.5px)] whitespace-nowrap" data-node-id="50:1208">
+            본관 · 로비층
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+506px)] not-italic text-[#1a2e3f] text-[20px] top-[calc(50%+591.5px)] whitespace-nowrap" data-node-id="50:1209">
+            자유 이용
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[45px] left-[calc(50%+199px)] not-italic text-[#1a2e3f] text-[40px] top-[calc(50%+385.5px)] whitespace-nowrap" data-node-id="50:1210">
+            Coastal Dining
+          </p>
+        </div>
+        <div className="absolute contents left-[calc(50%+199px)] top-[calc(50%+346.5px)]" data-node-id="50:1211">
+          <div className="absolute bg-[#e7f4fb] h-[28px] left-[calc(50%+199px)] rounded-[20px] top-[calc(50%+346.5px)] w-[124px]" data-node-id="50:1212" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[calc(50%+219px)] not-italic text-[#2d7ba3] text-[15px] top-[calc(50%+350.5px)] whitespace-nowrap" data-node-id="50:1213">
+            Ocean Front
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[173px] top-[1392px]" data-node-id="50:1182" data-name="Facilities 2">
+        <div className="absolute bg-[#d9d9d9] h-[568px] left-[814px] rounded-[30px] top-[1392px] w-[938px]" data-node-id="50:1183" />
+        <div className="absolute contents left-[173px] top-[1548px]" data-node-id="50:1230">
+          <div className="absolute contents left-[173px] top-[1587px]" data-node-id="50:1184">
+            <div className="absolute h-0 left-[173px] top-[1756px] w-[593px]" data-node-id="50:1185">
+              <div className="absolute inset-[-0.5px_0]">
+                <img alt="" className="block max-w-none size-full" src={imgVector13} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[173px] not-italic text-[#8a9ba9] text-[15px] top-[1638px] whitespace-nowrap" data-node-id="50:1186">
+              코스탈 다이닝
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[173px] not-italic text-[#8a9ba9] text-[15px] top-[1770px] whitespace-nowrap" data-node-id="50:1187">
+              운영 시간
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[355px] not-italic text-[#8a9ba9] text-[15px] top-[1770px] whitespace-nowrap" data-node-id="50:1188">
+              위치
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[480px] not-italic text-[#8a9ba9] text-[15px] top-[1770px] whitespace-nowrap" data-node-id="50:1189">
+              예약
+            </p>
+            <div className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[0] left-[173px] not-italic text-[#8a9ba9] text-[20px] top-[1697px] whitespace-nowrap" data-node-id="50:1190">
+              <p className="leading-[25px] mb-0">동해의 해산물과 계절의 재료</p>
+              <p className="leading-[25px]">파노라마 오션 뷰와 함께</p>
+            </div>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[173px] not-italic text-[#1a2e3f] text-[20px] top-[1793px] whitespace-nowrap" data-node-id="50:1191">
+              Breakfast · Dinner
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[355px] not-italic text-[#1a2e3f] text-[20px] top-[1793px] whitespace-nowrap" data-node-id="50:1192">
+              본관 · 로비층
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[480px] not-italic text-[#1a2e3f] text-[20px] top-[1793px] whitespace-nowrap" data-node-id="50:1193">
+              자유 이용
+            </p>
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[45px] left-[173px] not-italic text-[#1a2e3f] text-[40px] top-[1587px] whitespace-nowrap" data-node-id="50:1194">
+              Coastal Dining
+            </p>
+          </div>
+          <div className="absolute contents left-[173px] top-[1548px]" data-node-id="50:1195">
+            <div className="absolute bg-[#e7f4fb] h-[28px] left-[173px] rounded-[20px] top-[1548px] w-[124px]" data-node-id="50:1196" />
+            <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[193px] not-italic text-[#2d7ba3] text-[15px] top-[1552px] whitespace-nowrap" data-node-id="50:1197">
+              Ocean Front
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="absolute contents left-[169px] top-[724px]" data-node-id="50:1157" data-name="Facilities 1">
+        <div className="absolute bg-[#d9d9d9] h-[568px] left-[169px] rounded-[30px] top-[724px] w-[938px]" data-node-id="50:1143" />
+        <div className="absolute contents left-[calc(50%+199px)] top-[919px]" data-node-id="50:1144">
+          <div className="absolute h-0 left-[calc(50%+199px)] top-[1088px] w-[593px]" data-node-id="50:1145">
+            <div className="absolute inset-[-0.5px_0]">
+              <img alt="" className="block max-w-none size-full" src={imgVector13} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[15px] top-[970px] whitespace-nowrap" data-node-id="50:1146">
+            코스탈 다이닝
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[15px] top-[1102px] whitespace-nowrap" data-node-id="50:1147">
+            운영 시간
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+381px)] not-italic text-[#8a9ba9] text-[15px] top-[1102px] whitespace-nowrap" data-node-id="50:1148">
+            위치
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+506px)] not-italic text-[#8a9ba9] text-[15px] top-[1102px] whitespace-nowrap" data-node-id="50:1158">
+            예약
+          </p>
+          <div className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[0] left-[calc(50%+199px)] not-italic text-[#8a9ba9] text-[20px] top-[1029px] whitespace-nowrap" data-node-id="50:1149">
+            <p className="leading-[25px] mb-0">동해의 해산물과 계절의 재료</p>
+            <p className="leading-[25px]">파노라마 오션 뷰와 함께</p>
+          </div>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+199px)] not-italic text-[#1a2e3f] text-[20px] top-[1125px] whitespace-nowrap" data-node-id="50:1150">
+            Breakfast · Dinner
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+381px)] not-italic text-[#1a2e3f] text-[20px] top-[1125px] whitespace-nowrap" data-node-id="50:1151">
+            본관 · 로비층
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Regular'] leading-[20px] left-[calc(50%+506px)] not-italic text-[#1a2e3f] text-[20px] top-[1125px] whitespace-nowrap" data-node-id="50:1159">
+            자유 이용
+          </p>
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[45px] left-[calc(50%+199px)] not-italic text-[#1a2e3f] text-[40px] top-[919px] whitespace-nowrap" data-node-id="50:1152">
+            Coastal Dining
+          </p>
+        </div>
+        <div className="absolute contents left-[calc(50%+199px)] top-[880px]" data-node-id="50:1160">
+          <div className="absolute bg-[#e7f4fb] h-[28px] left-[calc(50%+199px)] rounded-[20px] top-[880px] w-[124px]" data-node-id="50:1161" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[20px] left-[calc(50%+219px)] not-italic text-[#2d7ba3] text-[15px] top-[884px] whitespace-nowrap" data-node-id="50:1162">
+            Ocean Front
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-0 top-[204px]" data-node-id="53:1234" data-name="header PH">
+        <div className="absolute h-[420px] left-0 top-[204px] w-[1920px]" data-node-id="50:958">
+          <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRectangle29} />
+        </div>
+        <div className="-translate-x-1/2 absolute bg-[rgba(212,247,255,0.41)] h-[420px] left-[calc(25%+480px)] top-[204px] w-[1920px]" data-node-id="53:1218" />
+        <div className="-translate-x-1/2 -translate-y-1/2 [word-break:break-word] absolute contents left-[calc(25%-12.5px)] not-italic top-[calc(25%-439.25px)]" data-node-id="50:959">
+          <p className="absolute font-['Pretendard:SemiBold'] h-[85px] leading-[80px] left-[calc(25%-311px)] text-[80px] text-white top-[calc(25%-484.75px)] w-[286px]" data-node-id="50:960">
+            부대시설
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] h-[30px] leading-[30px] left-[calc(25%-311px)] text-[#808080] text-[20px] top-[calc(25%-383.75px)] w-[597px]" data-node-id="50:961">
+            바다를 배경으로 하는 네 개의 공간. 필요할 때 열리고, 조용할 때 물러섭니다.
+          </p>
+          <p className="absolute font-['Pretendard:Regular'] h-[30px] leading-[30px] left-[calc(25%-311px)] text-[#808080] text-[20px] top-[calc(25%-524.75px)] w-[143px]" data-node-id="50:962">
+            Facilities
+          </p>
+        </div>
+      </div>
+      <div className="absolute contents left-[123px] top-[70px]" data-node-id="53:1233" data-name="header">
+        <div className="absolute contents left-[625px] top-[110px]" data-node-id="50:926">
+          <div className="[word-break:break-word] absolute contents font-['Pretendard:Regular'] left-[625px] not-italic text-[25px] top-[110px] whitespace-nowrap" data-node-id="50:927">
+            <a className="absolute block cursor-pointer leading-[0] left-[625px] text-[#546676] top-[110px]" data-node-id="50:928">
+              <p className="leading-[normal]">홈</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[697px] text-[#546676] top-[110px]" data-node-id="50:929">
+              <p className="leading-[normal]">객실</p>
+            </a>
+            <p className="absolute leading-[normal] left-[791px] text-[#1a2e3f] top-[110px]" data-node-id="50:930">
+              부대시설
+            </p>
+            <a className="absolute block cursor-pointer leading-[0] left-[928px] text-[#546676] top-[110px]" data-node-id="50:931">
+              <p className="leading-[normal]">오시는 길</p>
+            </a>
+            <a className="absolute block cursor-pointer leading-[0] left-[calc(50%+111px)] text-[#546676] top-[110px]" data-node-id="50:932">
+              <p className="leading-[normal]">공지사항</p>
+            </a>
+            <p className="absolute leading-[normal] left-[calc(50%+248px)] text-[#546676] top-[110px]" data-node-id="53:193">
+              문의사항
+            </p>
+          </div>
+        </div>
+        <a className="absolute contents cursor-pointer left-[calc(50%+696px)] top-[95px]" data-node-id="50:933">
+          <div className="absolute bg-[#2d7ba3] h-[61px] left-[calc(50%+696px)] rounded-[100px] top-[95px] w-[179px]" data-node-id="50:934" />
+          <p className="[word-break:break-word] absolute font-['Pretendard:Medium'] leading-[normal] left-[calc(50%+735px)] not-italic text-[25px] text-white top-[111px] whitespace-nowrap" data-node-id="50:935">{`예약&조회`}</p>
+        </a>
+        <div className="absolute contents left-[123px] top-[70px]" data-node-id="50:936">
+          <div className="absolute h-[70px] left-[182px] top-[70px] w-[72px]" data-node-id="50:937" data-name="image 2">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[102.53%] left-[-11.34%] max-w-none top-[-2.58%] w-[239.7%]" src={imgImage3} />
+            </div>
+          </div>
+          <div className="absolute h-[27px] left-[123px] top-[147px] w-[189px]" data-node-id="50:938" data-name="image 5">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <img alt="" className="absolute h-[250.52%] left-[-3.89%] max-w-none top-[-18.69%] w-[107%]" src={imgImage4} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+SUPER CRITICAL: The generated React+Tailwind code MUST be converted to match the target project's technology stack and styling system.
+1. Analyze the target codebase to identify: technology stack, styling approach, component patterns, and design tokens
+2. Convert React syntax to the target framework/library
+3. Transform all Tailwind classes to the target styling system while preserving exact visual design
+4. Follow the project's existing patterns and conventions
+DO NOT install any Tailwind as a dependency unless the user instructs you to do so.
+
+Node ids have been added to the code as data attributes, e.g. `data-node-id="1:2"`.
+Images and SVGs will be stored as constants, e.g. const image = 'https://www.figma.com/api/mcp/asset/550e8400-e29b-41d4-a716-446655440000.png'. These constants will be used in the code as the source for the image, ex: <img src={image} />. Image assets are stored on a remote server for 7 days and can be fetched using the provided URLs until they expire.
