@@ -310,17 +310,6 @@
   flex-wrap: wrap;
   margin-top: 16px;
 }
-.admin-room-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 8px;
-}
-.admin-room-options .portal-check {
-  margin: 0;
-  padding: 10px;
-  background: #f5f8fb;
-  border-radius: 6px;
-}
 .booking-admin button:focus-visible {
   outline: 3px solid #80c6e5;
   outline-offset: 3px;

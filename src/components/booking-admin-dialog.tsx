@@ -5,7 +5,6 @@ import {
   ApplicationCard,
   bookingRequest,
   type Application,
-  type Inventory,
 } from "./website-booking";
 
 export function BookingAdminDialog({
@@ -18,10 +17,6 @@ export function BookingAdminDialog({
   onChanged: () => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [inventory, setInventory] = useState<Inventory[] | null>(null);
-  const [inventoryError, setInventoryError] = useState("");
-  const [revision, setRevision] = useState(0);
-  const [roomNumbers, setRoomNumbers] = useState<string[]>([]);
   const [cancelling, setCancelling] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -37,26 +32,6 @@ export function BookingAdminDialog({
     };
   }, []);
 
-  useEffect(() => {
-    if (row.status !== "pending") return;
-    let disposed = false;
-    bookingRequest<Inventory[]>(
-      `admin/inventory?check_in=${row.check_in}&check_out=${row.check_out}`,
-    )
-      .then((data) => {
-        if (!disposed) {
-          setInventory(data);
-          setInventoryError("");
-        }
-      })
-      .catch((e: Error) => {
-        if (!disposed) setInventoryError(e.message);
-      });
-    return () => {
-      disposed = true;
-    };
-  }, [row.check_in, row.check_out, row.status, revision]);
-
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (busy) return;
@@ -67,7 +42,7 @@ export function BookingAdminDialog({
     if (!action) return;
     const message =
       action === "approve"
-        ? "선택한 객실로 승인하고 PMS 판매일보에 반영할까요?"
+        ? "예약을 승인하고 호실 미배정 상태로 PMS 판매일보를 생성할까요?"
         : action === "reject"
           ? "이 신청을 반려할까요?"
           : "홈페이지 예약을 취소하고 연결된 판매일보에 취소를 반영할까요?";
@@ -78,7 +53,6 @@ export function BookingAdminDialog({
     try {
       await bookingRequest(`admin/applications/${row.id}`, "POST", {
         action,
-        room_numbers: action === "approve" ? roomNumbers : [],
         note: fields.get("note"),
         is_peak_confirmed: fields.get("peak") === "on",
         is_upgrade_confirmed: fields.get("upgrade") === "on",
@@ -96,9 +70,6 @@ export function BookingAdminDialog({
     }
   }
 
-  const rooms =
-    inventory?.find((item) => item.name === row.room_type_name)?.room_numbers ??
-    [];
   return (
     <dialog
       ref={dialog}
@@ -191,57 +162,12 @@ export function BookingAdminDialog({
         </form>
       ) : row.status === "pending" ? (
         <form onSubmit={submit}>
-          <h2>객실 배정 및 승인</h2>
-          {inventoryError ? (
-            <div role="alert" className="portal-error">
-              {inventoryError}{" "}
-              <button
-                type="button"
-                onClick={() => {
-                  setInventoryError("");
-                  setRevision((n) => n + 1);
-                }}
-              >
-                객실 다시 확인
-              </button>
-            </div>
-          ) : !inventory ? (
-            <p role="status">예약 기간의 객실을 확인하고 있습니다.</p>
-          ) : null}
+          <h2>예약 승인</h2>
+          <p className="admin-muted">
+            승인하면 신청한 객실 타입과 수량으로 판매일보가 생성됩니다. 호실은
+            PMS에서 배정할 수 있습니다.
+          </p>
           <fieldset disabled={busy}>
-            <p>
-              동일 타입의 실제 호실 {row.room_count}개를 선택해 주세요.{" "}
-              <strong>
-                선택 {roomNumbers.length} / {row.room_count}실
-              </strong>
-            </p>
-            <div className="admin-room-options">
-              {rooms.map((number) => (
-                <label key={number} className="portal-check">
-                  <input
-                    type="checkbox"
-                    checked={roomNumbers.includes(number)}
-                    disabled={
-                      !roomNumbers.includes(number) &&
-                      roomNumbers.length >= row.room_count
-                    }
-                    onChange={(e) =>
-                      setRoomNumbers((prev) =>
-                        e.target.checked
-                          ? [...prev, number]
-                          : prev.filter((n) => n !== number),
-                      )
-                    }
-                  />
-                  {number}호
-                </label>
-              ))}
-            </div>
-            {inventory && rooms.length === 0 && (
-              <p className="portal-error">
-                배정 가능한 객실이 없습니다. 객실 현황을 확인해 주세요.
-              </p>
-            )}
             {row.kind === "owner" && (
               <>
                 <label className="portal-check">
@@ -260,15 +186,7 @@ export function BookingAdminDialog({
               <textarea name="note" required maxLength={1000} rows={3} />
             </label>
             <div className="admin-actions">
-              <button
-                value="approve"
-                type="submit"
-                disabled={
-                  !inventory ||
-                  !!inventoryError ||
-                  roomNumbers.length !== row.room_count
-                }
-              >
+              <button value="approve" type="submit">
                 {busy ? "처리 중…" : "승인 및 PMS 반영"}
               </button>
               <button value="reject" type="submit" className="admin-secondary">
