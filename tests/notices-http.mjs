@@ -136,6 +136,7 @@ try {
   assert.match(setCookie, /HttpOnly/i);
   assert.match(setCookie, /Secure/i);
   assert.match(setCookie, /SameSite=strict/i);
+  assert.match(setCookie, /Max-Age=2592000(?:;|$)/i);
   cookie = setCookie.split(";")[0];
   const adminEntry = await fetch(`${origin}/admin/`, { headers: { Cookie: cookie }, redirect: "manual" });
   assert.equal(adminEntry.status, 307);
@@ -213,7 +214,7 @@ try {
   cookie = "";
   assert.equal((await call("/api/admin/notices/")).status, 401);
   assert.doesNotMatch(await (await call("/admin/")).text(), /관리자 메뉴|예약 승인 · 수분양자 관리|수분양자 예약 화면|공지사항 보기/);
-  cookie = `wave_stayg_admin=${issueAdminSession(secret, hash, Date.now() - 9 * 3600000)}`;
+  cookie = `wave_stayg_admin=${issueAdminSession(secret, hash, Date.now() - 31 * 24 * 3600000)}`;
   assert.equal((await call("/api/admin/notices/")).status, 401);
   console.log(
     "HTTP integration passed: login, cookie flags, admin-only CRUD, CSRF, immediate public reading, stale write, delete, logout and session expiry. PMS transport is emulated; no external database was modified.",

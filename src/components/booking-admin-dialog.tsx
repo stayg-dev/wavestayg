@@ -182,8 +182,8 @@ export function BookingAdminDialog({
               </>
             )}
             <label>
-              승인 / 반려 안내 (고객에게 표시)
-              <textarea name="note" required maxLength={1000} rows={3} />
+              승인 / 반려 안내 (선택 · 고객에게 표시)
+              <textarea name="note" maxLength={1000} rows={3} />
             </label>
             <div className="admin-actions">
               <button value="approve" type="submit">

@@ -1,6 +1,9 @@
 "use client";
 import Link from "next/link";
 import { roomTypeLabel } from "@/lib/room-type-labels";
+import { RateTable } from "./rate-guide";
+import { OwnerCheckInCalendar } from "./owner-check-in-calendar";
+import { bookingToday, firstOwnerCheckIn, ownerCheckInAllowed, shiftBookingDate } from "@/lib/owner-booking-dates";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export type BookingQuote = {
@@ -148,7 +151,7 @@ export function OwnerPolicy() {
           2026년 5박, 2027년부터 연 15박. 객실 수 × 숙박 일수만큼 승인 시
           차감합니다.
         </li>
-        <li>비수기는 입실 14일 전부터, 1일 1회 신청, 최대 2실·3박입니다.</li>
+        <li>비수기는 입실 최소 14일 전까지 신청해야 하며, 1일 1회 신청, 최대 2실·3박입니다. 반려·취소된 신청은 횟수 제한에서 제외합니다.</li>
         <li>
           7~8월은 연 1회, 1실·최대 3박이며 운영 일정은 관리자가 확인합니다.
         </li>
@@ -190,6 +193,9 @@ export function BookingApplicationForm({
     [error, setError] = useState("");
   const [requestId, setRequestId] = useState("");
   const [quote, setQuote] = useState<BookingQuote | null>(null);
+  const today = bookingToday();
+  const validDates = !!dates.check_in && dates.check_out > dates.check_in &&
+    (!owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= "2028-01-01"));
   async function preview(form: HTMLFormElement) {
     const fields = new FormData(form);
     setBusy(true);
@@ -216,6 +222,7 @@ export function BookingApplicationForm({
     }
   }
   async function check() {
+    if (!validDates) return;
     setBusy(true);
     setError("");
     setInventory(null);
@@ -233,7 +240,7 @@ export function BookingApplicationForm({
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!inventory) return;
+    if (!inventory || !validDates) return;
     if (!quote) {
       setError("신청 전 요금을 확인해 주세요.");
       return;
@@ -292,7 +299,11 @@ export function BookingApplicationForm({
       >
         <fieldset disabled={busy}>
           <div className="portal-grid">
-            <label>
+            {owner ? <OwnerCheckInCalendar value={dates.check_in} today={today} onChange={(check_in) => {
+              setDates({ check_in, check_out: shiftBookingDate(check_in, 1) });
+              setInventory(null);
+              setQuote(null);
+            }} /> : <label>
               체크인
               <input
                 required
@@ -303,13 +314,15 @@ export function BookingApplicationForm({
                   setInventory(null);
                 }}
               />
-            </label>
+            </label>}
             <label>
               체크아웃
               <input
                 required
                 type="date"
                 value={dates.check_out}
+                min={owner ? shiftBookingDate(dates.check_in || firstOwnerCheckIn(today) || today, 1) : undefined}
+                max={owner ? "2028-01-01" : undefined}
                 onChange={(e) => {
                   setDates({ ...dates, check_out: e.target.value });
                   setInventory(null);
@@ -320,7 +333,7 @@ export function BookingApplicationForm({
           <button
             type="button"
             onClick={check}
-            disabled={!dates.check_in || !dates.check_out}
+            disabled={!validDates}
           >
             객실 확인
           </button>
@@ -656,6 +669,7 @@ export function OwnerPortal() {
             </details>
           </section>
           <OwnerPolicy />
+          <RateTable description="아래 요금은 일반 판매가입니다. 수분양자는 동일 타입 무료, 상위 타입은 판매가 차액의 50%가 적용됩니다." />
           <BookingApplicationForm
             owner={owner}
             onApplied={() => {

@@ -24,11 +24,12 @@ export function RoomRateGuide({ room }: { room: Room }) {
   );
 }
 
-export function RateTable() {
+export function RateTable({ description }: { description?: string } = {}) {
   return (
     <section className="rate-table-section" id="room-rates" aria-labelledby="room-rates-title">
       <h2 id="room-rates-title">객실 요금표</h2>
       <p>객실 1실 · 1박 기준 / 단위: 원</p>
+      {description && <p>{description}</p>}
       <div className="rate-table-scroll" role="region" aria-label="객실별 요일 요금표" tabIndex={0}>
         <table className="rate-table">
           <caption>11개 객실 타입의 요일별 1박 요금</caption>

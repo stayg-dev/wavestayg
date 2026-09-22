@@ -7,7 +7,7 @@ function derive(password: string, salt: string): Promise<Buffer> {
     );
   });
 }
-export const adminSessionSeconds = 8 * 60 * 60;
+export const adminSessionSeconds = 30 * 24 * 60 * 60;
 
 export async function hashAdminPassword(password: string, salt = randomBytes(16).toString("hex")) {
   const key = await derive(password, salt);

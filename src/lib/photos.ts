@@ -29,7 +29,7 @@ function roomGallery(code: string, name: string, order: number[]) {
   return order.map((number) => photo(`객실/${code}/${name} (${number}).jpg`, `${name} 객실 사진 ${number}`));
 }
 
-// Keep each photo associated with its exact room type. LDO was not supplied.
+// Keep each photo associated with its exact room type.
 export const roomPhotos: Record<number, SitePhoto[]> = {
   0: roomGallery("SDX", "스탠다드 더블", [2, 1, 3]),
   1: roomGallery("DDM", "디럭스 더블 마운틴", [2, 1, 3]),
@@ -39,7 +39,13 @@ export const roomPhotos: Record<number, SitePhoto[]> = {
   5: roomGallery("JFO", "주니어 패밀리 오션", [1, 2, 3]),
   6: roomGallery("PDO", "프리미엄 더블 오션", [1, 2, 3, 4, 5]),
   7: roomGallery("PTO", "프리미엄 트윈 오션", [1, 2, 3, 4, 5]),
-  8: [],
+  8: [
+    photo("객실/LDO/_BRW1684.jpg", "로프트 더블 오션 침실과 바다 전망, 복층 계단"),
+    photo("객실/LDO/_BRW1659.jpg", "로프트 더블 오션 더블 침대와 발코니"),
+    photo("객실/LDO/_BRW1677.jpg", "로프트 더블 오션 침실과 테이블"),
+    photo("객실/LDO/_BRW1680.jpg", "로프트 더블 오션 복층 휴식 공간"),
+    photo("객실/LDO/_BRW1654.jpg", "로프트 더블 오션 주방과 세탁기"),
+  ],
   9: roomGallery("LTO", "로프트 트윈 오션", [3, 1, 2, 4, 5]),
   10: roomGallery("LFO", "로프트 패밀리 오션", [2, 1, 3, 4, 5, 6]),
 };

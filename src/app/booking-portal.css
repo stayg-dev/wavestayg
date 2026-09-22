@@ -40,6 +40,14 @@
   padding: 24px;
   margin: 20px 0;
 }
+.booking-portal .rate-table-section {
+  margin: 20px 0;
+  padding: 24px;
+  border-radius: 14px;
+}
+.booking-portal .rate-table-section > p {
+  color: #536b78;
+}
 .portal-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -329,8 +337,42 @@
   .portal-card {
     padding: 18px;
   }
+  .booking-portal .rate-table-section {
+    padding: 18px;
+  }
   .booking-portal nav {
     font-size: 14px;
     gap: 12px;
   }
 }
+.owner-date-picker {
+  position: relative;
+  font-weight: 600;
+}
+.booking-portal .owner-date-trigger {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 8px;
+  background: white;
+  color: #24495b;
+  border: 1px solid #bbcfda;
+}
+.owner-date-calendar {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 5;
+  width: min(340px, 100%);
+  padding: 12px;
+  border: 1px solid #bbcfda;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 8px 24px #163b5026;
+}
+.owner-date-month { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.owner-date-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; text-align: center; margin-top: 12px; }
+.booking-portal .owner-date-days button { padding: 8px 0; background: #edf4f7; color: #24495b; border-radius: 6px; }
+.booking-portal .owner-date-days button:disabled { background: #f6f7f8; color: #a3adb3; opacity: 1; cursor: not-allowed; }
+.booking-portal .owner-date-days button[aria-pressed="true"] { background: #237c99; color: white; }
+.owner-date-calendar p { font-size: 13px; font-weight: 400; }

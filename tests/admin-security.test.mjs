@@ -25,6 +25,14 @@ test("sessions reject tampering, expiration and credential rotation", async () =
   const now = 1_800_000_000_000;
   const token = issueAdminSession(secret, hash, now);
   assert.equal(verifyAdminSession(token, secret, hash, now), true);
+  assert.equal(
+    verifyAdminSession(token, secret, hash, now + 30 * 24 * 60 * 60 * 1000 - 1000),
+    true,
+  );
+  assert.equal(
+    verifyAdminSession(token, secret, hash, now + 30 * 24 * 60 * 60 * 1000),
+    false,
+  );
   assert.equal(verifyAdminSession(token + "x", secret, hash, now), false);
   assert.equal(
     verifyAdminSession(token, secret, hash, now + adminSessionSeconds * 1000),
