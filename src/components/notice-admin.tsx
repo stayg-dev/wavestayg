@@ -249,9 +249,8 @@ export function NoticeAdmin({
   return (
     <>
       <nav className="admin-header admin-menu" aria-label="관리자 메뉴">
-        <Link href="/admin/reservations/">예약 승인 · 수분양자 관리 →</Link>
-        <Link href="/owners/">수분양자 예약 화면 →</Link>
-        <Link href="/notice/">공지사항 보기 ↗</Link>
+        <Link href="/admin/" aria-current="page">공지사항 관리</Link>
+        <Link href="/admin/reservations/">예약 관리</Link>
       </nav>
       <div className="admin-title">
         <div>

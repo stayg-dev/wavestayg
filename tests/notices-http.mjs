@@ -137,7 +137,13 @@ try {
   const adminHtml = await (await call("/admin/")).text();
   assert.match(adminHtml, /새 공지 작성/);
   assert.match(adminHtml, /관리자 메뉴/);
-  assert.match(adminHtml, /예약 승인 · 수분양자 관리/);
+  assert.match(adminHtml, /예약 관리/);
+  assert.doesNotMatch(adminHtml, /href="\/(owners|notice|reservation|rooms)\//);
+  const reservationsHtml = await (await call("/admin/reservations/")).text();
+  assert.match(reservationsHtml, /관리자 메뉴/);
+  assert.match(reservationsHtml, /공지사항 관리/);
+  assert.match(reservationsHtml, /예약 관리/);
+  assert.doesNotMatch(reservationsHtml, /href="\/(owners|notice|reservation|rooms)\//);
   assert.doesNotMatch(adminHtml, /임시저장|상단 고정|게시하기/);
   const base = {
     title: "테스트 공지",

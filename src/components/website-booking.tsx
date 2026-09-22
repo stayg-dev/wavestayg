@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { roomTypeLabel } from "@/lib/room-type-labels";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export type BookingQuote = {
@@ -76,20 +77,22 @@ export async function bookingRequest<T>(
 export function PortalShell({
   children,
   title,
+  navigation,
 }: {
   children: ReactNode;
   title: string;
+  navigation?: ReactNode;
 }) {
   return (
     <main id="main" className="booking-portal">
       <header>
         <Link href="/">WAVE STAY-G · 양양</Link>
-        <nav>
+        {navigation ?? <nav>
           <Link href="/rooms/">객실 안내</Link>
           <Link href="/reservation/book/">일반 예약</Link>
           <Link href="/reservation/lookup/">예약 조회</Link>
           <Link href="/owners/">수분양자</Link>
-        </nav>
+        </nav>}
       </header>
       <h1>{title}</h1>
       {children}
@@ -101,7 +104,7 @@ export function ApplicationCard({ row }: { row: Application }) {
     <article className="portal-card">
       <div className="portal-row">
         <strong>
-          {row.room_type_name} · {row.room_count}실
+          {roomTypeLabel(row.room_type_name)} · {row.room_count}실
         </strong>
         <span className={`booking-status ${row.status}`}>
           {statusText[row.status]}
@@ -117,7 +120,7 @@ export function ApplicationCard({ row }: { row: Application }) {
       <p>금액 {row.quoted_amount.toLocaleString()}원 · 현장 정산</p>
       {row.pricing?.owned_type && (
         <p>
-          보유 타입: {row.pricing.owned_type} · 업그레이드 차액 50%{" "}
+          보유 타입: {roomTypeLabel(row.pricing.owned_type)} · 업그레이드 차액 50%{" "}
           {row.pricing.upgrade_amount.toLocaleString()}원 · 인원 추가{" "}
           {row.pricing.guest_fee.toLocaleString()}원 · 침구{" "}
           {row.pricing.bedding_fee.toLocaleString()}원
@@ -331,7 +334,7 @@ export function BookingApplicationForm({
                         value={r.name}
                         disabled={r.available < 1}
                       >
-                        {r.name} · 신청 가능 {r.available}실
+                        {roomTypeLabel(r.name)} · 신청 가능 {r.available}실
                       </option>
                     ))}
                   </select>
@@ -348,7 +351,7 @@ export function BookingApplicationForm({
               </div>
               {owner && type !== owner.room_type_name && (
                 <p>
-                  보유 타입: {owner.room_type_name}. 타입 변경은 승인 시 가능
+                  보유 타입: {roomTypeLabel(owner.room_type_name)}. 타입 변경은 승인 시 가능
                   여부와 추가 요금을 안내합니다.
                 </p>
               )}
@@ -607,7 +610,7 @@ export function OwnerPortal() {
               잔여 {owner.annual_nights + owner.carryover_nights}박 · 올해{" "}
               {owner.annual_nights}박 / 이월 {owner.carryover_nights}박
             </p>
-            <p>보유 타입: {owner.room_type_name}</p>
+            <p>보유 타입: {roomTypeLabel(owner.room_type_name)}</p>
             <details>
               <summary>비밀번호 변경</summary>
               <form onSubmit={changePassword}>

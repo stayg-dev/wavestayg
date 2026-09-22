@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { roomTypeLabel } from "@/lib/room-type-labels";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import {
@@ -253,10 +254,15 @@ export function WebsiteBookingAdmin() {
     setRoster("");
   }
   return (
-    <PortalShell title="홈페이지 예약 관리">
-      <nav>
-        <Link href="/admin/">공지사항 작성·수정·삭제</Link>
-        <Link href="/owners/">수분양자 화면</Link>
+    <PortalShell
+      title="예약 관리"
+      navigation={
+        <nav aria-label="관리자 메뉴">
+          <Link href="/admin/">공지사항 관리</Link>
+          <Link href="/admin/reservations/" aria-current="page">예약 관리</Link>
+        </nav>
+      }
+    >
         <button
           onClick={async () => {
             await fetch("/api/admin/session/", { method: "DELETE" });
@@ -266,7 +272,6 @@ export function WebsiteBookingAdmin() {
         >
           로그아웃
         </button>
-      </nav>
       <p>
         승인 시에만 PMS 판매일보에 예약을 생성합니다. PMS에서 변경·삭제한 내용은
         홈페이지 신청 상태와 무료 박수에 반영되지 않습니다.
@@ -367,7 +372,7 @@ export function WebsiteBookingAdmin() {
                   <select name="room_type_name" required>
                     <option value="">선택</option>
                   {roomTypes.map((r) => (
-                      <option key={r.name}>{r.name}</option>
+                      <option key={r.name} value={r.name}>{roomTypeLabel(r.name)}</option>
                     ))}
                   </select>
                 </label>
@@ -431,7 +436,7 @@ export function WebsiteBookingAdmin() {
                       <br />
                       {owner.phone}
                     </td>
-                    <td>{owner.room_type_name}</td>
+                    <td>{roomTypeLabel(owner.room_type_name)}</td>
                     <td>
                       올해 {owner.annual_nights} · 이월 {owner.carryover_nights}
                     </td>
