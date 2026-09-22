@@ -7,12 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test tests/booking.test.mjs"
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "admin:setup": "node --experimental-strip-types scripts/setup-admin.mjs",
+    "test:http": "node --experimental-strip-types tests/notices-http.mjs",
+    "test:pms-http": "node --experimental-strip-types tests/pms-http.mjs"
   },
   "dependencies": {
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "^20",

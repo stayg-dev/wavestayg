@@ -4,7 +4,9 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Shell, MediaBlock, formatPrice, Tags } from "./shared";
-import { rooms } from "./content-pages";
+import { rooms, roomCatalog, getRoom } from "@/lib/rooms";
+import { ServiceRateGuide } from "./rate-guide";
+import { roomPhotos } from "@/lib/photos";
 import {
   Booking,
   ReservationRecord,
@@ -17,7 +19,9 @@ import {
   validateDates,
   validateGuest,
   normalizeBookingQuery,
-  priceList,
+  validateRoomOccupancy,
+  rateLabels,
+  type BookingQuote,
 } from "@/lib/booking";
 const storageKey = "wave-stayg-preview-reservations";
 function readRecords(): ReservationRecord[] {
@@ -263,14 +267,12 @@ function Counter({
 function Summary({
   booking,
   step,
-  discount,
 }: {
   booking: Booking;
   step: number;
-  discount: boolean;
 }) {
-  const n = nightsBetween(booking.checkin, booking.checkout),
-    t = totalFor(booking, discount);
+  const n = nightsBetween(booking.checkin, booking.checkout);
+  const quoteError = validateDates(booking);
   return (
     <aside className="panel booking-summary">
       <div className="minor-heading">
@@ -280,18 +282,18 @@ function Summary({
           {["날짜", "객실", "정보", "결제"][Math.min(step, 4) - 1]}
         </span>
       </div>
-      <MediaBlock />
+      <MediaBlock photo={roomPhotos[booking.room][0]} sizes="(max-width: 900px) 100vw, 360px" />
       {step > 1 ? (
         <>
-          <h3>Ocean Suite</h3>
-          <p className="muted">Ocean Suite</p>
+          <h3>{getRoom(booking.room).name}</h3>
+          <p className="muted">{getRoom(booking.room).korean}</p>
         </>
       ) : (
         <div className="availability">
           <div>
             <span>기간 예약 가능 객실</span>
             <h2>
-              4 <small>/ 6</small>
+              {rooms.filter((room) => room.available).length} <small>/ {rooms.length}</small>
             </h2>
           </div>
           <p>
@@ -306,7 +308,7 @@ function Summary({
           ["숙박", `${n}박`],
           [
             "인원",
-            `성인 ${booking.adults}${booking.children ? " · 아동 " + booking.children : ""}`,
+            `8세 이상 ${booking.adults}명 · 1~7세 ${booking.children}명`,
           ],
           ...(step === 4
             ? [
@@ -321,36 +323,35 @@ function Summary({
           </div>
         ))}
       </dl>
-      {step > 1 ? (
-        <dl className="summary-lines">
-          <div>
-            <dt>
-              {formatPrice(priceList[booking.room])} × {n}박
-            </dt>
-            <dd>{formatPrice(t.subtotal)}</dd>
-          </div>
-          {discount && (
-            <div>
-              <dt>쿠폰 할인</dt>
-              <dd>−{formatPrice(t.saving)}</dd>
-            </div>
-          )}
-          <div>
-            <dt>세금 · 봉사료</dt>
-            <dd>{formatPrice(t.tax)}</dd>
-          </div>
-          <div className="total">
-            <dt>총액</dt>
-            <dd>{formatPrice(t.total)}</dd>
-          </div>
-        </dl>
+      {step > 1 && !quoteError ? (
+        <>
+          <PriceBreakdown quote={totalFor(booking)} />
+          {validateRoomOccupancy(booking) && <p className="form-error">{validateRoomOccupancy(booking)}</p>}
+        </>
       ) : (
         <p className="summary-help">
-          다음 단계에서 이 기간에 예약 가능한 객실만 골라서 보여드립니다.
+          {quoteError || "다음 단계에서 객실별 숙박 요금을 확인할 수 있습니다."}
         </p>
       )}
       <p className="cancellation-note">무료 취소 · 체크인 3일 전까지</p>
     </aside>
+  );
+}
+function PriceBreakdown({ quote }: { quote: BookingQuote }) {
+  const nights = quote.nightly.length;
+  return (
+    <dl className="summary-lines price-breakdown">
+      {quote.nightly.map((night) => (
+        <div key={night.date}>
+          <dt>{shortDate(night.date)}<small>{rateLabels[night.type]}</small></dt>
+          <dd>{formatPrice(night.amount)}</dd>
+        </div>
+      ))}
+      <div><dt>객실료 · {nights}박</dt><dd>{formatPrice(quote.subtotal)}</dd></div>
+      {quote.extraGuests > 0 && <div><dt>인원 추가(침구 포함)<small>{quote.extraGuests}명 × {nights}박</small></dt><dd>{formatPrice(quote.guestFee)}</dd></div>}
+      {quote.beddingSets > 0 && <div><dt>추가 침구<small>{quote.beddingSets}세트 × {nights}박</small></dt><dd>{formatPrice(quote.beddingFee)}</dd></div>}
+      <div className="total"><dt>총액</dt><dd>{formatPrice(quote.total)}</dd></div>
+    </dl>
   );
 }
 export function BookingFlow() {
@@ -384,9 +385,6 @@ function BookingForm({ initial }: { initial: Booking }) {
   const [booking, setBooking] = useState<Booking>(initial);
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
-  const [coupon, setCoupon] = useState("");
-  const [discount, setDiscount] = useState(false);
-  const [couponStatus, setCouponStatus] = useState("");
   const [record, setRecord] = useState<ReservationRecord | null>(null);
   const [storageError, setStorageError] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -402,7 +400,10 @@ function BookingForm({ initial }: { initial: Booking }) {
   };
   const next = () => {
     const err =
-      validateDates(booking) || (step >= 3 ? validateGuest(booking) : "");
+      validateDates(booking) ||
+      (step >= 2 ? validateRoomOccupancy(booking) : "") ||
+      (step >= 2 && !getRoom(booking.room).available ? "예약 가능한 객실을 선택해 주세요." : "") ||
+      (step >= 3 ? validateGuest(booking) : "");
     if (err) {
       setError(err);
       return;
@@ -412,8 +413,8 @@ function BookingForm({ initial }: { initial: Booking }) {
         code: "DEMO-WS-" + crypto.randomUUID().slice(0, 8).toUpperCase(),
         booking,
         status: "confirmed",
-        total: totalFor(booking, discount).total,
-        discounted: discount,
+        total: totalFor(booking).total,
+        quote: totalFor(booking),
         createdAt: new Date().toISOString(),
       };
       setRecord(r);
@@ -477,21 +478,30 @@ function BookingForm({ initial }: { initial: Booking }) {
                         <span>객실은 다음 단계에서 진행됩니다</span>
                       </div>
                       <Counter
-                        label="성인"
-                        description="만 13세 이상"
+                        label="8세 이상"
+                        description="성인 요금 적용 · 기준 인원 초과 시 1인 1박 22,000원"
                         value={booking.adults}
                         onChange={(v) => update({ adults: v })}
                         min={1}
                         max={6 - booking.children}
                       />
                       <Counter
-                        label="아동"
-                        description="만 3~12세"
+                        label="아동(1~7세)"
+                        description="인원 추가요금 무료 · 객실 최대 인원에 포함"
                         value={booking.children}
                         onChange={(v) => update({ children: v })}
                         min={0}
                         max={6 - booking.adults}
                       />
+                      <Counter
+                        label="추가 침구"
+                        description="1세트 1박 22,000원 · 인원 추가에 포함된 침구 외 별도 신청"
+                        value={booking.extraBedding}
+                        onChange={(v) => update({ extraBedding: v })}
+                        min={0}
+                        max={6}
+                      />
+                      <ServiceRateGuide />
                     </section>
                   </>
                 )}
@@ -502,33 +512,33 @@ function BookingForm({ initial }: { initial: Booking }) {
                       {shortDate(booking.checkin)} →{" "}
                       {shortDate(booking.checkout)} ·{" "}
                       {nightsBetween(booking.checkin, booking.checkout)}박 ·
-                      성인 {booking.adults}
+                      8세 이상 {booking.adults}명 · 1~7세 {booking.children}명
                     </p>
                     <p className="selection-note">
-                      선택하신 날짜에 예약 가능한 객실만 표시됩니다.
+                      선택한 숙박일의 객실료와 추가요금을 합산한 금액입니다. 예약 가능 여부는 미리보기입니다.
                     </p>
                     <div className="booking-room-grid">
-                      {rooms.map((r) => (
+                      {roomCatalog.map((r) => (
                         <label
                           key={r.id}
-                          className={`booking-room ${r.available ? "" : "unavailable"} ${booking.room === r.id ? "selected" : ""}`}
+                          className={`booking-room ${r.available && !validateRoomOccupancy({ ...booking, room: r.id }) ? "" : "unavailable"} ${booking.room === r.id ? "selected" : ""}`}
                         >
                           <input
                             type="radio"
                             name="room"
                             value={r.id}
                             checked={booking.room === r.id}
-                            disabled={!r.available}
+                            disabled={!r.available || !!validateRoomOccupancy({ ...booking, room: r.id })}
                             onChange={() => update({ room: r.id })}
                           />
-                          <MediaBlock />
+                          <MediaBlock photo={roomPhotos[r.id][0]} sizes="(max-width: 640px) 100vw, 320px" />
                           <div>
-                            <h4>Ocean Suite</h4>
-                            <p className="muted">Ocean Suite</p>
-                            <strong>{formatPrice(r.price)}</strong>
-                            <span> / 1박</span>
+                            <h4>{r.name}</h4>
+                            <p className="muted">{r.korean}</p>
+                            <strong>{formatPrice(totalFor({ ...booking, room: r.id }).total)}</strong>
+                            <span> / {nightsBetween(booking.checkin, booking.checkout)}박 총액</span>
                             <small>
-                              {r.available ? "예약 가능" : "예약 마감"}
+                              {validateRoomOccupancy({ ...booking, room: r.id }) ? `최대 ${r.maxOccupancy}인 · 인원 초과` : r.available ? "예약 가능" : "예약 마감"}
                             </small>
                           </div>
                         </label>
@@ -755,39 +765,6 @@ function BookingForm({ initial }: { initial: Booking }) {
                         실제 결제 수단을 연결하기 전에는 카드 정보를 입력할 수
                         없습니다.
                       </p>
-                      <div className="coupon-row">
-                        <label className="field">
-                          쿠폰 번호
-                          <input
-                            value={coupon}
-                            placeholder="예 : SUMMER25"
-                            onChange={(e) => {
-                              setCoupon(e.target.value);
-                              setDiscount(false);
-                              setCouponStatus("");
-                            }}
-                          />
-                        </label>
-                        <button
-                          className="pill small"
-                          type="button"
-                          onClick={() => {
-                            const ok =
-                              coupon.trim().toUpperCase() === "SUMMER25";
-                            setDiscount(ok);
-                            setCouponStatus(
-                              ok
-                                ? "미리보기 할인 15%가 적용되었습니다."
-                                : "사용할 수 없는 쿠폰입니다.",
-                            );
-                          }}
-                        >
-                          적용
-                        </button>
-                      </div>
-                      <p className="coupon-status" aria-live="polite">
-                        {couponStatus}
-                      </p>
                     </section>
                     <section className="panel final-check">
                       <h3>최종 확인</h3>
@@ -795,14 +772,14 @@ function BookingForm({ initial }: { initial: Booking }) {
                         {[
                           ["예약자", booking.lastName + booking.firstName],
                           ["연락처", booking.phone],
-                          ["객실", "Ocean Suite · Ocean Front"],
+                          ["객실", getRoom(booking.room).name],
                           [
                             "일정",
                             `${shortDate(booking.checkin)} → ${shortDate(booking.checkout)} · ${nightsBetween(booking.checkin, booking.checkout)}박`,
                           ],
                           [
                             "인원",
-                            `성인 ${booking.adults} · 아동 ${booking.children}`,
+                            `8세 이상 ${booking.adults}명 · 1~7세 ${booking.children}명`,
                           ],
                           ["도착 시간", booking.arrival],
                           ["결제 수단", booking.payment],
@@ -845,7 +822,7 @@ function BookingForm({ initial }: { initial: Booking }) {
                   </button>
                 </div>
               </div>
-              <Summary booking={booking} step={step} discount={discount} />
+              <Summary booking={booking} step={step} />
             </div>
           </form>
         )}
@@ -965,11 +942,11 @@ export function Lookup() {
               <div className="lookup-columns">
                 <div>
                   <section className="panel lookup-room">
-                    <MediaBlock />
+                    <MediaBlock photo={roomPhotos[b.room]?.[0]} />
                     <div>
                       <span className="eyebrow">ROOM</span>
-                      <h3>Ocean Suite</h3>
-                      <Tags />
+                      <h3>{getRoom(b.room).name}</h3>
+                      <Tags items={getRoom(b.room).tags} />
                     </div>
                     <div className="check-dates">
                       <div>
@@ -990,7 +967,9 @@ export function Lookup() {
                         ["예약자", b.lastName + b.firstName],
                         ["연락처", b.phone],
                         ["이메일", b.email],
-                        ["인원", `성인 ${b.adults} · 아동 ${b.children}`],
+                        ["인원", record.quote
+                          ? `8세 이상 ${b.adults}명 · 1~7세 ${b.children}명`
+                          : `성인 ${b.adults}명 · 아동 ${b.children}명 (기존 기준)`],
                         ["도착 시간", b.arrival],
                         ["결제 수단", b.payment],
                         [
@@ -1036,7 +1015,8 @@ export function Lookup() {
                           "15:00 이후 · 프론트에서 예약번호를 알려주세요.",
                         ],
                         ["주차", "전용 주차장 무료 · 만차 시 안내"],
-                        ["문의", "033-672-0000 · stay@wave-stayg.kr"],
+                        ["얼리체크인·레이트체크아웃", "시간당 11,000원 · 프런트 사전 요청"],
+                        ["문의", "010-8064-0076 · wavestayg0901@gmail.com"],
                       ].map(([k, v]) => (
                         <div key={k}>
                           <dt>{k}</dt>
@@ -1048,29 +1028,14 @@ export function Lookup() {
                 </div>
                 <aside className="panel lookup-payment">
                   <h3>결제 내역</h3>
-                  <dl className="summary-lines">
-                    <div>
-                      <dt>
-                        {formatPrice(priceList[b.room])} ×{" "}
-                        {nightsBetween(b.checkin, b.checkout)}박
-                      </dt>
-                      <dd>{formatPrice(totalFor(b).subtotal)}</dd>
-                    </div>
-                    {record.discounted && (
-                      <div>
-                        <dt>쿠폰 할인</dt>
-                        <dd>−{formatPrice(totalFor(b, true).saving)}</dd>
-                      </div>
-                    )}
-                    <div>
-                      <dt>세금 · 봉사료</dt>
-                      <dd>{formatPrice(totalFor(b, record.discounted).tax)}</dd>
-                    </div>
-                    <div className="total">
-                      <dt>총액</dt>
-                      <dd>{formatPrice(record.total)}</dd>
-                    </div>
-                  </dl>
+                  {record.quote ? (
+                    <PriceBreakdown quote={record.quote} />
+                  ) : (
+                    <>
+                      <p>이전 요금 기준으로 저장된 미리보기입니다.</p>
+                      <dl className="summary-lines"><div className="total"><dt>저장된 총액</dt><dd>{formatPrice(record.total)}</dd></div></dl>
+                    </>
+                  )}
                   <p className="preview-note">실제 결제 내역이 아닙니다.</p>
                   <h4>취소 정책</h4>
                   <p>

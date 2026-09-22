@@ -1,0 +1,22 @@
+.media-photo, .photo-gallery { position: relative; overflow: hidden; isolation: isolate; }
+.media-empty { display: flex; align-items: center; justify-content: center; padding: 12px; text-align: center; color: #fff; font-size: 13px; }
+.room-detail-photo { aspect-ratio: 3 / 2; }
+.gallery-arrow { position: absolute; z-index: 1; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; padding: 0; border-radius: 50%; background: #142b3ed9; color: white; font-size: 32px; line-height: 1; display: grid; place-items: center; }
+.gallery-previous { left: 14px; }
+.gallery-next { right: 14px; }
+.gallery-arrow:hover { background: #142b3e; }
+.gallery-pagination { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; padding: 6px 14px; border-radius: 30px; background: #142b3ee6; color: white; white-space: nowrap; }
+.gallery-pagination > span { font-size: 12px; font-variant-numeric: tabular-nums; }
+.gallery-pagination > div { display: flex; }
+.gallery-pagination button { display: grid; place-items: center; padding: 0; width: 24px; height: 28px; }
+.gallery-pagination button::after { content: ""; width: 6px; height: 6px; background: #ffffff80; border-radius: 50%; }
+.gallery-pagination button[aria-pressed="true"]::after { background: white; width: 9px; height: 9px; }
+.gallery-arrow:focus-visible, .gallery-pagination button:focus-visible { outline-offset: 1px; outline-color: white; }
+.location-photo-link { display: block; width: fit-content; margin: 12px 0 24px auto; color: var(--blue); font-size: 14px; }
+@media (max-width: 640px) {
+  .gallery-arrow { width: 38px; height: 38px; font-size: 28px; }
+  .gallery-previous { left: 8px; }
+  .gallery-next { right: 8px; }
+  .gallery-pagination { bottom: 8px; gap: 8px; padding: 4px 10px; }
+  .room-list-card .media-empty { font-size: 10px; padding: 5px; }
+}

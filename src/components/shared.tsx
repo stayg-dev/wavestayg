@@ -3,6 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { BrandLogo } from "./brand-logo";
+import { pageBanners, sitePhotos, type SitePhoto } from "@/lib/photos";
+
+export function showReservationNotice() {
+  window.alert("준비중입니다.");
+}
+
+export function ReservationButton({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <button type="button" className={className} onClick={showReservationNotice}>{children}</button>;
+}
 export const navigation = [
   ["홈", "/"],
   ["객실", "/rooms/"],
@@ -17,13 +27,7 @@ export function Header({ home = false }: { home?: boolean }) {
   return (
     <header className={`site-header ${home ? "over-hero" : ""}`}>
       <Link href="/" aria-label="Wave STAY-G 홈" className="logo">
-        <Image
-          src={`/assets/logo-${home ? "white" : "color"}.png`}
-          alt="WAVE STAY-G"
-          width={189}
-          height={104}
-          priority
-        />
+        <BrandLogo white={home} />
       </Link>
       <button
         className="menu-toggle"
@@ -46,9 +50,9 @@ export function Header({ home = false }: { home?: boolean }) {
           </Link>
         ))}
       </nav>
-      <Link className="header-book" href="/reservation/">
+      <ReservationButton className="header-book">
         예약&조회
-      </Link>
+      </ReservationButton>
     </header>
   );
 }
@@ -58,19 +62,14 @@ export function Footer() {
       <div className="footer-grid">
         <div className="footer-brand">
           <Link href="/">
-            <Image
-              src="/assets/logo-white.png"
-              width={189}
-              height={101}
-              alt="WAVE STAY-G"
-            />
+            <BrandLogo white />
           </Link>
           <p>양양 죽도해변, 파도 소리와 함께 시작하는 편안한 스테이.</p>
         </div>
         <div>
           <h3>연락처</h3>
-          <p>010-0000-0000</p>
-          <p>010-0000-0000</p>
+          <p><a href="tel:01080640076">010-8064-0076</a></p>
+          <p><a href="mailto:wavestayg0901@gmail.com">wavestayg0901@gmail.com</a></p>
         </div>
         <div>
           <h3>바로가기</h3>
@@ -79,7 +78,7 @@ export function Footer() {
               {t === "문의사항" ? "문의하기" : t}
             </Link>
           ))}
-          <Link href="/reservation/">예약 및 조회</Link>
+          <ReservationButton className="footer-reservation">예약 및 조회</ReservationButton>
         </div>
         <div>
           <h3>주소</h3>
@@ -101,13 +100,15 @@ export function Banner({
   english: string;
   description?: string;
 }) {
+  const photo = pageBanners[english] ?? sitePhotos.about;
   return (
     <section className="page-banner">
       <Image
-        src="/assets/50-145-imgRectangle29.png"
+        src={photo.src}
         fill
-        alt="햇살이 들어오는 오션뷰 객실"
-        priority
+        alt={photo.alt}
+        style={{ objectPosition: photo.position }}
+        preload
         sizes="100vw"
       />
       <div className="banner-shade" />
@@ -141,9 +142,16 @@ export function Shell({
     </>
   );
 }
-// Solid gray media areas intentionally match unfilled media regions in Figma.
-export function MediaBlock({ className = "" }: { className?: string }) {
-  return <div className={`media-block ${className}`} aria-hidden="true" />;
+export function MediaBlock({ className = "", photo, sizes = "(max-width: 760px) 100vw, 50vw" }: {
+  className?: string;
+  photo?: SitePhoto;
+  sizes?: string;
+}) {
+  return (
+    <div className={`media-block ${photo ? "media-photo" : "media-empty"} ${className}`}>
+      {photo ? <Image src={photo.src} alt={photo.alt} fill sizes={sizes} style={{ objectFit: "cover", objectPosition: photo.position }} /> : <span>객실 사진 준비중</span>}
+    </div>
+  );
 }
 export function Tags({
   items = ["Ocean Front", "78㎡", "King"],
@@ -173,34 +181,3 @@ export function SectionTitle({
   );
 }
 export const formatPrice = (n: number) => "₩" + n.toLocaleString("ko-KR");
-export const description = "바다를 정면으로 마주하는 최상위 스위트";
-export const description2 = "개별 테라스와 프리미엄 어메니티가 제공됩니다.";
-export function RoomInfo({
-  price = 580000,
-  href = "/reservation/book/",
-}: {
-  price?: number;
-  href?: string;
-}) {
-  return (
-    <div className="room-info">
-      <Tags />
-      <h3>Ocean Suite</h3>
-      <p className="muted room-korean">오션 스위트</p>
-      <p className="room-description">
-        {description}
-        <br />
-        {description2}
-      </p>
-      <div className="price-row">
-        <p>
-          <strong>{formatPrice(price)}</strong>{" "}
-          <span className="muted">/ 1박</span>
-        </p>
-        <Link className="pill small" href={href}>
-          예약하기
-        </Link>
-      </div>
-    </div>
-  );
-}

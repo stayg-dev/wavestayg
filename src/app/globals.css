@@ -180,7 +180,14 @@ h3 {
   min-width: 126px;
   flex-shrink: 0;
 }
-.site-header .logo img {
+.brand-logo {
+  display: block;
+  height: auto;
+}
+.brand-logo-white {
+  filter: brightness(0) invert(1);
+}
+.site-header .logo .brand-logo {
   width: 100%;
   height: auto;
   display: block;
@@ -241,7 +248,7 @@ h3 {
   gap: 40px;
   min-height: calc(255 * var(--scale));
 }
-.footer-brand img {
+.footer-brand .brand-logo {
   width: calc(189 * var(--scale));
   min-width: 138px;
   height: auto;
@@ -258,9 +265,14 @@ h3 {
   margin: 5px 0 22px;
 }
 .footer-grid a:not(.footer-brand a),
+.footer-grid .footer-reservation,
 .footer-grid > div > p {
   display: block;
   margin-bottom: 10px;
+}
+.footer-reservation {
+  padding: 0;
+  text-align: left;
 }
 .footer-grid > div:last-child a {
   line-height: 1.5;
@@ -278,8 +290,19 @@ h3 {
   min-height: 640px;
   color: white;
 }
+.hero-photos {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #526475;
+}
 .hero-photo {
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+.hero-photo.is-active {
+  opacity: 1;
 }
 .hero-copy {
   position: absolute;
@@ -324,6 +347,15 @@ h3 {
 }
 .slide-controls button.active:after {
   background: white;
+}
+.slide-controls .slide-pause {
+  margin-left: 8px;
+  color: white;
+  font-size: 12px;
+  line-height: 18px;
+}
+.slide-controls .slide-pause:after {
+  content: none;
 }
 .booking-bar {
   position: absolute;
@@ -915,7 +947,7 @@ h3 {
   .footer-brand {
     grid-column: 1/-1;
   }
-  .footer-brand img {
+  .footer-brand .brand-logo {
     width: 140px;
   }
   .footer-brand p {
@@ -946,11 +978,14 @@ h3 {
     max-width: 90%;
     font-size: 14px;
   }
-  .site-footer .footer-brand img {
+  .site-footer .footer-brand .brand-logo {
     min-width: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .slide-pause {
+    display: none;
+  }
   html {
     scroll-behavior: auto;
   }

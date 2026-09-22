@@ -1,4 +1,4 @@
-import { Notice } from "@/components/content-pages";
+import { Notice } from "@/components/notice-board";
 export default function Page() {
   return <Notice />;
 }

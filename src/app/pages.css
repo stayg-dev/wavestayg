@@ -2067,3 +2067,6 @@
     margin-top: 25px;
   }
 }
+.notice-feedback { padding: 64px 20px; text-align: center; color: var(--muted); line-height: 1.8; }
+.notice-feedback button { margin-top: 20px; }
+.notice-plain-body { white-space: pre-wrap; overflow-wrap: anywhere; }

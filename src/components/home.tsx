@@ -1,18 +1,50 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Header,
   Footer,
   MediaBlock,
   SectionTitle,
-  RoomInfo,
-  description,
-  description2,
+  showReservationNotice,
 } from "./shared";
+
+import { RoomInfo } from "./rooms";
+import { rooms } from "@/lib/rooms";
+import { facilities, sights, aboutParagraphs } from "@/lib/property";
+import { sitePhotos, roomPhotos, momentPhotos } from "@/lib/photos";
+import { PhotoGallery } from "./photo-gallery";
+
+const heroPhotos = sitePhotos.hero;
+const heroTitles = [["파도가 머무는", "조용한 시간"], ["바다를 구경하는", "편안한 휴식"], ["건축으로 담아낸", "바다의 결"]];
+const heroRotationInterval = 5000;
+
 export function Home() {
   const [slide, setSlide] = useState(0);
+  const [rotationPaused, setRotationPaused] = useState(false);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleNextSlide = () => {
+      clearTimeout(timer);
+      if (rotationPaused || reducedMotion.matches || document.hidden) return;
+      timer = setTimeout(() => {
+        setSlide((current) => (current + 1) % heroPhotos.length);
+      }, heroRotationInterval);
+    };
+
+    scheduleNextSlide();
+    reducedMotion.addEventListener("change", scheduleNextSlide);
+    document.addEventListener("visibilitychange", scheduleNextSlide);
+    return () => {
+      clearTimeout(timer);
+      reducedMotion.removeEventListener("change", scheduleNextSlide);
+      document.removeEventListener("visibilitychange", scheduleNextSlide);
+    };
+  }, [slide, rotationPaused]);
+
   const [facility, setFacility] = useState(0);
   const [checkin, setCheckin] = useState("2026-09-20");
   const [checkout, setCheckout] = useState("2026-09-22");
@@ -21,78 +53,60 @@ export function Home() {
     1,
     Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86400000),
   );
-  const facilities = [
-    [
-      "Infinity Pool",
-      "인피니티 풀",
-      "수평선까지 이어지는 25m 야외 풀.",
-      "이른 아침 오션 뷰가 특히 아름답습니다.",
-      "10:00 – 22:00",
-    ],
-    [
-      "Spa",
-      "스파",
-      "바다를 마주하며 즐기는 편안한 휴식.",
-      "온전히 나에게 집중하는 시간을 만나보세요.",
-      "10:00 – 22:00",
-    ],
-    [
-      "Coastal Dining",
-      "코스탈 다이닝",
-      "동해의 해산물과 계절의 재료",
-      "파노라마 오션 뷰와 함께",
-      "Breakfast · Dinner",
-    ],
-    [
-      "Sea Lounge",
-      "씨 라운지",
-      "바다 옆의 여유로운 시간.",
-      "수평선을 바라보며 하루를 마무리하세요.",
-      "10:00 – 22:00",
-    ],
-  ];
   const f = facilities[facility];
   return (
     <>
       <Header home />
       <main id="main">
         <section className="home-hero">
-          <Image
-            className="hero-photo"
-            src={
-              [
-                "/assets/home-img.png",
-                "/assets/3-25-img14.png",
-                "/assets/3-25-img12.png",
-              ][slide]
-            }
-            alt="양양 죽도해변의 푸른 바다"
-            fill
-            sizes="100vw"
-            priority
-          />
+          <div className="hero-photos" aria-hidden="true">
+            {heroPhotos.map((photo, index) => (
+              <Image
+                key={photo.src}
+                className={`hero-photo${slide === index ? " is-active" : ""}`}
+                src={photo.src}
+                style={{ objectPosition: photo.position }}
+                alt=""
+                fill
+                sizes="100vw"
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : undefined}
+              />
+            ))}
+          </div>
           <div className="hero-copy">
             <h1>
-              파도가 머무는
+              {heroTitles[slide][0]}
               <br />
-              조용한 시간
+              {heroTitles[slide][1]}
             </h1>
             <p>
-              동해의 새벽, 바람과 파도만이 인사하는 자리에서 하루가 시작됩니다.
+              죽도해변 앞, 창을 열면 동해의 아침이 하루를 열어줍니다.
             </p>
             <div className="slide-controls">
-              {[0, 1, 2].map((i) => (
+              {heroPhotos.map((_, i) => (
                 <button
-                  aria-label={`${i + 1}번째 해변 사진`}
+                  aria-label={`${i + 1}번째 사진: ${heroPhotos[i].alt}`}
                   aria-pressed={slide === i}
                   className={slide === i ? "active" : ""}
                   onClick={() => setSlide(i)}
                   key={i}
                 />
               ))}
+              <button
+                type="button"
+                className="slide-pause"
+                aria-label={rotationPaused ? "배경 사진 자동 전환 재생" : "배경 사진 자동 전환 일시정지"}
+                onClick={() => setRotationPaused((paused) => !paused)}
+              >
+                <span aria-hidden="true">{rotationPaused ? "▶" : "Ⅱ"}</span>
+              </button>
             </div>
           </div>
-          <form className="booking-bar" action="/reservation/book/">
+          <form className="booking-bar" noValidate onSubmit={(event) => {
+            event.preventDefault();
+            showReservationNotice();
+          }}>
             <label>
               체크인
               <input
@@ -147,19 +161,19 @@ export function Home() {
           </form>
         </section>
         <section className="container home-about">
-          <SectionTitle eyebrow="About Wave STAYG">
+          <SectionTitle eyebrow="About Wave STAY-G">
             시원한 바다, 편안한 스테이
             <br />
             <em>힐링</em>이 시작되는 곳.
           </SectionTitle>
           <div className="feature-row">
-            <MediaBlock />
+            <MediaBlock photo={sitePhotos.about} />
             <div>
               <h3>WAVE STAY-G</h3>
               <p>
-                {description}
-                <br />
-                {description2}
+                {aboutParagraphs.map((paragraph, index) => (
+                  <span className="about-paragraph" key={index}>{paragraph}</span>
+                ))}
               </p>
             </div>
           </div>
@@ -168,18 +182,18 @@ export function Home() {
           <div className="container">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">ROOMS · 6 TYPES</p>
-                <h2>모든 객실이 오션뷰</h2>
+                <p className="eyebrow">ROOMS · {rooms.length} TYPES</p>
+                <h2>머무는 순간이 풍경이 되는 곳</h2>
               </div>
               <Link href="/rooms/">전체 객실 보기 →</Link>
             </div>
-            {[0, 1, 2].map((i) => (
+            {rooms.slice(0, 3).map((room, i) => (
               <div
                 className={`feature-row ${i === 1 ? "reverse" : ""}`}
                 key={i}
               >
-                <MediaBlock />
-                <RoomInfo />
+                <MediaBlock photo={roomPhotos[room.id][0]} />
+                <RoomInfo room={room} />
               </div>
             ))}
           </div>
@@ -196,29 +210,29 @@ export function Home() {
                 aria-pressed={facility === i}
                 onClick={() => setFacility(i)}
               >
-                0{i + 1} · {x[1]}
+                0{i + 1} · {x.tab}
               </button>
             ))}
           </div>
           <div className="feature-row">
-            <MediaBlock />
+            <PhotoGallery key={f.name} photos={f.photos} label={f.korean} />
             <div className="facility-info">
               <b className="facility-number">0{facility + 1}</b>
-              <h3>{f[0]}</h3>
-              <p className="muted">{f[1]}</p>
+              <h3>{f.name}</h3>
+              <p className="muted">{f.homeKorean}</p>
               <p className="facility-description">
-                {f[2]}
+                {f.description[0]}
                 <br />
-                {f[3]}
+                {f.description[1]}
               </p>
               <dl>
                 <div>
                   <dt>운영 시간</dt>
-                  <dd>{f[4]}</dd>
+                  <dd>{f.hours}</dd>
                 </div>
                 <div>
                   <dt>위치</dt>
-                  <dd>본관 · 로비층</dd>
+                  <dd>{f.location}</dd>
                 </div>
               </dl>
               <Link href="/facilities/" className="pill outline small">
@@ -251,13 +265,15 @@ export function Home() {
                   오시는 길 자세히 →
                 </Link>
               </div>
-              <MediaBlock />
+              <MediaBlock photo={sitePhotos.location} />
             </div>
             <div className="nearby">
-              <h4>주변 명소</h4>
-              <div>
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <MediaBlock key={i} />
+              <div className="minor-heading"><h4>주변 명소</h4><span>도보 · 차량 거리 기준</span></div>
+              <div className="nearby-grid">
+                {sights.map(([name, category, distance]) => (
+                  <article key={name}>
+                    <span>{category}</span><h5>{name}</h5><p>{distance}</p>
+                  </article>
                 ))}
               </div>
             </div>
@@ -268,8 +284,8 @@ export function Home() {
             오래 남는 <em>순간들</em>
           </SectionTitle>
           <div className="moments-grid">
-            {[0, 1, 2, 3].map((i) => (
-              <MediaBlock key={i} />
+            {momentPhotos.map((photo) => (
+              <MediaBlock key={photo.src} photo={photo} />
             ))}
           </div>
         </section>

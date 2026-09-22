@@ -1,0 +1,139 @@
+/* September Figma update: room catalog and property content. */
+.home-about .feature-row > div:last-child { transform: none; min-width: 0; }
+.home-about .feature-row p { font-size: clamp(15px, 1.04vw, 20px); line-height: 1.5; margin-top: 28px; }
+.about-paragraph { display: block; }
+.about-paragraph + .about-paragraph { margin-top: 12px; }
+.room-info { min-width: 0; }
+.room-description, .room-detail-description, .room-list-card p:not(.muted) { white-space: pre-line; }
+.room-info h3 { overflow-wrap: anywhere; }
+.room-info .tags { gap: 8px; }
+.room-info .tags span, .room-list-card .tags span, .room-detail-body .tags span {
+  border: 1px solid #dce1e5; background: #fdfdfe; font-size: 12px; padding: 1px 10px;
+}
+.room-list { max-height: calc(1264 * var(--scale)); overflow-y: auto; scrollbar-gutter: stable; padding: 1px 6px 1px 1px; }
+.room-list-card, .room-list-card.selected {
+  grid-template-columns: minmax(100px, 190fr) minmax(0, 430fr); padding: 30px 20px;
+  gap: 30px; min-height: 271px; border-width: 1px; align-items: start;
+}
+.room-list-card.selected, .room-detail { background: var(--tint); }
+.room-list-card > .media-block { min-height: 0; height: auto; aspect-ratio: 190/156; background: #737373; }
+.room-list-card h3 { font-size: clamp(20px, 1.5625vw, 30px); line-height: 1.35; margin: 10px 0 4px; overflow-wrap: anywhere; }
+.room-list-card .price-row { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; flex-wrap: wrap; }
+.room-list-card .price-row strong { font-size: 20px; }
+.room-list-card .price-row > span { font-size: 13px; }
+.room-select { margin-left: auto; padding: 4px 0; color: var(--blue); background: transparent; font-size: 13px; font-weight: 600; }
+.room-detail { border: 0; border-radius: 20px; scroll-margin-top: 24px; }
+.room-detail-photo { aspect-ratio: 816/768; background: #737373; }
+.room-detail-body { min-height: 464px; padding: 59px 50px 40px; }
+.room-detail-body > .tags { gap: 8px; }
+.room-detail h2 { font-size: 30px; line-height: 45px; overflow-wrap: anywhere; margin: 11px 0 0; }
+.room-detail-body > .muted { font-size: 13px; }
+.room-detail-description { font-size: 15px; line-height: 20px; margin: 22px 0 18px; }
+.room-specs { grid-template-columns: 183px minmax(0, 1fr); max-width: 430px; gap: 18px 24px; padding: 15px 0; margin-top: 0; margin-bottom: 24px; }
+.room-specs dt { font-size: 13px; margin-bottom: 6px; }
+.room-specs dd { font-size: 15px; }
+.room-detail-actions { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; padding-right: 47px; }
+.room-detail-actions .detail-price { margin: 0; gap: 6px; display: grid; grid-template-columns: auto auto; align-items: baseline; }
+.room-detail-actions .detail-price strong { font-size: 25px; }
+.room-detail-actions .detail-price span { font-size: 13px; color: var(--muted); }
+.room-detail-actions .detail-price small { grid-column: 1 / -1; margin: 0; font-size: 13px; }
+.room-detail-actions > .primary { border-radius: 24px; font-size: 15px; font-weight: 500; min-height: 43px; padding: 12px 22px; }
+.nearby { margin-top: 56px; padding-top: 24px; }
+.nearby > .minor-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+.nearby h4 { margin: 0; font-size: clamp(24px, 1.82vw, 35px); }
+.nearby > .nearby-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(16px, 2.3vw, 45px); }
+.nearby-grid article { border-radius: 20px; padding: 29px; background: white; min-width: 0; }
+.nearby-grid article > span { display: inline-block; border-radius: 20px; padding: 4px 18px; background: #e7f4fb; color: var(--blue); font-size: 15px; }
+.nearby-grid h5 { font-size: clamp(18px, 1.3vw, 25px); margin: 16px 0 8px; }
+.nearby-grid p { font-size: 15px; color: var(--muted); }
+.booking-room h4, .booking-summary h3 { overflow-wrap: anywhere; }
+.facilities-page { padding-bottom: calc(197 * var(--scale)); }
+.facilities-page .facility-info h3 { margin-top: 11px; line-height: 45px; }
+.facilities-page .facility-info .tags span { background: #e7f4fb; }
+.facilities-page .facility-description { margin-top: 54px; }
+.facilities-page .facility-info dd { font-size: 20px; }
+.location-page .contact-cards > div { background: var(--tint); border: 0; border-radius: 20px; padding: 48px 57px; }
+.location-page .contact-cards span { color: var(--muted); font-size: 20px; letter-spacing: 0; }
+.location-page .contact-cards h3 { margin: 26px 0 10px; line-height: 1.25; }
+.location-page .contact-cards > div:first-child h3 { font-size: 20px; }
+.location-page .contact-cards > div:nth-child(2) h3 { font-size: 35px; color: var(--blue); }
+.location-page .contact-cards > div:last-child h3 { font-size: 30px; font-weight: 500; }
+.location-page .travel, .location-page .sights { background: var(--tint); border-radius: 20px; padding: 48px 57px 28px; }
+.location-page .minor-heading { position: relative; align-items: start; min-height: 66px; margin-bottom: 17px; }
+.location-page .minor-heading h3 { font-size: 35px; line-height: 42px; }
+.location-page .minor-heading span { font-size: 20px; align-self: end; }
+.location-page .travel-methods { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+.location-page .travel-methods article { display: block; min-width: 0; border: 0; border-radius: 20px; background: white; padding: 50px 45px; }
+.location-page .travel-methods b { font-size: 40px; line-height: 48px; }
+.location-page .travel-methods h4 { font-size: 20px; color: #556c83; margin: 8px 0 20px; }
+.location-page .travel-methods p { font-size: 20px; line-height: 24px; white-space: pre-line; }
+.location-page .sights-grid { gap: 20px; }
+.location-page .sights-grid article { min-width: 0; background: white; border-radius: 20px; padding: 29px; }
+.location-page .sights-grid article > div:last-child { padding: 0; }
+.location-page .sights-grid span { display: inline-block; background: #e7f4fb; border-radius: 20px; font-size: 15px; padding: 4px 18px; }
+.location-page .sights-grid h4 { font-size: 25px; font-weight: 700; margin: 16px 0 8px; }
+.footer-grid > div { min-width: 0; }
+.footer-grid a { overflow-wrap: anywhere; }
+@media (min-width: 761px) {
+  .rooms-page { padding-top: calc(45 * var(--scale)); }
+  .room-browser { padding-left: calc(22 * var(--scale)); grid-template-columns: 688fr 816fr; }
+  .room-list { gap: calc(27 * var(--scale)); padding: 0; scrollbar-width: thin; }
+  .room-list-card, .room-list-card.selected { padding: calc(30 * var(--scale)) calc(20 * var(--scale)); gap: calc(30 * var(--scale)); }
+  .home-about .feature-row { grid-template-columns: 938fr 664fr; gap: calc(41 * var(--scale)); width: calc(100% + 60 * var(--scale)); align-items: start; }
+  .home-about .feature-row > div:last-child { padding-top: calc(46 * var(--scale)); }
+  .home-about .feature-row p { margin-top: calc(37 * var(--scale)); }
+  .about-paragraph + .about-paragraph { margin-top: 0; }
+}
+@media (min-width: 761px) and (max-width: 1600px) {
+  .location-page .contact-cards > div { padding: 32px 25px; }
+  .location-page .contact-cards > div:nth-child(2) h3 { font-size: clamp(22px, 1.82vw, 35px); }
+  .location-page .contact-cards > div:last-child h3 { font-size: clamp(18px, 1.56vw, 30px); }
+  .location-page .travel, .location-page .sights { padding: 36px 30px 28px; }
+  .location-page .travel-methods article { padding: 30px 20px; }
+  .location-page .travel-methods p { font-size: 16px; }
+  .location-page .sights-grid article { padding: 20px 15px; }
+  .location-page .sights-grid h4 { font-size: 20px; }
+  .room-detail-body { padding: 40px 28px; }
+  .room-detail-actions { padding-right: 0; }
+  .room-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 761px) and (max-width: 1200px) {
+  .room-list-card, .room-list-card.selected { grid-template-columns: 100px minmax(0, 1fr); gap: 16px; padding: 20px 14px; }
+  .room-list { max-height: 980px; }
+  .nearby > .nearby-grid { gap: 12px; }
+  .nearby-grid article { padding: 18px 14px; }
+}
+@media (max-width: 760px) {
+  .room-list { max-height: 520px; }
+  .room-list-card, .room-list-card.selected { grid-template-columns: 80px minmax(0, 1fr); gap: 14px; padding: 18px 14px; min-height: 0; }
+  .room-list-card h3 { font-size: 20px; }
+  .room-list-card .tags { gap: 4px; }
+  .room-list-card .tags span { font-size: 10px; padding: 1px 6px; }
+  .room-detail-body { padding: 24px; }
+  .room-specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .room-detail-actions { gap: 18px; padding-right: 0; }
+  .room-detail-actions > .primary { width: 100%; text-align: center; }
+  .home-about .feature-row p { margin-top: 20px; }
+  .nearby > .nearby-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .nearby-grid article { padding: 20px 16px; }
+  .nearby > .minor-heading { flex-wrap: wrap; }
+  .facilities-page { padding-bottom: 60px; }
+  .facilities-page .facility-description { margin-top: 25px; }
+  .facilities-page .facility-info dd { font-size: 16px; }
+  .location-page .contact-cards > div { padding: 28px 24px; }
+  .location-page .contact-cards span { font-size: 14px; }
+  .location-page .contact-cards > div:nth-child(2) h3 { font-size: 28px; }
+  .location-page .contact-cards > div:last-child h3 { font-size: 22px; }
+  .location-page .travel, .location-page .sights { padding: 28px 20px; }
+  .location-page .minor-heading { flex-wrap: wrap; min-height: 0; gap: 10px; margin-bottom: 22px; }
+  .location-page .minor-heading h3 { font-size: 26px; }
+  .location-page .minor-heading span { font-size: 14px; }
+  .location-page .travel-methods { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .location-page .travel-methods article { padding: 22px 16px; }
+  .location-page .travel-methods b { font-size: 30px; }
+  .location-page .travel-methods h4 { font-size: 18px; margin-bottom: 14px; }
+  .location-page .travel-methods p { font-size: 14px; line-height: 1.5; }
+  .location-page .sights-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .location-page .sights-grid article { padding: 20px 16px; }
+  .location-page .sights-grid h4 { font-size: 18px; }
+}

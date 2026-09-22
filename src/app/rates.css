@@ -1,0 +1,28 @@
+.rate-table-section { margin-top: 56px; padding: 32px; border: 1px solid var(--line, #dce5e7); border-radius: 20px; background: #fff; }
+.rate-table-section > h2 { margin: 0 0 8px; font-size: 28px; }
+.rate-table-section > p { color: var(--muted); font-size: 14px; }
+.rate-table-scroll { overflow-x: auto; margin-top: 24px; }
+.rate-table { border-collapse: collapse; width: 100%; min-width: 620px; font-variant-numeric: tabular-nums; }
+.rate-table caption { text-align: left; margin-bottom: 12px; font-size: 14px; }
+.rate-table th, .rate-table td { padding: 14px 16px; border: 1px solid #c5d8df; text-align: center; }
+.rate-table thead { background: #193342; color: #fff; }
+.rate-table tbody { background: #edf5f7; }
+.rate-table tbody th { text-align: left; font-weight: 500; }
+.rate-table-note { margin: 18px 0; line-height: 1.7; }
+.service-rate-guide { padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--line, #dce5e7); font-size: 14px; line-height: 1.8; }
+.service-rate-guide h3 { margin: 0 0 10px; color: #257d95; }
+.service-rate-guide p { margin: 6px 0; }
+.room-rate-guide { display: grid; gap: 10px; padding: 18px 0; margin: 0 0 20px; border-top: 1px solid var(--line, #dce5e7); border-bottom: 1px solid var(--line, #dce5e7); font-size: 14px; }
+.room-rate-guide > div { display: flex; justify-content: space-between; gap: 12px; }
+.room-rate-guide dd { margin: 0; font-weight: 600; white-space: nowrap; }
+.price-breakdown dt small { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.price-breakdown dd { white-space: nowrap; }
+.room-list-card .price-row, .room-info .price-row { flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .rate-table-section { padding: 22px 16px; margin-top: 32px; }
+  .rate-table-section > h2 { font-size: 24px; }
+  .room-rate-guide { font-size: 13px; }
+  .guest-panel .counter-row { gap: 12px; }
+  .guest-panel .counter-row > div:first-child { min-width: 0; }
+  .guest-panel .counter { flex-shrink: 0; }
+}

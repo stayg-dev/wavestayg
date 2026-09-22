@@ -1,4 +1,4 @@
-import { Rooms } from "@/components/content-pages";
+import { Rooms } from "@/components/rooms";
 export default function Page() {
   return <Rooms />;
 }
