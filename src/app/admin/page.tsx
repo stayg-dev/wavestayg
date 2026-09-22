@@ -23,9 +23,7 @@ export default async function AdminPage() {
         <Link href="/">
           WAVE STAY-G <span>양양</span>
         </Link>
-        <Link href="/notice/">공지사항 보기 ↗</Link>
       </header>
-      <nav className="admin-header"><Link href="/admin/reservations/">예약 승인 · 수분양자 관리 →</Link><Link href="/owners/">수분양자 예약 화면 →</Link></nav>
       {configured ? (
         <NoticeAdmin initialAuthenticated={await isAdmin()} />
       ) : (

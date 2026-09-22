@@ -42,6 +42,14 @@ export async function pms<T>(
     );
   }
   const result = await response.json().catch(() => null);
+  if (
+    response.status === 404 &&
+    (!result || (typeof result.message === "string" && /^Cannot (GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS) \//.test(result.message)))
+  )
+    throw new HttpError(
+      503,
+      "PMS 연동 API를 찾을 수 없습니다. PMS 백엔드 배포 상태를 확인해 주세요.",
+    );
   if (!response.ok)
     throw new HttpError(
       response.status >= 500 ? 503 : response.status,

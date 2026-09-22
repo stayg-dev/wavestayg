@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import {
   noticeCategories,
   sortNotices,
@@ -217,8 +218,8 @@ export function NoticeAdmin({
   if (!authenticated)
     return (
       <section className="admin-login">
-        <p className="admin-eyebrow">NOTICE ADMIN</p>
-        <h1>공지사항 관리</h1>
+        <p className="admin-eyebrow">ADMIN LOGIN</p>
+        <h1>관리자 로그인</h1>
         <p>관리자 비밀번호로 로그인해 주세요.</p>
         <form onSubmit={login}>
           <label>
@@ -247,6 +248,11 @@ export function NoticeAdmin({
   const notices = snapshot ? sortNotices(snapshot.catalog.notices) : [];
   return (
     <>
+      <nav className="admin-header admin-menu" aria-label="관리자 메뉴">
+        <Link href="/admin/reservations/">예약 승인 · 수분양자 관리 →</Link>
+        <Link href="/owners/">수분양자 예약 화면 →</Link>
+        <Link href="/notice/">공지사항 보기 ↗</Link>
+      </nav>
       <div className="admin-title">
         <div>
           <p className="admin-eyebrow">NOTICE ADMIN</p>

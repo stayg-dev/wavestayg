@@ -7,6 +7,7 @@ import { once } from "node:events";
 export async function startNoticePms(key, projectId) {
   let notices = [];
   let revision = null;
+  let loginAvailable = true;
   const server = createServer(async (req, res) => {
     const send = (status, data, message = "ok") => {
       res.writeHead(status, { "content-type": "application/json" });
@@ -15,7 +16,9 @@ export async function startNoticePms(key, projectId) {
     const prefix = `/projects/${projectId}/website/`;
     if (req.headers["x-website-key"] !== key || !req.url.startsWith(prefix)) return send(401, null);
     const path = req.url.slice(prefix.length);
-    if (path === "admin-login-attempt" && req.method === "POST") return send(201, null);
+    if (path === "admin-login-attempt" && req.method === "POST") {
+      return loginAvailable ? send(201, null) : send(404, null, `Cannot POST ${req.url}`);
+    }
     if (req.method === "GET" && ["notices", "admin/notices"].includes(path)) return send(200, { notices, ...(path === "admin/notices" ? { revision } : {}) });
     if (!path.startsWith("admin/notices")) return send(404, null);
     let raw = "";
@@ -36,5 +39,9 @@ export async function startNoticePms(key, projectId) {
   });
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
-  return { url: `http://127.0.0.1:${server.address().port}`, close: () => new Promise((resolve) => { server.close(resolve); server.closeAllConnections(); }) };
+  return {
+    url: `http://127.0.0.1:${server.address().port}`,
+    setLoginAvailable(value) { loginAvailable = value; },
+    close: () => new Promise((resolve) => { server.close(resolve); server.closeAllConnections(); }),
+  };
 }

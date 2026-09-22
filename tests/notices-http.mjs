@@ -92,7 +92,14 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
   assert.ok(ready, "server became ready");
-  assert.equal((await call("/admin/")).status, 200);
+  const loggedOut = await call("/admin/");
+  assert.equal(loggedOut.status, 200);
+  const loggedOutHtml = await loggedOut.text();
+  assert.match(loggedOutHtml, /관리자 로그인/);
+  assert.doesNotMatch(loggedOutHtml, /관리자 메뉴|예약 승인 · 수분양자 관리|수분양자 예약 화면|공지사항 보기/);
+  const guardedPage = await fetch(`${origin}/admin/reservations/`, { redirect: "manual" });
+  assert.equal(guardedPage.status, 307);
+  assert.equal(guardedPage.headers.get("location"), "/admin/");
   assert.equal((await call("/api/admin/notices/")).status, 401);
   assert.equal((await call("/api/admin/notices/", "POST", {})).status, 401);
   assert.equal(
@@ -112,6 +119,14 @@ try {
       .status,
     401,
   );
+  pms.setLoginAvailable(false);
+  const missingApi = await call("/api/admin/session/", "POST", { password }, false);
+  assert.equal(missingApi.status, 503);
+  assert.equal(missingApi.headers.get("set-cookie"), null);
+  const missingApiMessage = (await missingApi.json()).error;
+  assert.match(missingApiMessage, /PMS 백엔드 배포/);
+  assert.doesNotMatch(missingApiMessage, /Cannot POST|\/api\/projects/);
+  pms.setLoginAvailable(true);
   const login = await call("/api/admin/session/", "POST", { password }, false);
   assert.equal(login.status, 200, await login.text());
   const setCookie = login.headers.get("set-cookie");
@@ -121,6 +136,8 @@ try {
   cookie = setCookie.split(";")[0];
   const adminHtml = await (await call("/admin/")).text();
   assert.match(adminHtml, /새 공지 작성/);
+  assert.match(adminHtml, /관리자 메뉴/);
+  assert.match(adminHtml, /예약 승인 · 수분양자 관리/);
   assert.doesNotMatch(adminHtml, /임시저장|상단 고정|게시하기/);
   const base = {
     title: "테스트 공지",
@@ -182,6 +199,7 @@ try {
   assert.match(logout.headers.get("set-cookie"), /Max-Age=0/i);
   cookie = "";
   assert.equal((await call("/api/admin/notices/")).status, 401);
+  assert.doesNotMatch(await (await call("/admin/")).text(), /관리자 메뉴|예약 승인 · 수분양자 관리|수분양자 예약 화면|공지사항 보기/);
   cookie = `wave_stayg_admin=${issueAdminSession(secret, hash, Date.now() - 9 * 3600000)}`;
   assert.equal((await call("/api/admin/notices/")).status, 401);
   console.log(
