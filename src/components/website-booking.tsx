@@ -40,6 +40,8 @@ export type Owner = {
   room_type_name: string;
   annual_nights: number;
   carryover_nights: number;
+  benefit_year: number;
+  carryover_editable: boolean;
   is_active: boolean;
 };
 export type Inventory = {
@@ -78,13 +80,15 @@ export function PortalShell({
   children,
   title,
   navigation,
+  className = "",
 }: {
   children: ReactNode;
   title: string;
   navigation?: ReactNode;
+  className?: string;
 }) {
   return (
-    <main id="main" className="booking-portal">
+    <main id="main" className={`booking-portal ${className}`}>
       <header>
         <Link href="/">WAVE STAY-G · 양양</Link>
         {navigation ?? <nav>
@@ -116,7 +120,9 @@ export function ApplicationCard({ row }: { row: Application }) {
       <p>
         투숙객 {row.guest_name} · {row.phone}
       </p>
-      <p className="portal-reference">신청 번호: {row.id}</p>
+      {row.kind !== "owner" && (
+        <p className="portal-reference">신청 번호: {row.id}</p>
+      )}
       <p>금액 {row.quoted_amount.toLocaleString()}원 · 현장 정산</p>
       {row.pricing?.owned_type && (
         <p>

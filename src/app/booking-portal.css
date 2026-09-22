@@ -140,7 +140,196 @@
   text-align: left;
   border-bottom: 1px solid #d9e3e8;
 }
+.booking-admin {
+  max-width: 1500px;
+}
+.owner-balance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.booking-portal .owner-balance button {
+  padding: 7px 12px;
+  font-size: 13px;
+}
+.owner-balance-form {
+  width: 260px;
+  white-space: normal;
+  padding: 12px;
+  background: #f5f8fb;
+  border-radius: 8px;
+}
+.owner-balance-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.owner-balance-inputs label {
+  margin: 12px 0 0;
+}
+.owner-balance-form .admin-actions {
+  margin-top: 4px;
+}
+.owner-balance-form p {
+  font-size: 12px;
+}
+.owner-balance-form input:disabled {
+  background: #e9eff2;
+  color: #738693;
+}
+.admin-list-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.admin-list-toolbar label {
+  min-width: 180px;
+}
+.admin-muted {
+  color: #627785;
+  font-size: 14px;
+}
+.admin-reservations {
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+}
+.admin-reservations table {
+  font-size: 14px;
+}
+.admin-reservations th {
+  background: #f5f8fb;
+  color: #627785;
+  font-weight: 600;
+  font-size: 13px;
+}
+.admin-reservations td {
+  padding: 16px 12px;
+}
+.admin-reservations tbody tr {
+  cursor: pointer;
+}
+.admin-reservations tbody tr:hover,
+.admin-reservations tbody tr:focus-within {
+  background: #f2f8fc;
+}
+.admin-reservations small {
+  display: block;
+  color: #748795;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.admin-reservations .booking-status {
+  font-size: 12px;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+.booking-status.cancelled {
+  background: #fce7eb;
+  color: #b13d54;
+}
+.admin-sync {
+  font-size: 12px;
+  color: #24765b;
+  background: #e0f5ec;
+  padding: 5px 9px;
+  border-radius: 16px;
+}
+.admin-sync.cancelled {
+  background: #fce7eb;
+  color: #b13d54;
+}
+.admin-amount {
+  font-variant-numeric: tabular-nums;
+}
+.booking-portal .admin-detail-button {
+  background: transparent;
+  color: #247a9b;
+  padding: 4px;
+  margin: 0;
+  font-size: 13px;
+}
+.admin-reservations .admin-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: #627785;
+  cursor: default;
+}
+.booking-detail-dialog {
+  width: min(780px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 28px;
+  border: 1px solid #d9e3e8;
+  border-radius: 16px;
+  color: #19384a;
+  background: white;
+  box-shadow: 0 24px 80px #102b4533;
+  overflow-y: auto;
+}
+.booking-detail-dialog::backdrop {
+  background: #102b4580;
+}
+.booking-detail-heading h2 {
+  margin: 0;
+  font-size: 24px;
+}
+.booking-detail-heading p {
+  margin-bottom: 0;
+  color: #627785;
+  font-size: 14px;
+}
+.booking-detail-dialog .portal-card {
+  padding: 20px;
+  background: #f8fafc;
+  font-size: 14px;
+}
+.booking-detail-dialog label {
+  font-size: 14px;
+}
+.booking-detail-dialog .portal-check {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.booking-detail-dialog .portal-check input {
+  flex: 0 0 18px;
+}
+.booking-portal .admin-secondary {
+  background: #edf3f6;
+  color: #285066;
+}
+.booking-portal .admin-danger {
+  background: #fff0f0;
+  color: #b53838;
+}
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.admin-room-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+.admin-room-options .portal-check {
+  margin: 0;
+  padding: 10px;
+  background: #f5f8fb;
+  border-radius: 6px;
+}
+.booking-admin button:focus-visible {
+  outline: 3px solid #80c6e5;
+  outline-offset: 3px;
+}
 @media (max-width: 640px) {
+  .booking-detail-dialog {
+    padding: 20px;
+    max-height: calc(100dvh - 24px);
+  }
   .booking-portal {
     padding: 20px 16px 60px;
   }

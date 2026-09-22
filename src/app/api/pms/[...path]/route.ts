@@ -20,7 +20,7 @@ async function handle(request: Request, context: Context) {
           )
         : method === "POST" &&
           new RegExp(
-            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owners|admin/(owners|applications)/${uuid})$`,
+            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
           ).test(path);
     if (!allowed && !(method === "DELETE" && path === "login"))
       throw new HttpError(404, "잘못된 경로입니다.");

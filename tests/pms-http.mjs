@@ -142,6 +142,36 @@ try {
     "owner token stays out of browser JS",
   );
   const cookie = header.split(";")[0];
+  const balancePath = `admin/owners/${project}/balance`;
+  const balanceBody = {
+    year: 2026,
+    annual_nights: 8,
+    carryover_nights: 0,
+    expected_annual_nights: 5,
+    expected_carryover_nights: 0,
+  };
+  assert.equal(
+    (await call(balancePath, "POST", balanceBody, cookie)).status,
+    401,
+  );
+  assert.equal(
+    (
+      await call(
+        balancePath,
+        "POST",
+        balanceBody,
+        adminCookie,
+        "https://another.example",
+      )
+    ).status,
+    403,
+  );
+  assert.equal(
+    (await call(balancePath, "POST", balanceBody, adminCookie)).status,
+    200,
+  );
+  assert.deepEqual(calls.at(-1).body, balanceBody);
+  assert.equal(calls.at(-1).headers["x-owner-session"], undefined);
   assert.equal((await call("me", "GET", undefined, cookie)).status, 200);
   assert.equal(calls.at(-1).headers["x-owner-session"], "owner-fixture-token");
   await call("quote", "POST", {}, cookie, origin, {
