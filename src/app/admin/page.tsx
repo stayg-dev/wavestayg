@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { adminConfig, isAdmin } from "@/lib/admin-auth";
 import { pmsConfigured } from "@/lib/pms";
 import { NoticeAdmin } from "@/components/notice-admin";
 import "./admin.css";
 
 export const metadata: Metadata = {
-  title: "공지사항 관리",
+  title: "관리자",
   robots: { index: false, follow: false },
 };
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default async function AdminPage() {
   } catch {
     configured = false;
   }
+  if (configured && await isAdmin()) redirect("/admin/reservations/");
   return (
     <main id="main" className="admin-page">
       <header className="admin-header">
@@ -25,7 +27,7 @@ export default async function AdminPage() {
         </Link>
       </header>
       {configured ? (
-        <NoticeAdmin initialAuthenticated={await isAdmin()} />
+        <NoticeAdmin initialAuthenticated={false} />
       ) : (
         <section className="admin-login">
           <p className="admin-eyebrow">NOTICE ADMIN</p>

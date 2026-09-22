@@ -258,7 +258,7 @@ export function WebsiteBookingAdmin() {
       title="예약 관리"
       navigation={
         <nav aria-label="관리자 메뉴">
-          <Link href="/admin/">공지사항 관리</Link>
+          <Link href="/admin/notices/">공지사항 관리</Link>
           <Link href="/admin/reservations/" aria-current="page">예약 관리</Link>
         </nav>
       }

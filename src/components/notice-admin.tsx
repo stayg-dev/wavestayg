@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   noticeCategories,
   sortNotices,
@@ -48,6 +49,7 @@ export function NoticeAdmin({
 }: {
   initialAuthenticated: boolean;
 }) {
+  const router = useRouter();
   const [authenticated, setAuthenticated] = useState(initialAuthenticated);
   const [password, setPassword] = useState("");
   const [snapshot, setSnapshot] = useState<NoticeSnapshot | null>(null);
@@ -110,7 +112,8 @@ export function NoticeAdmin({
     try {
       await request("/api/admin/session/", "POST", { password });
       setPassword("");
-      setAuthenticated(true);
+      router.replace("/admin/reservations/");
+      router.refresh();
     } catch (error) {
       handleError(error);
     } finally {
@@ -208,6 +211,8 @@ export function NoticeAdmin({
       setDirty(false);
       setError("");
       setMessage("");
+      router.replace("/admin/");
+      router.refresh();
     } catch (error) {
       handleError(error);
     } finally {
@@ -249,7 +254,7 @@ export function NoticeAdmin({
   return (
     <>
       <nav className="admin-header admin-menu" aria-label="관리자 메뉴">
-        <Link href="/admin/" aria-current="page">공지사항 관리</Link>
+        <Link href="/admin/notices/" aria-current="page">공지사항 관리</Link>
         <Link href="/admin/reservations/">예약 관리</Link>
       </nav>
       <div className="admin-title">

@@ -100,6 +100,9 @@ try {
   const guardedPage = await fetch(`${origin}/admin/reservations/`, { redirect: "manual" });
   assert.equal(guardedPage.status, 307);
   assert.equal(guardedPage.headers.get("location"), "/admin/");
+  const guardedNotices = await fetch(`${origin}/admin/notices/`, { redirect: "manual" });
+  assert.equal(guardedNotices.status, 307);
+  assert.equal(guardedNotices.headers.get("location"), "/admin/");
   assert.equal((await call("/api/admin/notices/")).status, 401);
   assert.equal((await call("/api/admin/notices/", "POST", {})).status, 401);
   assert.equal(
@@ -134,7 +137,10 @@ try {
   assert.match(setCookie, /Secure/i);
   assert.match(setCookie, /SameSite=strict/i);
   cookie = setCookie.split(";")[0];
-  const adminHtml = await (await call("/admin/")).text();
+  const adminEntry = await fetch(`${origin}/admin/`, { headers: { Cookie: cookie }, redirect: "manual" });
+  assert.equal(adminEntry.status, 307);
+  assert.equal(adminEntry.headers.get("location"), "/admin/reservations/");
+  const adminHtml = await (await call("/admin/notices/")).text();
   assert.match(adminHtml, /새 공지 작성/);
   assert.match(adminHtml, /관리자 메뉴/);
   assert.match(adminHtml, /예약 관리/);
@@ -142,6 +148,7 @@ try {
   const reservationsHtml = await (await call("/admin/reservations/")).text();
   assert.match(reservationsHtml, /관리자 메뉴/);
   assert.match(reservationsHtml, /공지사항 관리/);
+  assert.match(reservationsHtml, /href="\/admin\/notices\/"/);
   assert.match(reservationsHtml, /예약 관리/);
   assert.doesNotMatch(reservationsHtml, /href="\/(owners|notice|reservation|rooms)\//);
   assert.doesNotMatch(adminHtml, /임시저장|상단 고정|게시하기/);
