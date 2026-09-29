@@ -13,7 +13,9 @@ async function handle(request: Request, context: Context) {
     const path = segments.join("/");
     const method = request.method;
     const admin = path.startsWith("admin/");
+    const ownerCancellation = new RegExp(`^owner-applications/${uuid}/cancellation$`).test(path);
     const allowed =
+      (ownerCancellation && ["GET", "POST"].includes(method)) || (
       method === "GET"
         ? /^(me|applications|inventory|admin\/(owners|applications|inventory))$/.test(
             path,
@@ -21,7 +23,7 @@ async function handle(request: Request, context: Context) {
         : method === "POST" &&
           new RegExp(
             `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
-          ).test(path);
+          ).test(path));
     if (!allowed && !(method === "DELETE" && path === "login"))
       throw new HttpError(404, "잘못된 경로입니다.");
     if (method !== "GET") sameOrigin(request);
@@ -39,6 +41,7 @@ async function handle(request: Request, context: Context) {
     }
     let body = method === "POST" ? await readJson(request, 12000) : undefined;
     const requiresOwner =
+      ownerCancellation ||
       ["me", "password", "owner-applications", "owner-quote"].includes(path) ||
       (path === "applications" && method === "GET");
     const token = requiresOwner ? jar.get(ownerCookie)?.value : undefined;

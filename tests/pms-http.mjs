@@ -194,6 +194,15 @@ try {
   assert.equal(calls.at(-1).headers["x-owner-session"], undefined);
   assert.equal((await call("me", "GET", undefined, cookie)).status, 200);
   assert.equal(calls.at(-1).headers["x-owner-session"], "owner-fixture-token");
+  const cancelPath = "owner-applications/11111111-1111-4111-8111-111111111111/cancellation";
+  assert.equal((await call(cancelPath)).status, 401);
+  assert.equal((await call(cancelPath, "POST", {})).status, 401);
+  assert.equal((await call(cancelPath, "POST", {}, cookie, "https://another.example")).status, 403);
+  assert.equal((await call(cancelPath, "GET", undefined, cookie)).status, 200);
+  assert.equal(calls.at(-1).headers["x-owner-session"], "owner-fixture-token");
+  assert.equal((await call(cancelPath, "POST", {}, cookie, origin, { "x-owner-session": "forged" })).status, 200);
+  assert.equal(calls.at(-1).headers["x-owner-session"], "owner-fixture-token");
+  assert.ok(calls.at(-1).url.endsWith(cancelPath));
   await call("quote", "POST", {}, cookie, origin, {
     "x-owner-session": "forged",
   });

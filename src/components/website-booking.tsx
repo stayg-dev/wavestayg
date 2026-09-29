@@ -109,7 +109,7 @@ export function PortalShell({
     </main>
   );
 }
-export function ApplicationCard({ row }: { row: Application }) {
+export function ApplicationCard({ row, children }: { row: Application; children?: ReactNode }) {
   return (
     <article className="portal-card">
       <div className="portal-row">
@@ -143,6 +143,7 @@ export function ApplicationCard({ row }: { row: Application }) {
       {row.admin_note && (
         <p className="portal-note">관리자 안내: {row.admin_note}</p>
       )}
+      {children}
     </article>
   );
 }
@@ -178,7 +179,7 @@ export function OwnerPolicy() {
       </ul>
       <p>
         신청 접수 후 호텔에서 확인하여 예약자에게 확정 알림톡을 발송합니다.
-        취소 및 일정 변경은 프런트에 문의해 주세요.
+        예약 취소는 내 예약 신청에서 할 수 있습니다. 별도 확인이 필요한 취소 및 일정 변경은 프런트에 문의해 주세요.
       </p>
     </details>
   );
@@ -594,7 +595,7 @@ export function OwnerPortal() {
     }
   }
   return (
-    <PortalShell title="수분양자 예약">
+    <PortalShell title="수분양자 예약" navigation={false}>
       <p>관리자가 발급한 아이디와 비밀번호로 로그인해 주세요.</p>
       {message && <p role="status">{message}</p>}
       {error && (
@@ -710,7 +711,11 @@ export function OwnerPortal() {
             </button>
           </div>
           {rows?.items.map((row) => (
-            <ApplicationCard key={row.id} row={row} />
+            <ApplicationCard key={row.id} row={row}>
+              {["pending", "registered", "approved"].includes(row.status) && (
+                <OwnerCancellation row={row} onCancelled={() => load()} />
+              )}
+            </ApplicationCard>
           ))}
           {rows?.items.length === 0 && <p>신청 내역이 없습니다.</p>}
           <Pagination page={page} total={rows?.total ?? 0} onPage={setPage} />
@@ -718,6 +723,43 @@ export function OwnerPortal() {
       )}
     </PortalShell>
   );
+}
+function OwnerCancellation({ row, onCancelled }: { row: Application; onCancelled: () => Promise<void> }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+  const [terms, setTerms] = useState<{ retained_nights: number; restored_nights: number } | null>(null);
+  const path = `owner-applications/${row.id}/cancellation`;
+  async function preview() {
+    setBusy(true);
+    setError("");
+    try {
+      setTerms(await bookingRequest<typeof terms>(path));
+    } catch (e) { setError((e as Error).message); }
+    finally { setBusy(false); }
+  }
+  async function cancel() {
+    setBusy(true);
+    setError("");
+    try {
+      await bookingRequest(path, "POST", {});
+      setDone(true);
+      setTerms(null);
+      await onCancelled();
+    } catch (e) { setError((e as Error).message); }
+    finally { setBusy(false); }
+  }
+  return <div>
+    {done ? <p role="status">예약이 취소되었습니다.</p> : terms ? <div>
+      <p>예약을 취소하시겠습니까? 취소하면 되돌릴 수 없습니다.</p>
+      <p>취소 규정에 따른 차감 {terms.retained_nights}박 · 잔여 박수 반환 {terms.restored_nights}박</p>
+      <div className="portal-row">
+        <button type="button" disabled={busy} onClick={() => void cancel()}>{busy ? "취소 처리 중…" : "예약 취소 확정"}</button>
+        <button type="button" disabled={busy} onClick={() => setTerms(null)}>돌아가기</button>
+      </div>
+    </div> : <button type="button" disabled={busy} onClick={() => void preview()}>{busy ? "취소 규정 확인 중…" : "예약 취소"}</button>}
+    {error && <p role="alert" className="portal-error">{error}</p>}
+  </div>;
 }
 export function Pagination({
   page,
