@@ -41,10 +41,8 @@ export function BookingAdminDialog({
       : ((e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement)?.value;
     if (!action) return;
     const message =
-      action === "approve"
-        ? "예약을 승인하고 호실 미배정 상태로 PMS 판매일보를 생성할까요?"
-        : action === "reject"
-          ? "이 신청을 반려할까요?"
+      action === "migrate"
+        ? "기존 신청을 PMS로 이관하고 무료 박수를 차감할까요? 접수 알림톡은 소급 발송하지 않습니다."
           : "홈페이지 예약을 취소하고 연결된 판매일보에 취소를 반영할까요?";
     if (!window.confirm(message)) return;
     setBusy(true);
@@ -53,7 +51,7 @@ export function BookingAdminDialog({
     try {
       await bookingRequest(`admin/applications/${row.id}`, "POST", {
         action,
-        note: fields.get("note"),
+        note: fields.get("note") ?? "",
         is_peak_confirmed: fields.get("peak") === "on",
         is_upgrade_confirmed: fields.get("upgrade") === "on",
         ...(action === "cancel" &&
@@ -160,59 +158,14 @@ export function BookingAdminDialog({
             </div>
           </fieldset>
         </form>
-      ) : row.status === "pending" ? (
+      ) : ["pending", "registered", "approved"].includes(row.status) ? (
         <form onSubmit={submit}>
-          <h2>예약 승인</h2>
-          <p className="admin-muted">
-            승인하면 신청한 객실 타입과 수량으로 판매일보가 생성됩니다. 호실은
-            PMS에서 배정할 수 있습니다.
-          </p>
-          <fieldset disabled={busy}>
-            {row.kind === "owner" && (
-              <>
-                <label className="portal-check">
-                  <input name="peak" type="checkbox" />
-                  성수기 이용 조건·연 1회·운영 일정을 확인했습니다.
-                </label>
-                <label className="portal-check">
-                  <input name="upgrade" type="checkbox" />
-                  보유 타입과 다른 객실의 이용 가능 여부 및 차액 50% 현장 정산을
-                  안내했습니다.
-                </label>
-              </>
-            )}
-            <label>
-              승인 / 반려 안내 (선택 · 고객에게 표시)
-              <textarea name="note" maxLength={1000} rows={3} />
-            </label>
-            <div className="admin-actions">
-              <button value="approve" type="submit">
-                {busy ? "처리 중…" : "승인 및 PMS 반영"}
-              </button>
-              <button value="reject" type="submit" className="admin-secondary">
-                반려
-              </button>
-              <button
-                type="button"
-                className="admin-danger"
-                onClick={() => {
-                  setCancelling(true);
-                  setError("");
-                }}
-              >
-                예약 취소
-              </button>
-            </div>
-          </fieldset>
+          {row.status === "pending" && <p className="admin-muted">기존 대기 신청입니다. 확인 후 PMS로 이관할 수 있습니다. 접수 알림톡은 소급 발송하지 않습니다.</p>}
+          <div className="admin-actions">
+            {row.status === "pending" && <button type="submit" value="migrate" disabled={busy}>기존 신청 PMS 이관</button>}
+            <button type="button" className="admin-danger" disabled={busy} onClick={() => setCancelling(true)}>예약 취소</button>
+          </div>
         </form>
-      ) : row.status === "approved" ? (
-        <button
-          type="button"
-          className="admin-danger"
-          onClick={() => setCancelling(true)}
-        >
-          예약 취소
-        </button>
       ) : null}
     </dialog>
   );

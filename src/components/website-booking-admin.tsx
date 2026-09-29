@@ -208,7 +208,7 @@ export function WebsiteBookingAdmin() {
         로그아웃
       </button>
       <p>
-        승인 시에만 PMS 판매일보에 예약을 생성합니다. PMS에서 변경·삭제한 내용은
+        신청 접수 시 PMS 판매일보를 자동 생성합니다. 확정 안내는 PMS에서 발송합니다. PMS에서 변경·삭제한 내용은
         홈페이지 신청 상태와 무료 박수에 반영되지 않습니다.
       </p>
       <section className="portal-card" aria-label="수분양자 베네핏 규정">

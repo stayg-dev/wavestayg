@@ -120,7 +120,8 @@
   background: #f5eed6;
   font-size: 14px;
 }
-.booking-status.approved {
+.booking-status.approved,
+.booking-status.registered {
   background: #e0f2eb;
 }
 .booking-status.rejected {

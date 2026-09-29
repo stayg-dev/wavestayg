@@ -27,6 +27,8 @@ export type Application = {
   room_type_name: string;
   guest_name: string;
   phone: string;
+  booker_name?: string;
+  booker_phone?: string;
   guest_count: number;
   quoted_amount: number;
   pricing: BookingQuote | null;
@@ -54,8 +56,9 @@ export type Inventory = {
 };
 export type PageResult<T> = { items: T[]; total: number; page: number };
 export const statusText: Record<string, string> = {
-  pending: "승인 대기",
-  approved: "예약 승인",
+  pending: "기존 신청 · 이관 대기",
+  approved: "PMS 등록 완료",
+  registered: "PMS 등록 완료",
   rejected: "반려",
   cancelled: "취소",
 };
@@ -123,6 +126,7 @@ export function ApplicationCard({ row }: { row: Application }) {
       <p>
         투숙객 {row.guest_name} · {row.phone}
       </p>
+      {row.booker_name && <p>예약자 {row.booker_name} · {row.booker_phone}</p>}
       {row.kind !== "owner" && (
         <p className="portal-reference">신청 번호: {row.id}</p>
       )}
@@ -148,7 +152,7 @@ export function OwnerPolicy() {
       <summary>수분양자 이용 조건 · 취소 및 이월 안내</summary>
       <ul>
         <li>
-          2026년 5박, 2027년부터 연 15박. 객실 수 × 숙박 일수만큼 승인 시
+          2026년 5박, 2027년부터 연 15박. 객실 수 × 숙박 일수만큼 신청 접수 시
           차감합니다.
         </li>
         <li>비수기는 입실 최소 14일 전까지 신청해야 하며, 1일 1회 신청, 최대 2실·3박입니다. 반려·취소된 신청은 횟수 제한에서 제외합니다.</li>
@@ -173,8 +177,8 @@ export function OwnerPolicy() {
         </li>
       </ul>
       <p>
-        신청만으로 예약이 확정되지 않습니다. 승인 결과는 이 화면에서 확인해
-        주세요. 취소 및 일정 변경은 프런트에 문의해 주세요.
+        신청 접수 후 호텔에서 확인하여 예약자에게 확정 알림톡을 발송합니다.
+        취소 및 일정 변경은 프런트에 문의해 주세요.
       </p>
     </details>
   );
@@ -261,6 +265,7 @@ export function BookingApplicationForm({
           room_type_name: type,
           guest_name: fields.get("guest_name"),
           phone: fields.get("phone"),
+          ...(!owner ? { booker_name: fields.get("booker_name"), booker_phone: fields.get("booker_phone") } : {}),
           guest_count: Number(fields.get("guest_count") ?? 1),
           note: fields.get("note"),
           adults: Number(fields.get("adults")),
@@ -282,8 +287,8 @@ export function BookingApplicationForm({
     <section className="portal-card">
       <h2>예약 신청</h2>
       <p>
-        객실 현황 확인 후 신청할 수 있습니다. 최종 객실 배정과 예약 확정은
-        관리자 승인 후 진행됩니다.
+        신청하면 호텔 예약 시스템에 자동 접수됩니다. 호텔에서 예약 내용을
+        확인한 후 예약자에게 확정 알림톡을 발송합니다.
       </p>
       <form
         onSubmit={submit}
@@ -370,11 +375,16 @@ export function BookingApplicationForm({
               </div>
               {owner && type !== owner.room_type_name && (
                 <p>
-                  보유 타입: {roomTypeLabel(owner.room_type_name)}. 타입 변경은 승인 시 가능
-                  여부와 추가 요금을 안내합니다.
+                  보유 타입: {roomTypeLabel(owner.room_type_name)}. 상위 타입은 판매가
+                  차액의 50%가 추가되며 현장에서 정산합니다.
                 </p>
               )}
               <div className="portal-grid">
+                {!owner && <>
+                  <label>예약자 이름<input name="booker_name" required maxLength={100} autoComplete="name" /></label>
+                  <label>예약자 연락처 · 알림톡 수신<input name="booker_phone" required type="tel" maxLength={30} autoComplete="tel" /></label>
+                </>}
+                {owner && <p>알림톡 수신: 예약자 {owner.name} · {owner.phone || "등록된 연락처가 없습니다. 프런트에 문의해 주세요."}</p>}
                 <label>
                   실제 투숙객 이름
                   <input
@@ -386,7 +396,7 @@ export function BookingApplicationForm({
                   />
                 </label>
                 <label>
-                  연락처
+                  투숙객 연락처
                   <input
                     name="phone"
                     required
@@ -674,7 +684,7 @@ export function OwnerPortal() {
             owner={owner}
             onApplied={() => {
               setMessage(
-                "예약 신청을 접수했습니다. 관리자 승인 후 확정됩니다.",
+                "예약 신청이 접수되었습니다. 호텔 확인 후 예약자에게 확정 알림톡을 발송합니다.",
               );
               void load(1).catch((e) => setError(e.message));
               setPage(1);
@@ -721,7 +731,13 @@ export function Pagination({
     </div>
   );
 }
-export function GeneralBookingPortal({ lookup = false }: { lookup?: boolean }) {
+export function GeneralBookingPortal({
+  lookup = false,
+  lookupId = "",
+}: {
+  lookup?: boolean;
+  lookupId?: string;
+}) {
   const [row, setRow] = useState<Application | null>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
@@ -750,7 +766,7 @@ export function GeneralBookingPortal({ lookup = false }: { lookup?: boolean }) {
         <form className="portal-card" onSubmit={find}>
           <label>
             신청 번호
-            <input name="id" required />
+            <input key={lookupId} name="id" defaultValue={lookupId} required />
           </label>
           <label>
             조회 비밀번호
@@ -777,7 +793,7 @@ export function GeneralBookingPortal({ lookup = false }: { lookup?: boolean }) {
           <p role="status">
             {lookup
               ? "신청 내역입니다."
-              : "신청이 접수되었습니다. 신청 번호와 비밀번호로 승인 결과를 조회할 수 있습니다. 신청 번호를 보관해 주세요."}
+              : "신청이 접수되었습니다. 호텔 확인 후 확정 알림톡을 발송합니다. 신청 번호와 비밀번호로 접수 내역을 조회할 수 있습니다."}
           </p>
           <ApplicationCard row={row} />
         </>
