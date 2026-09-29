@@ -186,9 +186,13 @@ export function OwnerPolicy() {
 export function BookingApplicationForm({
   owner,
   onApplied,
+  adminOwnerBooking = false,
+  onBusyChange,
 }: {
   owner?: Owner;
   onApplied: (row: Application) => void;
+  adminOwnerBooking?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const [dates, setDates] = useState({ check_in: "", check_out: "" });
   const [inventory, setInventory] = useState<Inventory[] | null>(null);
@@ -197,20 +201,25 @@ export function BookingApplicationForm({
     [error, setError] = useState("");
   const [requestId, setRequestId] = useState("");
   const [quote, setQuote] = useState<BookingQuote | null>(null);
+  function changeBusy(value: boolean) {
+    setBusy(value);
+    onBusyChange?.(value);
+  }
   const today = bookingToday();
   const validDates = !!dates.check_in && dates.check_out > dates.check_in &&
     (!owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= "2028-01-01"));
   async function preview(form: HTMLFormElement) {
     const fields = new FormData(form);
-    setBusy(true);
+    changeBusy(true);
     setError("");
     try {
       setQuote(
         await bookingRequest<BookingQuote>(
-          owner ? "owner-quote" : "quote",
+          adminOwnerBooking ? "admin/owner-quote" : owner ? "owner-quote" : "quote",
           "POST",
           {
             ...dates,
+            ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
             room_type_name: type,
             room_count: Number(fields.get("room_count") ?? 1),
             adults: Number(fields.get("adults")),
@@ -222,12 +231,12 @@ export function BookingApplicationForm({
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setBusy(false);
+      changeBusy(false);
     }
   }
   async function check() {
     if (!validDates) return;
-    setBusy(true);
+    changeBusy(true);
     setError("");
     setInventory(null);
     try {
@@ -239,7 +248,7 @@ export function BookingApplicationForm({
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setBusy(false);
+      changeBusy(false);
     }
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -252,14 +261,15 @@ export function BookingApplicationForm({
     const fields = new FormData(event.currentTarget);
     const id = requestId || crypto.randomUUID();
     setRequestId(id);
-    setBusy(true);
+    changeBusy(true);
     setError("");
     try {
       const row = await bookingRequest<Application>(
-        owner ? "owner-applications" : "applications",
+        adminOwnerBooking ? "admin/owner-applications" : owner ? "owner-applications" : "applications",
         "POST",
         {
           id,
+          ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
           ...dates,
           room_count: Number(fields.get("room_count") ?? 1),
           room_type_name: type,
@@ -280,12 +290,12 @@ export function BookingApplicationForm({
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setBusy(false);
+      changeBusy(false);
     }
   }
   return (
     <section className="portal-card">
-      <h2>예약 신청</h2>
+      <h2>{adminOwnerBooking ? "전화 예약 정보 입력" : "예약 신청"}</h2>
       <p>
         신청하면 호텔 예약 시스템에 자동 접수됩니다. 호텔에서 예약 내용을
         확인한 후 예약자에게 확정 알림톡을 발송합니다.
@@ -384,7 +394,7 @@ export function BookingApplicationForm({
                   <label>예약자 이름<input name="booker_name" required maxLength={100} autoComplete="name" /></label>
                   <label>예약자 연락처 · 알림톡 수신<input name="booker_phone" required type="tel" maxLength={30} autoComplete="tel" /></label>
                 </>}
-                {owner && <p>알림톡 수신: 예약자 {owner.name} · {owner.phone || "등록된 연락처가 없습니다. 프런트에 문의해 주세요."}</p>}
+                {owner && <p>{adminOwnerBooking ? "확정 알림톡은 아래 투숙객 연락처로 1건 발송합니다." : `알림톡 수신: 예약자 ${owner.name} · ${owner.phone || "등록된 연락처가 없습니다. 프런트에 문의해 주세요."}`}</p>}
                 <label>
                   실제 투숙객 이름
                   <input
@@ -470,8 +480,9 @@ export function BookingApplicationForm({
               )}
               <label className="portal-check">
                 <input name="terms" type="checkbox" required />
-                예약 처리를 위한 이름·연락처 수집 및 이용 조건에
-                동의합니다.{" "}
+                {adminOwnerBooking
+                  ? "전화 예약자의 개인정보 수집·이용 및 예약 조건 동의를 확인했습니다."
+                  : "예약 처리를 위한 이름·연락처 수집 및 이용 조건에 동의합니다."}
               </label>
               <button
                 type="button"
@@ -498,7 +509,7 @@ export function BookingApplicationForm({
                 }
                 type="submit"
               >
-                {busy ? "처리 중…" : "예약 신청"}
+                {busy ? "처리 중…" : adminOwnerBooking ? "수동 예약 등록" : "예약 신청"}
               </button>
             </>
           )}

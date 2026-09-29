@@ -142,6 +142,26 @@ try {
     "owner token stays out of browser JS",
   );
   const cookie = header.split(";")[0];
+  for (const path of ["admin/owner-quote", "admin/owner-applications"]) {
+    const body = { owner_id: project, terms: true, adults: 2, children: 1, password: "discard-me" };
+    const before = calls.length;
+    assert.equal((await call(path, "POST", body)).status, 401);
+    assert.equal((await call(path, "POST", body, cookie)).status, 401);
+    assert.equal((await call(path, "POST", body, adminCookie, "https://another.example")).status, 403);
+    assert.equal(calls.length, before, "manual booking requires administrator authentication and same origin");
+    if (path.endsWith("applications")) {
+      assert.equal((await call(path, "POST", { ...body, terms: false }, adminCookie)).status, 400);
+    }
+    assert.equal((await call(path, "POST", body, adminCookie)).status, 200);
+    assert.equal(calls.at(-1).body.owner_id, project);
+    assert.equal(calls.at(-1).headers["x-owner-session"], undefined);
+    if (path.endsWith("applications")) {
+      assert.equal(calls.at(-1).body.quoted_amount, 0);
+      assert.equal(calls.at(-1).body.guest_count, 3);
+      assert.equal(calls.at(-1).body.password, undefined);
+      assert.equal(calls.at(-1).body.terms, undefined);
+    }
+  }
   const balancePath = `admin/owners/${project}/balance`;
   const balanceBody = {
     year: 2026,

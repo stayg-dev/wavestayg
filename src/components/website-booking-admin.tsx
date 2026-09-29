@@ -16,6 +16,7 @@ import {
 
 import { BookingAdminDialog } from "./booking-admin-dialog";
 import { OwnerBalanceEditor } from "./owner-balance-editor";
+import { AdminOwnerBooking } from "./admin-owner-booking";
 
 export function WebsiteBookingAdmin() {
   const router = useRouter();
@@ -31,6 +32,8 @@ export function WebsiteBookingAdmin() {
     [busy, setBusy] = useState(false),
     [credentials, setCredentials] = useState<string[]>([]);
   const [selected, setSelected] = useState<Application | null>(null);
+  const [manualBooking, setManualBooking] = useState(false);
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [roomTypes, setRoomTypes] = useState<Inventory[]>([]);
   const [roster, setRoster] = useState("");
@@ -208,8 +211,8 @@ export function WebsiteBookingAdmin() {
         로그아웃
       </button>
       <p>
-        신청 접수 시 PMS 판매일보를 자동 생성합니다. 확정 안내는 PMS에서 발송합니다. PMS에서 변경·삭제한 내용은
-        홈페이지 신청 상태와 무료 박수에 반영되지 않습니다.
+        신청 접수 시 PMS 판매일보를 자동 생성합니다. 확정 안내는 PMS에서 발송합니다. PMS의 ‘예약취소 및 알림톡 발송’ 버튼은
+        홈페이지 예약 취소·무료 박수 전액 복원·판매일보 삭제를 함께 처리합니다. 그 외 PMS 수정·삭제는 홈페이지에 반영되지 않습니다.
       </p>
       <section className="portal-card" aria-label="수분양자 베네핏 규정">
         <p>① 예약은 수분양자 본인만 가능. 사용은 무기명 (신분증 또는 예약 알림 메시지 제시).</p>
@@ -242,11 +245,24 @@ export function WebsiteBookingAdmin() {
           >
             수분양자 명부
           </button>
+          {" "}<button disabled={manualBooking} onClick={() => { setManualBooking(true); setMessage(""); setSelected(null); }}>
+            수분양자 수동 예약
+          </button>
         </div>
         <button disabled={loading || busy} onClick={refresh}>
           새로고침
         </button>
       </div>
+      {manualBooking && <AdminOwnerBooking onClose={() => setManualBooking(false)} onApplied={(row) => {
+        setManualBooking(false);
+        setTab("applications");
+        setKind("all");
+        setPage(1);
+        setMessage(`${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. PMS에서 예약확정 시 입력한 연락처로 알림톡 1건을 발송해 주세요.`);
+        setSelected(row);
+        refresh();
+      }} />}
+      {message && <p role="status">{message}</p>}
       {error && (
         <p role="alert" className="portal-error portal-note">
           {error}

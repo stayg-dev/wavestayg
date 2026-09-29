@@ -20,7 +20,7 @@ async function handle(request: Request, context: Context) {
           )
         : method === "POST" &&
           new RegExp(
-            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
+            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
           ).test(path);
     if (!allowed && !(method === "DELETE" && path === "login"))
       throw new HttpError(404, "잘못된 경로입니다.");
@@ -44,14 +44,14 @@ async function handle(request: Request, context: Context) {
     const token = requiresOwner ? jar.get(ownerCookie)?.value : undefined;
     if (requiresOwner && !token)
       throw new HttpError(401, "수분양자 로그인이 필요합니다.");
-    if ((path === "applications" || path === "owner-applications") && body) {
+    if (["applications", "owner-applications", "admin/owner-applications"].includes(path) && body) {
       if (body.terms !== true)
         throw new HttpError(400, "개인정보 수집 및 예약 조건에 동의해 주세요.");
       const input = { ...body };
       delete input.terms;
       input.quoted_amount = 0; // PMS calculates the authoritative price for both customer types.
       input.guest_count = Number(body.adults) + Number(body.children);
-      if (path === "owner-applications") delete input.password;
+      if (path !== "applications") delete input.password;
       body = input;
     }
     const search = new URL(request.url).searchParams;
