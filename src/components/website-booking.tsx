@@ -114,7 +114,7 @@ export function PortalShell({
     </main>
   );
 }
-export function ApplicationCard({ row, children }: { row: Application; children?: ReactNode }) {
+export function ApplicationCard({ row, children, statusLabel }: { row: Application; children?: ReactNode; statusLabel?: string }) {
   return (
     <article className="portal-card">
       <div className="portal-row">
@@ -122,7 +122,7 @@ export function ApplicationCard({ row, children }: { row: Application; children?
           {roomTypeLabel(row.room_type_name)} · {row.room_count}실
         </strong>
         <span className={`booking-status ${row.status}`}>
-          {applicationStatusText(row)}
+          {statusLabel ?? applicationStatusText(row)}
         </span>
       </div>
       <p>
@@ -724,7 +724,11 @@ export function OwnerPortal() {
             </button>
           </div>
           {rows?.items.map((row) => (
-            <ApplicationCard key={row.id} row={row}>
+            <ApplicationCard
+              key={row.id}
+              row={row}
+              statusLabel={row.is_db_only && ["registered", "approved"].includes(row.status) ? "사용" : undefined}
+            >
               {["pending", "registered", "approved"].includes(row.status) && (
                 <OwnerCancellation row={row} onCancelled={() => load()} />
               )}

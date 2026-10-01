@@ -43,6 +43,8 @@ export function BookingAdminDialog({
     const message =
       action === "migrate"
         ? "기존 신청을 PMS로 이관하고 무료 박수를 차감할까요? 접수 알림톡은 소급 발송하지 않습니다."
+        : row.is_db_only
+          ? "DB 등록을 취소하고 차감했던 박수를 복원할까요?"
           : "홈페이지 예약을 취소하고 연결된 판매일보에 취소를 반영할까요?";
     if (!window.confirm(message)) return;
     setBusy(true);
@@ -55,6 +57,7 @@ export function BookingAdminDialog({
         is_peak_confirmed: fields.get("peak") === "on",
         is_upgrade_confirmed: fields.get("upgrade") === "on",
         ...(action === "cancel" &&
+        !row.is_db_only &&
         row.kind === "owner" &&
         typeof retained === "string" &&
         retained !== ""
@@ -109,7 +112,7 @@ export function BookingAdminDialog({
         </button>
       </div>
       <ApplicationCard row={row} />
-      {row.report_ids.length > 0 && (
+      {!row.is_db_only && row.report_ids.length > 0 && (
         <p className="admin-muted">
           PMS 판매일보 반영 {row.report_ids.length}실
           {row.status === "cancelled" ? " · 취소 처리" : ""}
@@ -122,8 +125,12 @@ export function BookingAdminDialog({
       )}
       {cancelling ? (
         <form onSubmit={submit}>
-          <h2>예약 취소</h2>
-          {row.kind === "owner" && (
+          <h2>{row.is_db_only ? "DB 등록 취소 및 박수 복원" : "예약 취소"}</h2>
+          {row.is_db_only ? (
+            <p className="admin-muted">
+              등록 내역을 취소하고 차감했던 박수를 전부 되돌립니다. 취소 위약 규정은 적용하지 않으며, 판매일보 처리와 알림톡 발송은 하지 않습니다.
+            </p>
+          ) : row.kind === "owner" && (
             <p className="admin-muted">
               7일 전까지 무료, 3일 전 50% 차감(내림), 당일·노쇼 100% 차감입니다.
               4~6일 전 또는 1~2일 전은 운영 기준 확인 후 차감 유지 박수를 입력해
@@ -131,19 +138,19 @@ export function BookingAdminDialog({
             </p>
           )}
           <fieldset disabled={busy}>
-            {row.kind === "owner" && (
+            {!row.is_db_only && row.kind === "owner" && (
               <label>
                 차감 유지 박수 (명시된 규정 적용 시 비워두세요)
                 <input name="retained_nights" type="number" min={0} max={6} />
               </label>
             )}
             <label>
-              취소 사유 및 안내
-              <textarea name="note" required maxLength={1000} rows={3} />
+              {row.is_db_only ? "등록 취소 메모 (선택)" : "취소 사유 및 안내"}
+              <textarea name="note" required={!row.is_db_only} maxLength={1000} rows={3} />
             </label>
             <div className="admin-actions">
               <button type="submit" className="admin-danger">
-                {busy ? "처리 중…" : "취소 확정"}
+                {busy ? "처리 중…" : row.is_db_only ? "DB 등록 취소 및 박수 복원" : "취소 확정"}
               </button>
               <button
                 type="button"
@@ -163,7 +170,7 @@ export function BookingAdminDialog({
           {row.status === "pending" && <p className="admin-muted">기존 대기 신청입니다. 확인 후 PMS로 이관할 수 있습니다. 접수 알림톡은 소급 발송하지 않습니다.</p>}
           <div className="admin-actions">
             {row.status === "pending" && <button type="submit" value="migrate" disabled={busy}>기존 신청 PMS 이관</button>}
-            <button type="button" className="admin-danger" disabled={busy} onClick={() => setCancelling(true)}>예약 취소</button>
+            <button type="button" className="admin-danger" disabled={busy} onClick={() => setCancelling(true)}>{row.is_db_only ? "DB 등록 취소" : "예약 취소"}</button>
           </div>
         </form>
       ) : null}
