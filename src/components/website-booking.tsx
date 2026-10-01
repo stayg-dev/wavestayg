@@ -154,7 +154,7 @@ export function ApplicationCard({ row, children, statusLabel }: { row: Applicati
 }
 export function OwnerPolicy() {
   return (
-    <details className="portal-card">
+    <details className="portal-card" open>
       <summary>수분양자 이용 조건 · 취소 및 이월 안내</summary>
       <ul>
         <li>
@@ -174,7 +174,7 @@ export function OwnerPolicy() {
           정산하며 관리자 확인이 필요합니다.
         </li>
         <li>
-          7일 전까지 취소는 무료, 3일 전 취소는 박수 50% 차감(내림), 당일
+          7일 전까지 취소는 무료, 3일 전 취소는 박수 50% 차감(내림), 2일 전부터 당일까지
           취소·노쇼는 100% 차감입니다. 그 외 구간은 관리자에게 문의해 주세요.
         </li>
         <li>
