@@ -208,7 +208,7 @@ export function BookingApplicationForm({
   }
   const today = bookingToday();
   const validDates = !!dates.check_in && dates.check_out > dates.check_in &&
-    (!owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= "2028-01-01"));
+    (adminOwnerBooking || !owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= "2028-01-01"));
   async function preview(form: HTMLFormElement) {
     const fields = new FormData(form);
     changeBusy(true);
@@ -242,7 +242,7 @@ export function BookingApplicationForm({
     setInventory(null);
     try {
       const rows = await bookingRequest<Inventory[]>(
-        `inventory?${new URLSearchParams(dates)}`,
+        `${adminOwnerBooking ? "admin/inventory" : "inventory"}?${new URLSearchParams(dates)}`,
       );
       setInventory(rows);
       setType(rows.some((r) => r.name === type) ? type : (rows[0]?.name ?? ""));
@@ -298,8 +298,9 @@ export function BookingApplicationForm({
     <section className="portal-card">
       <h2>{adminOwnerBooking ? "전화 예약 정보 입력" : "예약 신청"}</h2>
       <p>
-        신청하면 호텔 예약 시스템에 자동 접수됩니다. 호텔에서 예약 내용을
-        확인한 후 예약자에게 확정 알림톡을 발송합니다.
+        {adminOwnerBooking
+          ? "등록하면 PMS 판매일보 생성 후 입력한 투숙객 연락처로 예약확정 알림톡이 자동 발송됩니다."
+          : "신청하면 호텔 예약 시스템에 자동 접수됩니다. 호텔에서 예약 내용을 확인한 후 예약자에게 확정 알림톡을 발송합니다."}
       </p>
       <form
         onSubmit={submit}
@@ -315,7 +316,7 @@ export function BookingApplicationForm({
       >
         <fieldset disabled={busy}>
           <div className="portal-grid">
-            {owner ? <OwnerCheckInCalendar value={dates.check_in} today={today} onChange={(check_in) => {
+            {owner && !adminOwnerBooking ? <OwnerCheckInCalendar value={dates.check_in} today={today} onChange={(check_in) => {
               setDates({ check_in, check_out: shiftBookingDate(check_in, 1) });
               setInventory(null);
               setQuote(null);
@@ -326,8 +327,12 @@ export function BookingApplicationForm({
                 type="date"
                 value={dates.check_in}
                 onChange={(e) => {
-                  setDates({ ...dates, check_in: e.target.value });
+                  const check_in = e.target.value;
+                  setDates(adminOwnerBooking
+                    ? { check_in, check_out: check_in ? shiftBookingDate(check_in, 1) : "" }
+                    : { ...dates, check_in });
                   setInventory(null);
+                  setQuote(null);
                 }}
               />
             </label>}
@@ -337,8 +342,8 @@ export function BookingApplicationForm({
                 required
                 type="date"
                 value={dates.check_out}
-                min={owner ? shiftBookingDate(dates.check_in || firstOwnerCheckIn(today) || today, 1) : undefined}
-                max={owner ? "2028-01-01" : undefined}
+                min={adminOwnerBooking ? (dates.check_in ? shiftBookingDate(dates.check_in, 1) : undefined) : owner ? shiftBookingDate(dates.check_in || firstOwnerCheckIn(today) || today, 1) : undefined}
+                max={owner && !adminOwnerBooking ? "2028-01-01" : undefined}
                 onChange={(e) => {
                   setDates({ ...dates, check_out: e.target.value });
                   setInventory(null);

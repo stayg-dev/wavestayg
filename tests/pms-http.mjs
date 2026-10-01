@@ -87,7 +87,8 @@ async function call(
   source = origin,
   headers = {},
 ) {
-  return fetch(`${origin}/api/pms/${path}/`, {
+  const [pathname, query] = path.split("?");
+  return fetch(`${origin}/api/pms/${pathname}/${query ? `?${query}` : ""}`, {
     method,
     headers: {
       Origin: source,
@@ -142,6 +143,12 @@ try {
     "owner token stays out of browser JS",
   );
   const cookie = header.split(";")[0];
+  const historicalInventory = "admin/inventory?check_in=2026-09-01&check_out=2026-09-02";
+  assert.equal((await call(historicalInventory)).status, 401);
+  assert.equal((await call(historicalInventory, "GET", undefined, cookie)).status, 401);
+  assert.equal((await call(historicalInventory, "GET", undefined, adminCookie)).status, 200);
+  assert.ok(calls.at(-1).url.endsWith(historicalInventory));
+  assert.equal(calls.at(-1).headers["x-owner-session"], undefined);
   for (const path of ["admin/owner-quote", "admin/owner-applications"]) {
     const body = { owner_id: project, terms: true, adults: 2, children: 1, password: "discard-me" };
     const before = calls.length;

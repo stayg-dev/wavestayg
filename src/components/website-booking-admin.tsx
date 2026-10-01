@@ -211,7 +211,7 @@ export function WebsiteBookingAdmin() {
         로그아웃
       </button>
       <p>
-        신청 접수 시 PMS 판매일보를 자동 생성합니다. 확정 안내는 PMS에서 발송합니다. PMS의 ‘예약취소 및 알림톡 발송’ 버튼은
+        신청 접수 시 PMS 판매일보를 자동 생성합니다. 관리자 수동 예약은 확정 알림톡을 자동 발송하며, 고객이 직접 신청한 예약의 확정 안내는 PMS에서 발송합니다. PMS의 ‘예약취소 및 알림톡 발송’ 버튼은
         홈페이지 예약 취소·무료 박수 전액 복원·판매일보 삭제를 함께 처리합니다. 그 외 PMS 수정·삭제는 홈페이지에 반영되지 않습니다.
       </p>
       <section className="portal-card" aria-label="수분양자 베네핏 규정">
@@ -258,7 +258,7 @@ export function WebsiteBookingAdmin() {
         setTab("applications");
         setKind("all");
         setPage(1);
-        setMessage(`${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. PMS에서 예약확정 시 입력한 연락처로 알림톡 1건을 발송해 주세요.`);
+        setMessage(`${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. 입력한 투숙객 연락처로 예약확정 알림톡을 자동 발송합니다. 발송 상태는 PMS에서 확인할 수 있습니다.`);
         setSelected(row);
         refresh();
       }} />}
