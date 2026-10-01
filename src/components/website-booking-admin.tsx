@@ -4,7 +4,7 @@ import { roomTypeLabel } from "@/lib/room-type-labels";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import {
-  statusText,
+  applicationStatusText,
   Pagination,
   PortalShell,
   bookingRequest,
@@ -211,7 +211,7 @@ export function WebsiteBookingAdmin() {
         로그아웃
       </button>
       <p>
-        신청 접수 시 PMS 판매일보를 자동 생성합니다. 관리자 수동 예약은 확정 알림톡을 자동 발송하며, 고객이 직접 신청한 예약의 확정 안내는 PMS에서 발송합니다. PMS의 ‘예약취소 및 알림톡 발송’ 버튼은
+        예약 신청과 ‘예약 수동등록’은 PMS 판매일보를 자동 생성합니다. ‘예약 수동등록’은 확정 알림톡도 자동 발송하며, ‘DB만 등록’은 예약 내역 저장과 잔여 박수 차감만 처리합니다. 고객이 직접 신청한 예약의 확정 안내는 PMS에서 발송합니다. PMS의 ‘예약취소 및 알림톡 발송’ 버튼은
         홈페이지 예약 취소·무료 박수 전액 복원·판매일보 삭제를 함께 처리합니다. 그 외 PMS 수정·삭제는 홈페이지에 반영되지 않습니다.
       </p>
       <section className="portal-card" aria-label="수분양자 베네핏 규정">
@@ -258,7 +258,9 @@ export function WebsiteBookingAdmin() {
         setTab("applications");
         setKind("all");
         setPage(1);
-        setMessage(`${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. 입력한 투숙객 연락처로 예약확정 알림톡을 자동 발송합니다. 발송 상태는 PMS에서 확인할 수 있습니다.`);
+        setMessage(row.is_db_only
+          ? `${row.owner_login_id}호 ${row.owner_name}님의 예약 내역 저장과 잔여 박수 차감이 완료되었습니다. DB만 등록한 내역으로, PMS 판매일보 생성과 알림톡 발송은 하지 않았습니다.`
+          : `${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. 입력한 투숙객 연락처로 예약확정 알림톡을 자동 발송합니다. 발송 상태는 PMS에서 확인할 수 있습니다.`);
         setSelected(row);
         refresh();
       }} />}
@@ -458,10 +460,10 @@ export function WebsiteBookingAdmin() {
                     <tr key={row.id} onClick={() => setSelected(row)}>
                       <td>
                         <span className={`booking-status ${row.status}`}>
-                          {statusText[row.status] ?? row.status}
+                          {applicationStatusText(row)}
                         </span>
                       </td>
-                      <td>{row.kind === "owner" ? "수분양자" : "일반"}</td>
+                      <td>{row.kind === "owner" ? "수분양자" : "일반"}{row.is_db_only && <small>DB만 등록</small>}</td>
                       <td>
                         {row.kind === "owner" ? (
                           <>
@@ -489,7 +491,7 @@ export function WebsiteBookingAdmin() {
                         {row.quoted_amount.toLocaleString()}원
                       </td>
                       <td>
-                        {row.report_ids.length > 0 ? (
+                        {row.is_db_only ? "연동 안 함" : row.report_ids.length > 0 ? (
                           <span
                             className={`admin-sync ${row.status === "cancelled" ? "cancelled" : ""}`}
                           >

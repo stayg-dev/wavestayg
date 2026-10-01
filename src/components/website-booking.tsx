@@ -16,6 +16,7 @@ export type BookingQuote = {
 };
 export type Application = {
   id: string;
+  is_db_only?: boolean;
   kind: string;
   owner_id: string | null;
   owner_login_id?: string | null;
@@ -62,6 +63,10 @@ export const statusText: Record<string, string> = {
   rejected: "반려",
   cancelled: "취소",
 };
+export function applicationStatusText(row: Application) {
+  return row.is_db_only && ["registered", "approved"].includes(row.status)
+    ? "DB 등록 완료" : statusText[row.status] ?? row.status;
+}
 export async function bookingRequest<T>(
   path: string,
   method = "GET",
@@ -117,7 +122,7 @@ export function ApplicationCard({ row, children }: { row: Application; children?
           {roomTypeLabel(row.room_type_name)} · {row.room_count}실
         </strong>
         <span className={`booking-status ${row.status}`}>
-          {statusText[row.status]}
+          {applicationStatusText(row)}
         </span>
       </div>
       <p>
@@ -188,11 +193,13 @@ export function BookingApplicationForm({
   owner,
   onApplied,
   adminOwnerBooking = false,
+  dbOnly = false,
   onBusyChange,
 }: {
   owner?: Owner;
   onApplied: (row: Application) => void;
   adminOwnerBooking?: boolean;
+  dbOnly?: boolean;
   onBusyChange?: (busy: boolean) => void;
 }) {
   const [dates, setDates] = useState({ check_in: "", check_out: "" });
@@ -271,6 +278,7 @@ export function BookingApplicationForm({
         {
           id,
           ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
+          ...(adminOwnerBooking ? { is_db_only: dbOnly } : {}),
           ...dates,
           room_count: Number(fields.get("room_count") ?? 1),
           room_type_name: type,
@@ -296,9 +304,9 @@ export function BookingApplicationForm({
   }
   return (
     <section className="portal-card">
-      <h2>{adminOwnerBooking ? "전화 예약 정보 입력" : "예약 신청"}</h2>
+      <h2>{dbOnly ? "DB 등록 정보 입력" : adminOwnerBooking ? "전화 예약 정보 입력" : "예약 신청"}</h2>
       <p>
-        {adminOwnerBooking
+        {dbOnly ? "예약 내역을 저장하고 잔여 박수를 차감합니다. PMS 판매일보 생성과 알림톡 발송은 하지 않습니다." : adminOwnerBooking
           ? "등록하면 PMS 판매일보 생성 후 입력한 투숙객 연락처로 예약확정 알림톡이 자동 발송됩니다."
           : "신청하면 호텔 예약 시스템에 자동 접수됩니다. 호텔에서 예약 내용을 확인한 후 예약자에게 확정 알림톡을 발송합니다."}
       </p>
@@ -356,7 +364,7 @@ export function BookingApplicationForm({
             onClick={check}
             disabled={!validDates}
           >
-            객실 확인
+            {dbOnly ? "객실 타입 확인" : "객실 확인"}
           </button>
           {inventory && (
             <>
@@ -372,9 +380,9 @@ export function BookingApplicationForm({
                       <option
                         key={r.name}
                         value={r.name}
-                        disabled={r.available < 1}
+                        disabled={!dbOnly && r.available < 1}
                       >
-                        {roomTypeLabel(r.name)} · 신청 가능 {r.available}실
+                        {roomTypeLabel(r.name)}{!dbOnly && ` · 신청 가능 ${r.available}실`}
                       </option>
                     ))}
                   </select>
@@ -400,7 +408,7 @@ export function BookingApplicationForm({
                   <label>예약자 이름<input name="booker_name" required maxLength={100} autoComplete="name" /></label>
                   <label>예약자 연락처 · 알림톡 수신<input name="booker_phone" required type="tel" maxLength={30} autoComplete="tel" /></label>
                 </>}
-                {owner && <p>{adminOwnerBooking ? "확정 알림톡은 아래 투숙객 연락처로 1건 발송합니다." : `알림톡 수신: 예약자 ${owner.name} · ${owner.phone || "등록된 연락처가 없습니다. 프런트에 문의해 주세요."}`}</p>}
+                {owner && !dbOnly && <p>{adminOwnerBooking ? "확정 알림톡은 아래 투숙객 연락처로 1건 발송합니다." : `알림톡 수신: 예약자 ${owner.name} · ${owner.phone || "등록된 연락처가 없습니다. 프런트에 문의해 주세요."}`}</p>}
                 <label>
                   실제 투숙객 이름
                   <input
@@ -510,12 +518,12 @@ export function BookingApplicationForm({
               )}
               <button
                 disabled={
-                  !inventory.some((r) => r.name === type && r.available > 0) ||
+                  !inventory.some((r) => r.name === type && (dbOnly || r.available > 0)) ||
                   !quote
                 }
                 type="submit"
               >
-                {busy ? "처리 중…" : adminOwnerBooking ? "수동 예약 등록" : "예약 신청"}
+                {busy ? "처리 중…" : dbOnly ? "DB만 등록 · 박수 차감" : adminOwnerBooking ? "수동 예약 등록" : "예약 신청"}
               </button>
             </>
           )}
