@@ -48,12 +48,19 @@ export function AdminOwnerBooking({ onClose, onApplied }: {
       <h2 id="manual-booking-title">수분양자 수동 예약</h2>
       <button type="button" disabled={busy} onClick={onClose}>닫기</button>
     </div>
-    <label>등록 유형
-      <select value={dbOnly ? "db-only" : "reservation"} disabled={busy} onChange={(event) => setDbOnly(event.target.value === "db-only")}>
-        <option value="reservation">예약 수동등록</option>
-        <option value="db-only">DB만 등록</option>
-      </select>
-    </label>
+    <fieldset className="portal-registration-type" disabled={busy}>
+      <legend>등록 유형</legend>
+      <div className="portal-registration-options">
+        <label>
+          <input type="radio" name="registration_type" value="reservation" checked={!dbOnly} onChange={() => setDbOnly(false)} />
+          예약 수동등록
+        </label>
+        <label>
+          <input type="radio" name="registration_type" value="db-only" checked={dbOnly} onChange={() => setDbOnly(true)} />
+          DB만 등록
+        </label>
+      </div>
+    </fieldset>
     <p>{dbOnly
       ? "예약 내역 저장과 잔여 박수 차감만 처리합니다. PMS 판매일보를 생성하거나 알림톡을 발송하지 않습니다."
       : "전화 예약을 대신 등록합니다. 등록하면 잔여 박수가 차감되고 PMS 판매일보가 생성되며, 입력한 투숙객 연락처로 예약확정 알림톡 1건이 자동 발송됩니다."}</p>
