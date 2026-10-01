@@ -258,7 +258,9 @@ export function WebsiteBookingAdmin() {
         setTab("applications");
         setKind("all");
         setPage(1);
-        setMessage(row.is_db_only
+        setMessage(row.is_pre_deducted
+          ? `${row.owner_login_id}호 ${row.owner_name}님의 이미 차감된 이용 내역을 저장했습니다. 잔여 박수 변경, PMS 판매일보 생성과 알림톡 발송은 하지 않았습니다.`
+          : row.is_db_only
           ? `${row.owner_login_id}호 ${row.owner_name}님의 예약 내역 저장과 잔여 박수 차감이 완료되었습니다. DB만 등록한 내역으로, PMS 판매일보 생성과 알림톡 발송은 하지 않았습니다.`
           : `${row.owner_login_id}호 ${row.owner_name}님의 수동 예약을 등록했습니다. 잔여 박수 차감 및 PMS 판매일보 생성이 완료되었습니다. 입력한 투숙객 연락처로 예약확정 알림톡을 자동 발송합니다. 발송 상태는 PMS에서 확인할 수 있습니다.`);
         setSelected(row);
@@ -463,7 +465,7 @@ export function WebsiteBookingAdmin() {
                           {applicationStatusText(row)}
                         </span>
                       </td>
-                      <td>{row.kind === "owner" ? "수분양자" : "일반"}{row.is_db_only && <small>DB만 등록</small>}</td>
+                      <td>{row.kind === "owner" ? "수분양자" : "일반"}{row.is_db_only && <small>{row.is_pre_deducted ? "이미 차감된 내역" : "DB만 등록"}</small>}</td>
                       <td>
                         {row.kind === "owner" ? (
                           <>

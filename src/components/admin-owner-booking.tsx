@@ -15,7 +15,9 @@ export function AdminOwnerBooking({ onClose, onApplied }: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [revision, setRevision] = useState(0);
-  const [dbOnly, setDbOnly] = useState(false);
+  const [registrationType, setRegistrationType] = useState("reservation");
+  const dbOnly = registrationType !== "reservation";
+  const preDeducted = registrationType === "pre-deducted";
   useEffect(() => {
     let disposed = false;
     async function load() {
@@ -52,19 +54,25 @@ export function AdminOwnerBooking({ onClose, onApplied }: {
       <legend>등록 유형</legend>
       <div className="portal-registration-options">
         <label>
-          <input type="radio" name="registration_type" value="reservation" checked={!dbOnly} onChange={() => setDbOnly(false)} />
+          <input type="radio" name="registration_type" value="reservation" checked={registrationType === "reservation"} onChange={() => setRegistrationType("reservation")} />
           예약 수동등록
         </label>
         <label>
-          <input type="radio" name="registration_type" value="db-only" checked={dbOnly} onChange={() => setDbOnly(true)} />
+          <input type="radio" name="registration_type" value="db-only" checked={registrationType === "db-only"} onChange={() => setRegistrationType("db-only")} />
           DB만 등록
+        </label>
+        <label>
+          <input type="radio" name="registration_type" value="pre-deducted" checked={preDeducted} onChange={() => setRegistrationType("pre-deducted")} />
+          이미 차감된 내역 등록
         </label>
       </div>
     </fieldset>
-    <p>{dbOnly
+    <p>{preDeducted
+      ? "엑셀 등에서 이미 잔여 박수에 반영한 이용 내역을 저장합니다. 잔여 0박이어도 등록 가능하며 추가 차감·취소 시 복원·PMS 판매일보 생성·알림톡 발송은 하지 않습니다."
+      : dbOnly
       ? "예약 내역 저장과 잔여 박수 차감만 처리합니다. PMS 판매일보를 생성하거나 알림톡을 발송하지 않습니다."
       : "전화 예약을 대신 등록합니다. 등록하면 잔여 박수가 차감되고 PMS 판매일보가 생성되며, 입력한 투숙객 연락처로 예약확정 알림톡 1건이 자동 발송됩니다."}</p>
-    <p>과거 날짜와 당일 예약도 등록할 수 있습니다. 객실 수·최대 숙박 박수·잔여 혜택 규정은 적용됩니다. 날짜·객실·추가 요금과 연락처를 확인한 후 등록해 주세요.</p>
+    <p>{preDeducted ? "과거 이용 내역을 여러 건 등록할 수 있습니다. 날짜·객실·연락처와 이미 박수가 반영된 내역인지 확인해 주세요." : "과거 날짜와 당일 예약도 등록할 수 있습니다. 객실 수·최대 숙박 박수·잔여 혜택 규정은 적용됩니다. 날짜·객실·추가 요금과 연락처를 확인한 후 등록해 주세요."}</p>
     {loading ? <p role="status">수분양자 명부를 불러오는 중…</p> : error ? <div role="alert">
       <p className="portal-error">{error}</p>
       <button type="button" onClick={() => { setError(""); setLoading(true); setRevision((n) => n + 1); }}>다시 불러오기</button>
@@ -87,7 +95,7 @@ export function AdminOwnerBooking({ onClose, onApplied }: {
       {owner && <>
         <p><strong>{owner.login_id}호 · {owner.name}</strong> / 보유 타입: {roomTypeLabel(owner.room_type_name)}</p>
         <p>{owner.benefit_year}년 잔여 {owner.annual_nights + owner.carryover_nights}박 · 올해 {owner.annual_nights}박 / 이월 {owner.carryover_nights}박</p>
-        <BookingApplicationForm key={`${owner.id}:${dbOnly}`} owner={owner} adminOwnerBooking dbOnly={dbOnly} onBusyChange={setBusy} onApplied={(row) => onApplied({ ...row, owner_login_id: owner.login_id, owner_name: owner.name })} />
+        <BookingApplicationForm key={`${owner.id}:${registrationType}`} owner={owner} adminOwnerBooking dbOnly={dbOnly} preDeducted={preDeducted} onBusyChange={setBusy} onApplied={(row) => onApplied({ ...row, owner_login_id: owner.login_id, owner_name: owner.name })} />
       </>}
     </>}
   </section>;
