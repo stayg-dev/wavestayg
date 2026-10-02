@@ -189,8 +189,8 @@ export const rooms: Room[] = [
   {
     "id": 8,
     "nodeId": "138:1435",
-    "name": "Loft Double Ocean",
-    "korean": "로프트 더블 오션",
+    "name": "Loft Double Mountain",
+    "korean": "로프트 더블 마운틴",
     "category": "로프트",
     "rates": { "weekday": 240000, "friday": 260000, "peak": 290000 },
     "baseOccupancy": 2,
@@ -201,11 +201,11 @@ export const rooms: Room[] = [
       "23㎡ · 복층",
       "더블 1"
     ],
-    "description": "위층과 아래층이 나뉜 로프트 구조의 오션뷰 객실\n색다른 시선으로 바다를 마주하는 하루를 담아냅니다.",
+    "description": "위층과 아래층이 나뉜 로프트 구조의 산전망의 객실\n색다른 시선으로 산을 마주하는 하루를 담아냅니다.",
     "bed": "Double",
     "capacity": "기준 2인 · 최대 4인",
     "area": "23㎡",
-    "view": "오션뷰"
+    "view": "마운틴뷰"
   },
   {
     "id": 9,

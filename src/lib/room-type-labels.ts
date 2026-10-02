@@ -8,7 +8,7 @@ const labels: Record<string, string> = {
   JDO: "주니어 더블 오션",
   PDO: "프리미엄 더블 오션",
   PTO: "프리미엄 트윈 오션",
-  LDO: "로프트 더블 오션",
+  LDM: "로프트 더블 마운틴",
   LTO: "로프트 트윈 오션",
   LFO: "로프트 패밀리 오션",
 };
