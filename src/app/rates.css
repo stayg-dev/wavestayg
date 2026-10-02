@@ -5,10 +5,9 @@
 .rate-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 620px; font-variant-numeric: tabular-nums; border-top: 1px solid #c5d8df; border-left: 1px solid #c5d8df; }
 .rate-table-high { min-width: 860px; }
 .rate-period-tabs { display: flex; gap: 8px; margin-top: 24px; }
-.rate-period-tabs button { flex: 1; padding: 12px 16px; border: 1px solid #c5d8df; border-radius: 8px; background: #edf5f7; color: #193342; font: inherit; font-weight: 600; cursor: pointer; }
+.rate-period-tabs button[role="tab"] { flex: 1; padding: 12px 16px; border: 1px solid #c5d8df; border-radius: 8px; background: #edf5f7; color: #193342; font: inherit; font-weight: 600; cursor: pointer; }
 .rate-period-tabs button[aria-selected="true"] { background: #247c98; border-color: #247c98; color: #fff; }
 .rate-period-tabs button:focus-visible { outline: 2px solid #193342; outline-offset: 3px; }
-.rate-table caption { text-align: left; margin-bottom: 12px; font-size: 14px; }
 .rate-table th, .rate-table td { padding: 14px 12px; border-right: 1px solid #c5d8df; border-bottom: 1px solid #c5d8df; text-align: center; white-space: nowrap; }
 .rate-table thead { background: #193342; color: #fff; }
 .rate-table tbody { background: #edf5f7; }
@@ -29,8 +28,24 @@
 .price-breakdown dt small { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
 .price-breakdown dd { white-space: nowrap; }
 .room-list-card .price-row, .room-info .price-row { flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .rate-table-section { padding: 20px 8px; }
+  .rate-table-scroll { margin-top: 16px; }
+  .rate-table { width: calc(100% - 1px); min-width: 0; table-layout: fixed; font-size: 12px; }
+  .rate-table-high { font-size: clamp(8px, 2.35vw, 12px); }
+  .rate-room-column { width: 32%; }
+  .rate-table-high .rate-room-column { width: 25%; }
+  .rate-table th, .rate-table td { padding: 10px 2px; }
+  .rate-table-high td { padding-inline: 0; letter-spacing: -0.2px; }
+  .rate-table .rate-room-heading, .rate-table tbody th { position: static; white-space: normal; word-break: keep-all; overflow-wrap: anywhere; box-shadow: none; line-height: 1.5; }
+  .rate-table tbody th { padding-inline: 4px; }
+  .rate-table .rate-season-heading { white-space: normal; }
+  .rate-season-heading span { font-size: inherit; line-height: 1.5; margin-top: 4px; }
+  .rate-period-tabs { gap: 5px; margin-top: 18px; }
+  .rate-period-tabs button[role="tab"] { padding: 10px 6px; font-size: 12px; }
+}
 @media (max-width: 640px) {
-  .rate-table-section { padding: 22px 16px; margin-top: 32px; }
+  .rate-table-section { margin-top: 32px; }
   .rate-table-section > h2 { font-size: 24px; }
   .room-rate-guide { font-size: 13px; }
   .guest-panel .counter-row { gap: 12px; }

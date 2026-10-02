@@ -54,8 +54,7 @@ export function RateTable({ description }: { description?: string } = {}) {
       </div>
       <div id="rate-period-panel" role="tabpanel" aria-labelledby={`rate-tab-${period}`}>
       <div className="rate-table-scroll" role="region" aria-label="객실별 기간 및 요일 요금표" tabIndex={0} key={period}>
-        <table className={`rate-table${period === "high" ? " rate-table-high" : ""}`}>
-          <caption>11개 객실 타입의 요일별 1박 요금 · 2026.09.20 기준</caption>
+        <table className={`rate-table${period === "high" ? " rate-table-high" : ""}`} aria-label="객실별 기간·요일 요금">
           <colgroup><col className="rate-room-column" /></colgroup>
           {visibleSeasons.map((season) => <colgroup key={season.key} span={3} />)}
           <thead>
