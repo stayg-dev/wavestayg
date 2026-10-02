@@ -2,12 +2,23 @@
 .rate-table-section > h2 { margin: 0 0 8px; font-size: 28px; }
 .rate-table-section > p { color: var(--muted); font-size: 14px; }
 .rate-table-scroll { overflow-x: auto; margin-top: 24px; }
-.rate-table { border-collapse: collapse; width: 100%; min-width: 620px; font-variant-numeric: tabular-nums; }
+.rate-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 620px; font-variant-numeric: tabular-nums; border-top: 1px solid #c5d8df; border-left: 1px solid #c5d8df; }
+.rate-table-high { min-width: 860px; }
+.rate-period-tabs { display: flex; gap: 8px; margin-top: 24px; }
+.rate-period-tabs button { flex: 1; padding: 12px 16px; border: 1px solid #c5d8df; border-radius: 8px; background: #edf5f7; color: #193342; font: inherit; font-weight: 600; cursor: pointer; }
+.rate-period-tabs button[aria-selected="true"] { background: #247c98; border-color: #247c98; color: #fff; }
+.rate-period-tabs button:focus-visible { outline: 2px solid #193342; outline-offset: 3px; }
 .rate-table caption { text-align: left; margin-bottom: 12px; font-size: 14px; }
-.rate-table th, .rate-table td { padding: 14px 16px; border: 1px solid #c5d8df; text-align: center; }
+.rate-table th, .rate-table td { padding: 14px 12px; border-right: 1px solid #c5d8df; border-bottom: 1px solid #c5d8df; text-align: center; white-space: nowrap; }
 .rate-table thead { background: #193342; color: #fff; }
 .rate-table tbody { background: #edf5f7; }
 .rate-table tbody th { text-align: left; font-weight: 500; }
+.rate-room-column { width: 210px; }
+.rate-table .rate-room-heading, .rate-table tbody th { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 #afc6d0; }
+.rate-table .rate-room-heading { background: #193342; }
+.rate-table tbody th { background: #edf5f7; }
+.rate-season-heading span { display: block; margin-top: 6px; font-size: 12px; font-weight: 400; color: #d7e7ee; }
+.rate-table .rate-season-heading, .rate-table .rate-season-start { border-left: 1px solid #afc6d0; }
 .rate-table-note { margin: 18px 0; line-height: 1.7; }
 .service-rate-guide { padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--line, #dce5e7); font-size: 14px; line-height: 1.8; }
 .service-rate-guide h3 { margin: 0 0 10px; color: #257d95; }
