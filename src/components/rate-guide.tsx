@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 import { type Room } from "@/lib/rooms";
-import { rateLabels, serviceRates } from "@/lib/booking";
+import { rateLabels, serviceRates, ownerServiceRates } from "@/lib/booking";
 import { rateTableSeasons, seasonalRateTable } from "@/lib/seasonal-rate-table";
 import { formatPrice } from "./shared";
 
-export function ServiceRateGuide() {
+export function ServiceRateGuide({ owner = false }: { owner?: boolean } = {}) {
+  const rates = owner ? ownerServiceRates : serviceRates;
   return (
     <div className="service-rate-guide">
       <h3>부가서비스</h3>
-      <p><strong>인원 추가(침구 포함)</strong> · 기준 인원 초과 시 1인 1박 {formatPrice(serviceRates.extraGuest)}</p>
-      <p>1~7세 무료 · 8세 이상 성인 요금 적용</p>
-      <p><strong>추가 침구류</strong> · 1세트 1박 {formatPrice(serviceRates.bedding)}</p>
+      <p><strong>인원 추가(침구 포함)</strong> · 기준 인원 초과 시 1인 1박 {formatPrice(rates.extraGuest)}</p>
+      <p>{owner ? "4세 이상 추가 인원 요금 적용" : "1~7세 무료 · 8세 이상 성인 요금 적용"}</p>
+      <p><strong>추가 침구류</strong> · 1세트 1박 {formatPrice(rates.bedding)}</p>
       <p><strong>얼리체크인·레이트체크아웃</strong> · 시간당 {formatPrice(serviceRates.extraHour)} (프런트 사전 요청)</p>
     </div>
   );
@@ -28,7 +29,7 @@ export function RoomRateGuide({ room }: { room: Room }) {
   );
 }
 
-export function RateTable({ description }: { description?: string } = {}) {
+export function RateTable({ description, owner = false }: { description?: string; owner?: boolean } = {}) {
   const [period, setPeriod] = useState<"off" | "shoulder" | "high">("off");
   const visibleSeasons = rateTableSeasons.filter((season) => season.key === period || (period === "high" && season.key === "peak"));
   return (
@@ -81,7 +82,7 @@ export function RateTable({ description }: { description?: string } = {}) {
       </div>
       </div>
       <p className="rate-table-note">공휴일 전일은 요일과 관계없이 토요일 요금이 적용됩니다. 연박은 각 숙박일의 요금을 합산합니다.</p>
-      <ServiceRateGuide />
+      <ServiceRateGuide owner={owner} />
     </section>
   );
 }

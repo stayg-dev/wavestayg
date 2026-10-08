@@ -2,6 +2,7 @@ import { rooms } from "./rooms.ts";
 import { holidayCalendarStart, holidayCalendarEnd, publicHolidays } from "./holidays.ts";
 
 export const serviceRates = { extraGuest: 22000, bedding: 22000, extraHour: 11000 };
+export const ownerServiceRates = { ...serviceRates, extraGuest: 11000, bedding: 11000 };
 export const rateLabels = { weekday: "일~목요일", friday: "금요일", peak: "토요일·공휴일 전일" };
 export type RateType = keyof typeof rateLabels;
 export type NightlyRate = { date: string; type: RateType; amount: number };

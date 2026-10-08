@@ -7,7 +7,7 @@ import { BrandLogo } from "./brand-logo";
 import { pageBanners, sitePhotos, type SitePhoto } from "@/lib/photos";
 
 export function showReservationNotice() {
-  window.alert("준비중입니다.");
+  window.alert("준비중입니다. 현장으로 문의 부탁드립니다.");
 }
 
 export function ReservationButton({ children, className }: { children: React.ReactNode; className?: string }) {

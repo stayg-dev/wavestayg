@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { roomTypeLabel } from "@/lib/room-type-labels";
+import { ownerServiceRates } from "@/lib/booking";
 import { RateTable } from "./rate-guide";
 import { OwnerCheckInCalendar } from "./owner-check-in-calendar";
 import { bookingToday, firstOwnerCheckIn, ownerCheckInAllowed, shiftBookingDate } from "@/lib/owner-booking-dates";
@@ -234,7 +235,7 @@ export function BookingApplicationForm({
             room_type_name: type,
             room_count: Number(fields.get("room_count") ?? 1),
             adults: Number(fields.get("adults")),
-            children: Number(fields.get("children")),
+            children: owner ? 0 : Number(fields.get("children")),
             extra_bedding: Number(fields.get("extra_bedding")),
           },
         ),
@@ -291,7 +292,7 @@ export function BookingApplicationForm({
           guest_count: Number(fields.get("guest_count") ?? 1),
           note: fields.get("note"),
           adults: Number(fields.get("adults")),
-          children: Number(fields.get("children")),
+          children: owner ? 0 : Number(fields.get("children")),
           extra_bedding: Number(fields.get("extra_bedding")),
           password: fields.get("password"),
           terms: fields.get("terms") === "on",
@@ -406,6 +407,7 @@ export function BookingApplicationForm({
                   차액의 50%가 추가되며 현장에서 정산합니다.
                 </p>
               )}
+              {owner && <p>객실당 기준 2인 초과 시 4세 이상 1인·1박당 {ownerServiceRates.extraGuest.toLocaleString("ko-KR")}원, 추가 침구는 1세트·1박당 {ownerServiceRates.bedding.toLocaleString("ko-KR")}원입니다.</p>}
               <div className="portal-grid">
                 {!owner && <>
                   <label>예약자 이름<input name="booker_name" required maxLength={100} autoComplete="name" /></label>
@@ -436,7 +438,7 @@ export function BookingApplicationForm({
                 {
                   <>
                     <label>
-                      8세 이상
+                      {owner ? "4세 이상" : "8세 이상"}
                       <input
                         name="adults"
                         type="number"
@@ -446,7 +448,7 @@ export function BookingApplicationForm({
                         required
                       />
                     </label>
-                    <label>
+                    {!owner && <label>
                       1~7세
                       <input
                         name="children"
@@ -456,7 +458,7 @@ export function BookingApplicationForm({
                         defaultValue={0}
                         required
                       />
-                    </label>
+                    </label>}
                     <label>
                       추가 침구(세트)
                       <input
@@ -707,7 +709,7 @@ export function OwnerPortal() {
             </details>
           </section>
           <OwnerPolicy />
-          <RateTable description="아래 요금은 일반 판매가입니다. 수분양자는 동일 타입 무료, 상위 타입은 판매가 차액의 50%가 적용됩니다." />
+          <RateTable owner description="아래 요금은 일반 판매가입니다. 수분양자는 동일 타입 무료, 상위 타입은 판매가 차액의 50%가 적용됩니다." />
           <BookingApplicationForm
             owner={owner}
             onApplied={() => {
