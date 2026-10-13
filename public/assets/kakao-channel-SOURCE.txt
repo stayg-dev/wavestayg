@@ -1,0 +1,4 @@
+Official KakaoTalk Channel add button, used without altering the artwork.
+Source: https://developers.kakao.com/assets/img/about/logos/channel/friendadd_large_yellow_rect.png
+Documentation: https://developers.kakao.com/docs/ko/kakaotalk-channel/js
+Channel: https://pf.kakao.com/_UuiJX

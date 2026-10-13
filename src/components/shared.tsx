@@ -58,6 +58,7 @@ export function Header({ home = false }: { home?: boolean }) {
 }
 export function Footer() {
   return (
+    <>
     <footer className="site-footer">
       <div className="footer-grid">
         <div className="footer-brand">
@@ -70,6 +71,7 @@ export function Footer() {
           <h3>연락처</h3>
           <p><a href="tel:01080640076">010-8064-0076</a></p>
           <p><a href="mailto:wavestayg0901@gmail.com">wavestayg0901@gmail.com</a></p>
+          <KakaoChannelButton />
         </div>
         <div>
           <h3>바로가기</h3>
@@ -89,6 +91,23 @@ export function Footer() {
       </div>
       <div className="copyright">© 2026 Wave STAYG. All rights reserved</div>
     </footer>
+    <KakaoChannelButton floating />
+    </>
+  );
+}
+
+function KakaoChannelButton({ floating = false }: { floating?: boolean }) {
+  return (
+    <a
+      className={`kakao-channel-button${floating ? " kakao-channel-floating" : ""}`}
+      href="https://pf.kakao.com/_UuiJX/friend"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="웨이브 스테이지 카카오채널 친구추가 (새 창)"
+      title="카카오채널 친구추가"
+    >
+      <Image src="/assets/kakao-channel-add.png" alt="카카오톡 채널 추가" width={114} height={45} unoptimized />
+    </a>
   );
 }
 export function Banner({

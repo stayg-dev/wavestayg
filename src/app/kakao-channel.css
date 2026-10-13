@@ -1,0 +1,41 @@
+.kakao-channel-button {
+  display: inline-flex;
+  width: 114px;
+  height: 45px;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+
+.kakao-channel-button img {
+  display: block;
+  width: 114px;
+  height: 45px;
+}
+
+.kakao-channel-button:focus-visible {
+  outline: 3px solid #247c98;
+  outline-offset: 4px;
+}
+
+.kakao-channel-floating {
+  position: fixed;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 10;
+  box-shadow: 0 4px 18px #142b3e26;
+}
+
+@media (max-width: 760px) {
+  .kakao-channel-floating {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(20px + env(safe-area-inset-bottom));
+  }
+
+  body:has(.site-header nav.open) .kakao-channel-floating {
+    visibility: hidden;
+  }
+}
+
+@media print {
+  .kakao-channel-floating { display: none; }
+}
