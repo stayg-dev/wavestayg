@@ -17,12 +17,12 @@ async function handle(request: Request, context: Context) {
     const allowed =
       (ownerCancellation && ["GET", "POST"].includes(method)) || (
       method === "GET"
-        ? /^(me|applications|inventory|admin\/(owners|applications|inventory))$/.test(
+        ? /^(me|applications|inventory|owner-inventory|sales|admin\/(owners|applications|inventory|sales|sales\/history))$/.test(
             path,
           )
         : method === "POST" &&
           new RegExp(
-            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
+            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/sales|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
           ).test(path));
     if (!allowed && !(method === "DELETE" && path === "login"))
       throw new HttpError(404, "잘못된 경로입니다.");
@@ -39,10 +39,10 @@ async function handle(request: Request, context: Context) {
       jar.set(ownerCookie, "", { ...cookieOptions, maxAge: 0 });
       return jsonResponse({});
     }
-    let body = method === "POST" ? await readJson(request, 12000) : undefined;
+    let body = method === "POST" ? await readJson(request, path === "admin/sales" ? 2600000 : 12000) : undefined;
     const requiresOwner =
       ownerCancellation ||
-      ["me", "password", "owner-applications", "owner-quote"].includes(path) ||
+      ["me", "password", "owner-applications", "owner-quote", "owner-inventory"].includes(path) ||
       (path === "applications" && method === "GET");
     const token = requiresOwner ? jar.get(ownerCookie)?.value : undefined;
     if (requiresOwner && !token)
@@ -59,14 +59,14 @@ async function handle(request: Request, context: Context) {
     }
     const search = new URL(request.url).searchParams;
     const query = new URLSearchParams();
-    for (const key of ["check_in", "check_out", "page"])
+    for (const key of path === "sales" ? ["from", "to"] : ["check_in", "check_out", "page"])
       if (search.has(key)) query.set(key, search.get(key)!);
     const remotePath =
       path === "owner-applications"
         ? "applications"
         : path === "owner-quote"
           ? "quote"
-          : path;
+          : path === "owner-inventory" ? "inventory" : path;
     const data = await pms<unknown>(
       remotePath + (query.size ? `?${query}` : ""),
       method,

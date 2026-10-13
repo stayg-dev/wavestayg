@@ -1,0 +1,89 @@
+.sales-settings {
+  max-width: 1440px;
+}
+.sales-editor {
+  border: 0;
+  margin: 1.5rem 0;
+  padding: 0;
+  min-width: 0;
+}
+.sales-editor .portal-card {
+  margin-bottom: 1.5rem;
+}
+.sales-settings h2 {
+  margin-bottom: 1rem;
+}
+.sales-settings p {
+  line-height: 1.7;
+}
+.sales-settings label {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.65rem 0;
+  font-size: 0.9rem;
+}
+.sales-settings .portal-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sales-settings .portal-check input {
+  width: auto;
+}
+.sales-room-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.25rem 1rem;
+}
+.sales-table-scroll {
+  overflow: auto;
+  max-height: 520px;
+  margin: 1rem 0;
+}
+.sales-table-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 780px;
+  font-size: 0.9rem;
+}
+.sales-table-scroll th,
+.sales-table-scroll td {
+  border-bottom: 1px solid #d8dfe3;
+  padding: 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+.sales-table-scroll thead th {
+  background: #eef3f5;
+  color: #243e4c;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.sales-table-scroll input {
+  min-width: 120px;
+}
+.sales-table-scroll label {
+  max-width: 220px;
+  font-size: 0.75rem;
+}
+.sales-save {
+  border: 2px solid #325c6e;
+}
+.sales-settings details {
+  padding: 1rem 0;
+  border-bottom: 1px solid #d8dfe3;
+}
+.sales-settings summary {
+  cursor: pointer;
+}
+.sales-feedback {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: white;
+}
+.sales-feedback p {
+  padding: 0.75rem;
+  border: 1px solid currentColor;
+}

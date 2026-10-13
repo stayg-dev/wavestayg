@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { roomTypeLabel } from "@/lib/room-type-labels";
-import { ownerServiceRates } from "@/lib/booking";
-import { RateTable } from "./rate-guide";
+import { RateTable, ServiceRateGuide } from "./rate-guide";
 import { OwnerCheckInCalendar } from "./owner-check-in-calendar";
 import { bookingToday, firstOwnerCheckIn, ownerCheckInAllowed, shiftBookingDate } from "@/lib/owner-booking-dates";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 
 export type BookingQuote = {
+  pricing_revision?: string | null;
   room_amount: number;
   upgrade_amount: number;
   guest_fee: number;
@@ -232,6 +232,7 @@ export function BookingApplicationForm({
           {
             ...dates,
             ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
+            ...(adminOwnerBooking ? { is_db_only: dbOnly } : {}),
             room_type_name: type,
             room_count: Number(fields.get("room_count") ?? 1),
             adults: Number(fields.get("adults")),
@@ -253,7 +254,7 @@ export function BookingApplicationForm({
     setInventory(null);
     try {
       const rows = await bookingRequest<Inventory[]>(
-        `${adminOwnerBooking ? "admin/inventory" : "inventory"}?${new URLSearchParams(dates)}`,
+        `${adminOwnerBooking ? "admin/inventory" : owner ? "owner-inventory" : "inventory"}?${new URLSearchParams(dates)}`,
       );
       setInventory(rows);
       setType(rows.some((r) => r.name === type) ? type : (rows[0]?.name ?? ""));
@@ -281,6 +282,7 @@ export function BookingApplicationForm({
         "POST",
         {
           id,
+          ...(quote.pricing_revision ? { pricing_revision: quote.pricing_revision } : {}),
           ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
           ...(adminOwnerBooking ? { is_db_only: dbOnly, is_pre_deducted: preDeducted } : {}),
           ...dates,
@@ -407,7 +409,7 @@ export function BookingApplicationForm({
                   차액의 50%가 추가되며 현장에서 정산합니다.
                 </p>
               )}
-              {owner && <p>객실당 기준 2인 초과 시 4세 이상 1인·1박당 {ownerServiceRates.extraGuest.toLocaleString("ko-KR")}원, 추가 침구는 1세트·1박당 {ownerServiceRates.bedding.toLocaleString("ko-KR")}원입니다.</p>}
+              {owner && <ServiceRateGuide owner />}
               <div className="portal-grid">
                 {!owner && <>
                   <label>예약자 이름<input name="booker_name" required maxLength={100} autoComplete="name" /></label>
