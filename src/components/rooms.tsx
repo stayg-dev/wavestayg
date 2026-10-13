@@ -2,8 +2,8 @@
 
 import { useRef, useState } from "react";
 import { getRoom, roomCatalog, roomCategories, type Room } from "@/lib/rooms";
-import { Shell, MediaBlock, Tags, formatPrice, ReservationButton } from "./shared";
-import { RateTable, RoomRateGuide } from "./rate-guide";
+import { Shell, MediaBlock, Tags, ReservationButton } from "./shared";
+import { RateTable, RoomRateGuide, RoomStartingRate } from "./rate-guide";
 import { roomPhotos } from "@/lib/photos";
 import { PhotoGallery } from "./photo-gallery";
 
@@ -15,7 +15,7 @@ export function RoomInfo({ room }: { room: Room }) {
       <p className="muted room-korean">{room.korean}</p>
       <p className="room-description">{room.description}</p>
       <div className="price-row">
-        <p><strong>{formatPrice(room.rates.weekday)}부터</strong> <span className="muted">/ 1박 · 일~목 기준</span></p>
+        <p><RoomStartingRate room={room} /> <span className="muted">/ 1박 · 비수기 일~목 기준</span></p>
         <ReservationButton className="pill small">예약하기</ReservationButton>
       </div>
     </div>
@@ -37,8 +37,8 @@ export function RoomDetails({ room }: { room: Room }) {
       <RoomRateGuide room={room} />
       <div className="room-detail-actions">
         <div className="detail-price">
-          <strong>{formatPrice(room.rates.weekday)}부터</strong><span>/ 1박</span>
-          <small>일~목 기준 · 공휴일 전일 제외</small>
+          <span><RoomStartingRate room={room} /></span><span>/ 1박</span>
+          <small>비수기 일~목 기준 · 공휴일 전일 제외</small>
         </div>
         <ReservationButton className="primary">이 객실 예약하기 →</ReservationButton>
       </div>
@@ -85,7 +85,7 @@ export function Rooms() {
                   <p className="muted">{item.korean}</p>
                   <p>{item.description}</p>
                   <div className="price-row">
-                    <strong>{formatPrice(item.rates.weekday)}부터</strong><span>/ 1박 · 일~목 기준</span>
+                    <span><RoomStartingRate room={item} /></span><span>/ 1박 · 비수기 일~목 기준</span>
                     <button className="room-select" aria-label={`${item.korean} 자세히 보기`} aria-pressed={selected === item.id} aria-controls="room-detail" onClick={() => selectRoom(item.id)}>{selected === item.id ? "선택됨 ✓" : "자세히 보기 →"}</button>
                   </div>
                 </div>

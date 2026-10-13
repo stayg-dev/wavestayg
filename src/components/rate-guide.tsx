@@ -3,8 +3,21 @@
 import { useState } from "react";
 import { type Room } from "@/lib/rooms";
 import { rateLabels, serviceRates, ownerServiceRates } from "@/lib/booking";
-import { rateTableSeasons, seasonalRateTable } from "@/lib/seasonal-rate-table";
+import { rateTableSeasons, seasonalRateTable, getOffSeasonRates, offSeasonDiscount } from "@/lib/seasonal-rate-table";
 import { formatPrice } from "./shared";
+
+export function DiscountedRate({ original, discounted, currency = true }: { original: number; discounted: number; currency?: boolean }) {
+  const format = currency ? formatPrice : (price: number) => price.toLocaleString("ko-KR");
+  return (
+    <span className="discounted-rate" aria-label={`기존 ${original.toLocaleString("ko-KR")}원, 할인 ${discounted.toLocaleString("ko-KR")}원`}>
+      <s>{format(original)}</s><span aria-hidden="true"> → </span><strong>{format(discounted)}</strong>
+    </span>
+  );
+}
+
+export function RoomStartingRate({ room }: { room: Room }) {
+  return <><DiscountedRate original={room.rates.weekday} discounted={getOffSeasonRates(room.id)[0] - offSeasonDiscount} />부터</>;
+}
 
 export function ServiceRateGuide({ owner = false }: { owner?: boolean } = {}) {
   const rates = owner ? ownerServiceRates : serviceRates;
@@ -22,8 +35,9 @@ export function ServiceRateGuide({ owner = false }: { owner?: boolean } = {}) {
 export function RoomRateGuide({ room }: { room: Room }) {
   return (
     <dl className="room-rate-guide" aria-label={`${room.korean} 1박 요금`}>
-      {Object.entries(rateLabels).map(([key, label]) => (
-        <div key={key}><dt>{label}</dt><dd>{formatPrice(room.rates[key as keyof Room["rates"]])}</dd></div>
+      <div><dt>비수기 요금</dt><dd>1박 · 5,000원 할인</dd></div>
+      {Object.entries(rateLabels).map(([key, label], index) => (
+        <div key={key}><dt>{label}</dt><dd><DiscountedRate original={getOffSeasonRates(room.id)[index]} discounted={getOffSeasonRates(room.id)[index] - offSeasonDiscount} /></dd></div>
       ))}
     </dl>
   );
@@ -74,7 +88,7 @@ export function RateTable({ description, owner = false }: { description?: string
           <tbody>{seasonalRateTable.map((room) => (
             <tr key={room.name}><th scope="row">{room.name}</th>
               {visibleSeasons.flatMap((season) => room.rates[season.key].map((price, index) => (
-                <td key={`${season.key}-${index}`} className={index === 0 ? "rate-season-start" : undefined}>{price.toLocaleString("ko-KR")}</td>
+                <td key={`${season.key}-${index}`} className={index === 0 ? "rate-season-start" : undefined}>{season.key === "off" ? <DiscountedRate original={price} discounted={price - offSeasonDiscount} currency={false} /> : price.toLocaleString("ko-KR")}</td>
               )))}
             </tr>
           ))}</tbody>
@@ -82,6 +96,7 @@ export function RateTable({ description, owner = false }: { description?: string
       </div>
       </div>
       <p className="rate-table-note">공휴일 전일은 요일과 관계없이 토요일 요금이 적용됩니다. 연박은 각 숙박일의 요금을 합산합니다.</p>
+      {period === "off" && <p className="rate-table-note">비수기(9월~4월)는 기존 요금에서 객실당 1박 5,000원 할인됩니다.</p>}
       <ServiceRateGuide owner={owner} />
     </section>
   );

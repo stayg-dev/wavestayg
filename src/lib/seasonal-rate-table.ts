@@ -30,6 +30,17 @@ const loftFamily: SeasonalRates = {
   high: [165000, 195000, 218000], peak: [218000, 238000, 258000],
 };
 
+export const offSeasonDiscount = 5000;
+
+export function getOffSeasonRates(roomId: number) {
+  const rates: Record<number, SeasonalRates> = {
+    0: standard, 1: deluxe, 2: deluxe, 3: deluxe,
+    4: junior, 5: junior, 6: premium, 7: premium,
+    8: premium, 9: premium, 10: loftFamily,
+  };
+  return rates[roomId].off;
+}
+
 export const seasonalRateTable = [
   { name: "스탠다드 더블 X", rates: standard },
   { name: "디럭스 더블 마운틴", rates: deluxe },

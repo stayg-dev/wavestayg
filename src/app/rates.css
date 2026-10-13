@@ -1,3 +1,7 @@
+.discounted-rate { display: inline-flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.discounted-rate s { color: var(--muted, #617681); font-size: .85em; font-weight: 400; }
+.discounted-rate strong { color: #247c98; }
+.rate-table .discounted-rate { justify-content: center; }
 .rate-table-section { margin-top: 56px; padding: 32px; border: 1px solid var(--line, #dce5e7); border-radius: 20px; background: #fff; }
 .rate-table-section > h2 { margin: 0 0 8px; font-size: 28px; }
 .rate-table-section > p { color: var(--muted); font-size: 14px; }
