@@ -26,6 +26,7 @@ export type SalesServices = {
   extra_hour: number;
 };
 export type SalesConfig = {
+  payment_policy?: { version: string; text: string };
   is_enabled: boolean;
   is_general_enabled: boolean;
   is_owner_enabled: boolean;

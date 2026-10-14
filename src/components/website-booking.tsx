@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { NicepayCheckout } from './nicepay-checkout';
+import { paymentRequest, type PaymentConfiguration, type PreparedPayment } from '@/lib/payments';
 import { roomTypeLabel } from "@/lib/room-type-labels";
 import { RateTable, ServiceRateGuide } from "./rate-guide";
 import { OwnerCheckInCalendar } from "./owner-check-in-calendar";
@@ -16,6 +18,7 @@ export type BookingQuote = {
   owned_type: string | null;
 };
 export type Application = {
+  payment_order_id?: string | null;
   id: string;
   is_db_only?: boolean;
   is_pre_deducted?: boolean;
@@ -59,6 +62,7 @@ export type Inventory = {
 };
 export type PageResult<T> = { items: T[]; total: number; page: number };
 export const statusText: Record<string, string> = {
+  payment_pending: '결제 확인 중',
   pending: "기존 신청 · 이관 대기",
   approved: "PMS 등록 완료",
   registered: "PMS 등록 완료",
@@ -137,7 +141,8 @@ export function ApplicationCard({ row, children, statusLabel }: { row: Applicati
       {row.kind !== "owner" && (
         <p className="portal-reference">신청 번호: {row.id}</p>
       )}
-      <p>금액 {row.quoted_amount.toLocaleString()}원 · 현장 정산</p>
+      <p>금액 {row.quoted_amount.toLocaleString()}원 · {row.payment_order_id ? '온라인 카드 결제' : '현장 정산'}</p>
+      {row.payment_order_id && <p><Link href={`/reservation/payment/?order=${row.payment_order_id}`}>결제·환불 상태 확인</Link></p>}
       {row.pricing?.owned_type && (
         <p>
           보유 타입: {roomTypeLabel(row.pricing.owned_type)} · 업그레이드 차액 50%{" "}
@@ -198,6 +203,7 @@ export function BookingApplicationForm({
   dbOnly = false,
   preDeducted = false,
   onBusyChange,
+  initial,
 }: {
   owner?: Owner;
   onApplied: (row: Application) => void;
@@ -205,14 +211,23 @@ export function BookingApplicationForm({
   dbOnly?: boolean;
   preDeducted?: boolean;
   onBusyChange?: (busy: boolean) => void;
+  initial?: { check_in: string; check_out: string; adults: number; room_type: string };
 }) {
-  const [dates, setDates] = useState({ check_in: "", check_out: "" });
+  const [dates, setDates] = useState({ check_in: initial?.check_in ?? '', check_out: initial?.check_out ?? '' });
   const [inventory, setInventory] = useState<Inventory[] | null>(null);
-  const [type, setType] = useState(owner?.room_type_name ?? "");
+  const [type, setType] = useState(owner?.room_type_name ?? initial?.room_type ?? '');
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
   const [requestId, setRequestId] = useState("");
   const [quote, setQuote] = useState<BookingQuote | null>(null);
+  const [paymentConfig, setPaymentConfig] = useState<PaymentConfiguration | null>(null);
+  const [prepared, setPrepared] = useState<PreparedPayment | null>(null);
+  useEffect(() => {
+    if (owner) return;
+    let active = true;
+    paymentRequest<PaymentConfiguration>('config').then(data => { if (active) setPaymentConfig(data); }).catch((e: Error) => { if (active) setError(e.message); });
+    return () => { active = false; };
+  }, [owner]);
   function changeBusy(value: boolean) {
     setBusy(value);
     onBusyChange?.(value);
@@ -257,7 +272,7 @@ export function BookingApplicationForm({
         `${adminOwnerBooking ? "admin/inventory" : owner ? "owner-inventory" : "inventory"}?${new URLSearchParams(dates)}`,
       );
       setInventory(rows);
-      setType(rows.some((r) => r.name === type) ? type : (rows[0]?.name ?? ""));
+      setType(rows.find((r) => r.name === type || roomTypeLabel(r.name) === type)?.name ?? rows[0]?.name ?? '');
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -277,10 +292,7 @@ export function BookingApplicationForm({
     changeBusy(true);
     setError("");
     try {
-      const row = await bookingRequest<Application>(
-        adminOwnerBooking ? "admin/owner-applications" : owner ? "owner-applications" : "applications",
-        "POST",
-        {
+      const input = {
           id,
           ...(quote.pricing_revision ? { pricing_revision: quote.pricing_revision } : {}),
           ...(adminOwnerBooking && owner ? { owner_id: owner.id } : {}),
@@ -298,8 +310,15 @@ export function BookingApplicationForm({
           extra_bedding: Number(fields.get("extra_bedding")),
           password: fields.get("password"),
           terms: fields.get("terms") === "on",
-        },
-      );
+        };
+      if (!owner) {
+        if (!paymentConfig || (paymentConfig.enabled && !paymentConfig.ready)) throw new Error('온라인 결제 준비 중입니다. 프런트에 문의해 주세요.');
+        if (paymentConfig.enabled) {
+          setPrepared(await paymentRequest<PreparedPayment>('prepare', { ...input, policy_version: paymentConfig.policy_version, payment_terms: fields.get('payment_terms') === 'on' }));
+          return;
+        }
+      }
+      const row = await bookingRequest<Application>(adminOwnerBooking ? 'admin/owner-applications' : owner ? 'owner-applications' : 'applications', 'POST', input);
       setRequestId("");
       onApplied(row);
     } catch (e) {
@@ -308,6 +327,7 @@ export function BookingApplicationForm({
       changeBusy(false);
     }
   }
+  if (prepared) return <NicepayCheckout prepared={prepared} />;
   return (
     <section className="portal-card">
       <h2>{preDeducted ? "이미 차감된 이용 내역 입력" : dbOnly ? "DB 등록 정보 입력" : adminOwnerBooking ? "전화 예약 정보 입력" : "예약 신청"}</h2>
@@ -446,7 +466,7 @@ export function BookingApplicationForm({
                         type="number"
                         min={1}
                         max={owner ? 8 : 4}
-                        defaultValue={2}
+                        defaultValue={initial?.adults ?? 2}
                         required
                       />
                     </label>
@@ -495,8 +515,7 @@ export function BookingApplicationForm({
               {!owner && (
                 <p>
                   요금표 기준 객실료와 인원·침구 추가 비용이 적용됩니다.
-                  세금·봉사료 추가 및 쿠폰 할인은 없습니다. 결제는 현장에서
-                  진행합니다.
+                  {paymentConfig?.enabled ? '최종 금액을 확인한 후 카드로 결제합니다.' : '결제는 현장에서 진행합니다.'}
                 </p>
               )}
               <label className="portal-check">
@@ -505,6 +524,10 @@ export function BookingApplicationForm({
                   ? "전화 예약자의 개인정보 수집·이용 및 예약 조건 동의를 확인했습니다."
                   : "예약 처리를 위한 이름·연락처 수집 및 이용 조건에 동의합니다."}
               </label>
+              {!owner && paymentConfig?.enabled && <>
+                <details className="portal-card"><summary>결제·취소 규정</summary><p style={{ whiteSpace: 'pre-wrap' }}>{paymentConfig.policy_text || '취소 규정 등록을 준비 중입니다.'}</p></details>
+                <label className="portal-check"><input name="payment_terms" type="checkbox" required />결제 금액과 취소·환불 규정을 확인하고 동의합니다.</label>
+              </>}
               <button
                 type="button"
                 onClick={(e) => {
@@ -526,11 +549,11 @@ export function BookingApplicationForm({
               <button
                 disabled={
                   !inventory.some((r) => r.name === type && (dbOnly || r.available > 0)) ||
-                  !quote
+                  !quote || (!owner && (!paymentConfig || (paymentConfig.enabled && !paymentConfig.ready)))
                 }
                 type="submit"
               >
-                {busy ? "처리 중…" : preDeducted ? "이미 차감된 내역 등록" : dbOnly ? "DB만 등록 · 박수 차감" : adminOwnerBooking ? "수동 예약 등록" : "예약 신청"}
+                {busy ? "처리 중…" : preDeducted ? "이미 차감된 내역 등록" : dbOnly ? "DB만 등록 · 박수 차감" : adminOwnerBooking ? "수동 예약 등록" : !owner && paymentConfig?.enabled ? '카드 결제 준비' : "예약 신청"}
               </button>
             </>
           )}
@@ -811,9 +834,11 @@ export function Pagination({
 export function GeneralBookingPortal({
   lookup = false,
   lookupId = "",
+  initial,
 }: {
   lookup?: boolean;
   lookupId?: string;
+  initial?: { check_in: string; check_out: string; adults: number; room_type: string };
 }) {
   const [row, setRow] = useState<Application | null>(null),
     [error, setError] = useState(""),
@@ -824,13 +849,10 @@ export function GeneralBookingPortal({
     setError("");
     setRow(null);
     try {
-      setRow(
-        await bookingRequest<Application>(
-          "lookup",
-          "POST",
-          Object.fromEntries(new FormData(e.currentTarget)),
-        ),
-      );
+      const input = Object.fromEntries(new FormData(e.currentTarget));
+      const application = await bookingRequest<Application>('lookup', 'POST', input);
+      if (application.payment_order_id) await paymentRequest('lookup', input);
+      setRow(application);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -858,7 +880,7 @@ export function GeneralBookingPortal({
           <button disabled={busy}>조회</button>
         </form>
       ) : (
-        !row && <BookingApplicationForm onApplied={setRow} />
+        !row && <BookingApplicationForm onApplied={setRow} initial={initial} />
       )}
       {error && (
         <p role="alert" className="portal-error">

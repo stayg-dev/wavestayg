@@ -16,7 +16,7 @@ export function RoomInfo({ room }: { room: Room }) {
       <p className="room-description">{room.description}</p>
       <div className="price-row">
         <p><RoomStartingRate room={room} /> <span className="muted">/ 1박 · 향후 31일 최저가</span></p>
-        <ReservationButton className="pill small">예약하기</ReservationButton>
+        <ReservationButton className="pill small" href={`/reservation/book/?room_type=${encodeURIComponent(room.korean)}`}>예약하기</ReservationButton>
       </div>
     </div>
   );
@@ -40,7 +40,7 @@ export function RoomDetails({ room }: { room: Room }) {
           <span><RoomStartingRate room={room} /></span><span>/ 1박</span>
           <small>비수기 일~목 기준 · 공휴일 전일 제외</small>
         </div>
-        <ReservationButton className="primary">이 객실 예약하기 →</ReservationButton>
+        <ReservationButton className="primary" href={`/reservation/book/?room_type=${encodeURIComponent(room.korean)}`}>이 객실 예약하기 →</ReservationButton>
       </div>
     </div>
   );

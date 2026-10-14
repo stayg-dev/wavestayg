@@ -17,12 +17,12 @@ async function handle(request: Request, context: Context) {
     const allowed =
       (ownerCancellation && ["GET", "POST"].includes(method)) || (
       method === "GET"
-        ? /^(me|applications|inventory|owner-inventory|sales|admin\/(owners|applications|inventory|sales|sales\/history))$/.test(
+        ? /^(me|applications|inventory|owner-inventory|sales|admin\/(owners|applications|inventory|payments|sales|sales\/history))$/.test(
             path,
           )
         : method === "POST" &&
           new RegExp(
-            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/sales|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
+            `^(login|password|quote|owner-quote|applications|owner-applications|lookup|admin/sales|admin/payments/${uuid}/(refund|reconcile)|admin/owner-quote|admin/owner-applications|admin/owners|admin/(owners|applications)/${uuid}|admin/owners/${uuid}/balance)$`,
           ).test(path));
     if (!allowed && !(method === "DELETE" && path === "login"))
       throw new HttpError(404, "잘못된 경로입니다.");

@@ -707,6 +707,11 @@ export function WebsiteSalesSettings() {
             </div>
           </section>
           <section className="portal-card">
+            <h2>결제·취소 규정</h2>
+            <p>카드 결제 고객에게 보여줄 운영 규정을 입력하세요. 내용 변경 시 버전도 변경해 주세요. 동의한 내용은 결제 주문에 보관됩니다.</p>
+            <label>규정 버전<input maxLength={50} value={config.payment_policy?.version ?? ''} onChange={e => edit({ payment_policy: { version: e.target.value, text: config.payment_policy?.text ?? '' } })} placeholder="예: 2026-10-v1" /></label>
+            <label>결제·취소·환불 안내<textarea rows={8} maxLength={10000} value={config.payment_policy?.text ?? ''} onChange={e => edit({ payment_policy: { version: config.payment_policy?.version ?? '', text: e.target.value } })} /></label>
+            <p><Link href="/admin/payments/">온라인 결제·환불 관리</Link></p>
             <h2>부가서비스 요금</h2>
             <div className="portal-grid">
               {(

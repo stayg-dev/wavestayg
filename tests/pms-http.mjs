@@ -16,6 +16,8 @@ const hash = await hashAdminPassword("local-test-password");
 const project = "7b85fd96-06a0-42f3-bfb9-cbe14c55718a";
 const calls = [];
 const roomTypeId = randomUUID();
+const paymentOrder = randomUUID(), applicationId = randomUUID(), statusToken = 's'.repeat(43), callbackToken = 'c'.repeat(43);
+let paymentStatus = 'awaiting_auth';
 const fixturePrice = () => ({ base_amount: 65000, discount_amount: 0, sale_amount: 65000 });
 let sales = { revision: randomUUID(), room_types: [{ id: roomTypeId, name: "DDM" }], config: {
   is_enabled: true, is_general_enabled: true, is_owner_enabled: true, message: "", valid_from: "2026-01-01", valid_to: "2027-12-31",
@@ -43,6 +45,15 @@ const pms = createServer(async (req, res) => {
       ? { total: 25000 }
       : { items: [], total: 0, page: 1 };
   const url = new URL(req.url, "http://127.0.0.1");
+  if (url.pathname.endsWith('/payments/config')) data = { enabled: true, ready: true, policy_version: 'test-v1', policy_text: '테스트 취소 규정입니다.' };
+  else if (url.pathname.endsWith('/payments/prepare')) data = { order_id: paymentOrder, application_id: applicationId, expires_at: new Date(Date.now() + 900000).toISOString(), status_token: statusToken, fields: { MID: 'fixture00m', Moid: 'Wfixture', Amt: '25000', PayMethod: 'CARD', ReturnURL: `${origin}/api/payments/return/?order=${paymentOrder}&token=${callbackToken}` } };
+  else if (url.pathname.endsWith('/authenticate')) { paymentStatus = 'paid'; data = { order_id: paymentOrder, status_token: statusToken }; }
+  else if (url.pathname.endsWith('/status')) { assert.equal(body.token, statusToken); data = { order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test' }; }
+  else if (url.pathname.endsWith('/payments/lookup')) data = { order_id: paymentOrder, status_token: statusToken };
+  else if (url.pathname.endsWith('/admin/payments')) data = { page: 1, total: 1, items: [{ order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test', moid: 'Wfixture', tid: 'fixture00m01012610131200000001', last_error: null, review_note: '', refunds: [] }] };
+  else if (url.pathname.endsWith('/refund')) { paymentStatus = 'refund_pending'; data = { id: randomUUID(), status: 'queued', moid: 'Rfixture' }; }
+  else if (url.pathname.endsWith('/inventory')) data = [{ name: 'DDM', available: 2 }];
+  else if (url.pathname.endsWith('/quote')) data = { room_amount: 25000, upgrade_amount: 0, guest_fee: 0, bedding_fee: 0, total: 25000, owned_type: null, pricing_revision: sales.revision };
   if (url.pathname.endsWith("/admin/sales")) {
     if (req.method === "POST" && body.config?.tariffs) sales = { ...sales, config: structuredClone(body.config), revision: randomUUID() };
     data = sales;
@@ -271,6 +282,24 @@ try {
   assert.equal(calls.at(-1).headers["x-owner-session"], undefined);
   assert.match(response.headers.get("cache-control"), /no-store/);
   assert.equal((await call("login", "DELETE", undefined, cookie)).status, 200);
+  const paymentCall = (path, body, extra = {}) => fetch(`${origin}/api/payments/${path}/`, { method: body === undefined ? 'GET' : 'POST', headers: { Origin: origin, 'Content-Type': 'application/json', ...extra }, body: body === undefined ? undefined : JSON.stringify(body) });
+  assert.equal((await paymentCall('prepare', { terms: true, payment_terms: true }, { Origin: 'https://other.test' })).status, 403);
+  assert.equal((await paymentCall('prepare', { terms: true })).status, 400);
+  assert.equal((await paymentCall(`${paymentOrder}/status`)).status, 401);
+  const prepared = await paymentCall('prepare', { terms: true, payment_terms: true, adults: 2, children: 1, quoted_amount: 1 });
+  const preparedBody = await prepared.json();
+  assert.equal(prepared.status, 200); assert.equal(preparedBody.status_token, undefined);
+  assert.equal(calls.at(-1).body.quoted_amount, 0); assert.equal(calls.at(-1).body.guest_count, 3);
+  assert.equal(calls.at(-1).body.terms, undefined); assert.equal(calls.at(-1).body.payment_terms, undefined);
+  const paymentCookie = prepared.headers.get('set-cookie'); assert.match(paymentCookie, /HttpOnly/i); assert.match(paymentCookie, /Secure/i);
+  assert.equal((await paymentCall(`${paymentOrder}/status`, undefined, { Cookie: paymentCookie.split(';')[0] })).status, 200);
+  // Mobile return is a cross-site POST without the original browser cookie.
+  const returned = await fetch(`${origin}/api/payments/return/?order=${paymentOrder}&token=${callbackToken}`, { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/x-www-form-urlencoded', Origin: 'https://pg-web.nicepay.co.kr' }, body: 'AuthResultCode=0000&Amt=000000025000&AuthToken=test%2Btoken&AuthResultMsg=%C3%EB%BC%D2' });
+  assert.equal(returned.status, 303); assert.equal(returned.headers.get('location'), `/reservation/payment/?order=${paymentOrder}`);
+  assert.match(returned.headers.get('set-cookie'), /HttpOnly/i); assert.equal(calls.at(-1).body.fields.AuthToken, 'test+token');
+  assert.equal(calls.at(-1).body.fields.Amt, '000000025000'); assert.equal(calls.at(-1).body.fields.AuthResultMsg, undefined);
+  assert.equal((await call('admin/payments')).status, 401);
+  assert.equal((await call(`admin/payments/${paymentOrder}/refund`, 'POST', { request_id: randomUUID(), reason: '테스트' }, adminCookie, 'https://other.test')).status, 403);
   // Optional real-browser check, using an already installed Playwright runtime.
   if (process.env.SALES_PLAYWRIGHT_MODULE) {
     const { chromium } = await import(pathToFileURL(process.env.SALES_PLAYWRIGHT_MODULE).href);
@@ -306,6 +335,37 @@ try {
       await page.screenshot({ path: "design-reference/sales-settings-mobile.png", fullPage: true });
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "mobile page has no horizontal overflow");
       assert.deepEqual(errors, []);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.route('https://pg-web.nicepay.co.kr/v3/common/js/nicepay-pgweb.js', route => route.fulfill({ contentType: 'text/javascript', body: `window.goPay = function(form) { const field = document.createElement('input'); field.type='hidden'; field.name='AuthResultCode'; field.value='0000'; form.appendChild(field); window.nicepaySubmit(); };` }));
+      await page.goto(origin);
+      await page.getByRole('link', { name: '예약&조회', exact: true }).click();
+      await page.waitForURL('**/reservation/');
+      await page.goto(`${origin}/reservation/book/?check_in=2026-11-10&check_out=2026-11-11&adults=3`);
+      assert.equal(await page.getByLabel('체크인', { exact: true }).inputValue(), '2026-11-10');
+      assert.equal(await page.getByLabel('체크아웃', { exact: true }).inputValue(), '2026-11-11');
+      await page.getByRole('button', { name: '객실 확인', exact: true }).click();
+      await page.getByLabel('예약자 이름', { exact: true }).fill('결제 테스트');
+      await page.getByLabel('예약자 연락처 · 알림톡 수신', { exact: true }).fill('01012345678');
+      await page.getByLabel('실제 투숙객 이름', { exact: true }).fill('투숙 테스트');
+      await page.getByLabel('투숙객 연락처', { exact: true }).fill('01012345678');
+      await page.locator('input[name=password]').fill('fixture-password');
+      await page.locator('input[name=terms]').check(); await page.locator('input[name=payment_terms]').check();
+      await page.getByRole('button', { name: '요금 확인', exact: true }).click();
+      await page.getByRole('button', { name: '카드 결제 준비', exact: true }).click();
+      await page.getByRole('button', { name: 'NICEPAY 카드 결제창 열기', exact: true }).click();
+      await page.getByRole('heading', { name: '결제 완료 · 예약 접수', exact: true }).waitFor();
+      await page.screenshot({ path: 'design-reference/payment-result-mobile.png', fullPage: true });
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+      await page.goto(`${origin}/admin/payments/`);
+      await page.getByRole('button', { name: '전액 환불', exact: true }).click();
+      await page.getByLabel('환불 사유', { exact: true }).fill('브라우저 환불 요청 테스트');
+      page.once('dialog', dialog => dialog.accept());
+      await page.getByRole('button', { name: '확인 후 처리', exact: true }).click();
+      await page.getByText('환불 처리 중', { exact: true }).waitFor();
+      await page.screenshot({ path: 'design-reference/payment-admin-mobile.png', fullPage: true });
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+      assert.deepEqual(errors, []);
+      console.log('Payment HTTP/browser checks passed: cookies, CSRF, raw mobile return, price stripping, official SDK callback and result page.');
       console.log("Sales settings browser checks passed: discount input, calculated price, save/reload, stop-sale and mobile layout.");
     } finally { await browser.close(); }
   }

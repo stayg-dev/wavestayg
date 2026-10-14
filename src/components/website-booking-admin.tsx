@@ -196,6 +196,7 @@ export function WebsiteBookingAdmin() {
         <nav aria-label="관리자 메뉴">
           <Link href="/admin/notices/">공지사항 관리</Link>
           <Link href="/admin/settings/">요금·판매 설정</Link>
+          <Link href="/admin/payments/">결제·환불</Link>
           <Link href="/admin/reservations/" aria-current="page">
             예약 관리
           </Link>

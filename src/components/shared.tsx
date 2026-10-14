@@ -6,12 +6,8 @@ import { useState } from "react";
 import { BrandLogo } from "./brand-logo";
 import { pageBanners, sitePhotos, type SitePhoto } from "@/lib/photos";
 
-export function showReservationNotice() {
-  window.alert("준비중입니다. 현장으로 문의 부탁드립니다.");
-}
-
-export function ReservationButton({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <button type="button" className={className} onClick={showReservationNotice}>{children}</button>;
+export function ReservationButton({ children, className, href = '/reservation/' }: { children: React.ReactNode; className?: string; href?: string }) {
+  return <Link className={className} href={href}>{children}</Link>;
 }
 export const navigation = [
   ["홈", "/"],

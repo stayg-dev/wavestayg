@@ -171,7 +171,7 @@ export function BookingAdminDialog({
             </div>
           </fieldset>
         </form>
-      ) : ["pending", "registered", "approved"].includes(row.status) ? (
+      ) : row.payment_order_id ? <p><a href="/admin/payments/">온라인 결제 관리에서 결제 확인·환불 처리</a></p> : ["pending", "registered", "approved"].includes(row.status) ? (
         <form onSubmit={submit}>
           {row.status === "pending" && <p className="admin-muted">기존 대기 신청입니다. 확인 후 PMS로 이관할 수 있습니다. 접수 알림톡은 소급 발송하지 않습니다.</p>}
           <div className="admin-actions">

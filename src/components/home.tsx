@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from "react";
 import {
   Header,
   Footer,
   MediaBlock,
   SectionTitle,
-  showReservationNotice,
 } from "./shared";
 
 import { RoomInfo } from "./rooms";
@@ -21,6 +21,7 @@ const heroTitles = [["파도가 머무는", "조용한 시간"], ["바다를 구
 const heroRotationInterval = 5000;
 
 export function Home() {
+  const router = useRouter();
   const [slide, setSlide] = useState(0);
   const [rotationPaused, setRotationPaused] = useState(false);
 
@@ -46,10 +47,10 @@ export function Home() {
   }, [slide, rotationPaused]);
 
   const [facility, setFacility] = useState(0);
-  const [checkin, setCheckin] = useState("2026-09-20");
-  const [checkout, setCheckout] = useState("2026-09-22");
+  const [checkin, setCheckin] = useState('');
+  const [checkout, setCheckout] = useState('');
   const [guests, setGuests] = useState("2");
-  const nights = Math.max(
+  const nights = !checkin || !checkout ? 0 : Math.max(
     1,
     Math.round((Date.parse(checkout) - Date.parse(checkin)) / 86400000),
   );
@@ -105,7 +106,7 @@ export function Home() {
           </div>
           <form className="booking-bar" noValidate onSubmit={(event) => {
             event.preventDefault();
-            showReservationNotice();
+            router.push(`/reservation/book/?${new URLSearchParams({ check_in: checkin, check_out: checkout, adults: guests })}`);
           }}>
             <label>
               체크인
@@ -131,9 +132,9 @@ export function Home() {
               <input
                 type="date"
                 name="checkout"
-                min={new Date(Date.parse(checkin) + 86400000)
+                min={checkin ? new Date(Date.parse(checkin) + 86400000)
                   .toISOString()
-                  .slice(0, 10)}
+                  .slice(0, 10) : undefined}
                 value={checkout}
                 onChange={(e) => setCheckout(e.target.value)}
                 required

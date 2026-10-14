@@ -1,10 +1,57 @@
 # NICEPAY 인증결제 연동 설계
 
-작성일: 2026-10-13 · 상태: 구현 전 설계안
+작성일: 2026-10-13 · 상태: 로컬 구현 완료, 운영 미적용
 
 2026-10-13 요구사항 추가: **PG보다 먼저 홈페이지 관리자에서 실제 판매 요금 수정과 홈페이지 방막기를 제공한다. 요금·판매 차단·예약·결제·변경 이력의 모든 영속 데이터는 기존 PMS DB에서 관리한다.** 상세 화면과 저장 규칙은 [홈페이지 요금 및 방막기 관리 설계](./website-sales-settings-design.md)를 따른다.
 
-2026-10-13 로컬 구현: `/admin/settings/`의 요금·할인액·방막기와 PMS 저장·견적 연결을 구현했다. `base_amount`, 별도 `discount_amount`, 서버 계산 `sale_amount`를 사용한다. 아래 가격 불일치는 구현 착수 전 상태를 설명한다. 운영 DB 적용·가격 입력·배포와 NICEPAY 결제 구현은 아직 수행하지 않았다.
+2026-10-13 로컬 구현: `/admin/settings/`의 요금·할인액·방막기와 PMS 저장·견적 연결, NICEPAY 인증결제·서버 승인·망취소·관리자 전액 환불을 구현했다. `base_amount`, 별도 `discount_amount`, 서버 계산 `sale_amount`를 사용한다. 아래 최초 설계의 가격 차이와 테이블 제안은 착수 전 상태이며, 실제 구현·운영 적용 기준은 다음 절을 우선한다. 운영 DB 적용·실제 PG 요청·배포는 수행하지 않았다.
+
+## 구현 및 운영 적용 기준 (2026-10-13)
+
+홈페이지와 `C:/dev/HIO/stayg-pms/backend`를 함께 변경했다. 결제 영속 데이터는 PMS PostgreSQL에만 저장한다. 홈페이지 브라우저에는 주문별 조회용 HttpOnly 쿠키만 보관하고, MerchantKey·조회 토큰·인증 토큰은 공개 JSON과 로그에 노출하지 않는다. PG 결제창용 SignData와 일회성 ReturnURL은 공식 결제창 호출에 필요한 공개 요청 값이다.
+
+| 항목 | 구현 |
+|---|---|
+| 일반 예약 | PMS 견적 및 설정 revision 확인 → 취소 규정 동의 → 15분 재고 확보 → 공식 `nicepay-pgweb.js`의 `goPay(form)` |
+| PC / 모바일 복귀 | `/api/payments/return/`에서 form POST 수신, 원래 쿠키 없이 주문별 복귀 토큰과 PG 서명 검증. ASCII 프로토콜 값의 원문을 보존하며 EUC-KR/UTF-8 안내문은 저장하지 않음 |
+| 결과 조회 | `/reservation/payment/?order=…`, 신청 번호·비밀번호 조회 시 다른 기기에서도 상태 쿠키 발급 |
+| 관리자 | `/admin/payments/`: 결제·환불 상태, Moid/TID, 관리자 전액 환불, NICEPAY에서 확인한 거래 결과의 수동 대사 |
+| 정책 | `/admin/settings/`의 결제·취소 규정 버전/본문, 내용 변경 시 버전 변경 필수, 주문에 동의한 본문·버전·시각 저장 |
+| DB | `website_payment_orders`, `website_payment_attempts`, `website_payment_refunds`; `website_applications.payment_order_id`, `sales_daily_reports.website_payment_order_id` 연결 |
+| 재고와 수납 | 대기 판매일보는 `RESERVED`·수납 0원, 승인 확정 후 카드 항목에 실제 청구액 반영. 고객 접수 알림은 승인 후, 취소 알림은 환불 확정 후 기존 PMS 발송 큐에 저장 |
+| 기존 흐름 보호 | 수분양자 무료·현장 정산 유지. 온라인 결제 예약의 직접 취소·삭제·금액/일정 변경·복사 차단. 결제 완료 후 기존 금액을 보존한 객실 배정·투숙객 정보 수정 및 프런트 체크인 지원 |
+
+승인·환불 HTTP 통신은 DB 트랜잭션 밖에서 수행한다. 5초 주기의 PMS 스케줄러가 DB에 작업 상태와 120초 lease를 먼저 저장한다. 승인 응답 유실 또는 승인 중 서버 재시작 시 승인을 다시 보내지 않고 망취소로 전환한다. 검증된 응답은 판매일보 반영 전에 별도로 커밋하므로 후속 DB 오류는 청구 없이 로컬 반영만 재시도한다. 망취소는 최대 3회까지 확인하고 불명확하면 `manual_review`로 전환하며 재고를 유지한다. 일반 환불 응답이 불명확하면 자동 재전송하지 않는다.
+
+관리자 수동 대사는 NICEPAY 관리자에서 TID·주문번호·승인/취소 금액을 확인한 뒤 확인자·시각·근거를 입력하는 절차다. **대사 버튼은 PG에 승인·취소 요청을 보내지 않으며 확인된 결과만 PMS에 기록한다.** 처리 중인 거래는 수동 대사할 수 없다. 결과가 불명확한 거래를 임의로 실패 처리해서 객실을 다시 판매하지 않는다. 승인 완료와 호텔의 예약 확정 알림은 별개다.
+
+### 적용 순서
+
+1. 기존 PMS DB 백업 후 미적용된 `backend/.db/patches/20261013_website_sales.sql`, 다음으로 `20261013_website_payments.sql`을 적용한다. `schema.ddl.sql`에도 같은 테이블·열을 반영했다. 코드에서 자동으로 운영 스키마를 변경하지 않는다.
+2. PMS 환경 변수는 `backend/.env.example`을 따른다. `NICEPAY_ENABLED=false` 상태로 PMS와 홈페이지를 배포한다. 홈페이지에는 기존 `PMS_PROJECT_ID`, `PMS_API_KEY`, 관리자 인증만 필요하다. PG 키는 PMS에만 둔다.
+3. PMS에 `NICEPAY_MID`, `NICEPAY_MERCHANT_KEY`, `NICEPAY_ENVIRONMENT=test`, `WEBSITE_PUBLIC_ORIGIN=https://실제홈페이지도메인`, `PAYMENT_DATA_ENCRYPTION_KEY`를 설정한다. 암호화 키는 독립적인 무작위 32바이트의 base64 값이며 모든 PMS 인스턴스에서 동일해야 한다. 서버 재시작 시 새로 만들지 않는다. 대기 거래가 있는 동안 키·MID를 바꾸지 않는다.
+4. **`NICEPAY_ENVIRONMENT=test`는 기록용 구분이다. 실제 테스트 여부는 NICEPAY가 발급한 MID/키에 의해 결정되므로 테스트 MID/키를 사용해야 한다.** 이 구현은 테스트와 운영 모두 공식 인증결제 도메인만 호출한다.
+5. 관리자에서 실제 요금·별도 할인액·판매일·방막기·취소 규정을 저장한다. PG 키 또는 규정이 준비되지 않으면 활성화 상태여도 신규 카드 결제를 차단한다. `NICEPAY_ENABLED=false`에서는 기존 일반 현장 정산 신청을 유지한다.
+6. 테스트 가맹점으로 PC와 모바일 브라우저의 인증·승인·전액 취소, 앱카드 복귀, 결제창 닫기, 서명 오류, 중복 복귀, 통신 단절, 실제 PostgreSQL 동시 재고 경합을 확인한다. 현재 로컬 검증은 PG 응답 대체와 pg-mem을 사용했으며 실제 승인/취소나 실 PostgreSQL 잠금 경합 검증을 대신하지 않는다.
+7. 운영 MID 계약/도메인/네트워크 설정 확인 후 사용자가 운영 키와 `NICEPAY_ENVIRONMENT=production`, `NICEPAY_ENABLED=true`로 전환한다. PMS 스케줄러가 계속 실행되어야 승인·만료·환불을 처리할 수 있다. 신규 결제만 중단할 때는 `NICEPAY_ENABLED=false`로 바꾸고 기존 키와 스케줄러를 유지한다.
+
+Reverse proxy/APM은 `/api/payments/return/`의 query token과 POST 본문을 로그에 기록하지 않도록 설정한다. 이 경로는 PG의 외부 form POST와 303 리다이렉트를 허용해야 한다. 홈페이지 결제창 요청과 PMS 승인/취소 요청은 EUC-KR, 응답 요청은 `CharSet=utf-8`이다. HTTPS 연결 5초·전체 요청 35초·응답 64KiB 제한과 공식 호스트/경로 허용 목록을 적용한다.
+
+현재 범위는 일반 예약의 카드 전액 결제와 입실 전 관리자 전액 취소다. 부분 환불·가상계좌·정산 수수료 계산·거래 조회 API 자동 대사는 포함하지 않는다. 온라인 결제 예약의 키오스크 체크인은 차단하며 프런트에서 처리한다. 객실 간 이동·자동 노쇼 처리도 보호 대상이다. 기존 PMS 폼에서 객실 배정/체크인하는 운영 경로를 사용하고 금액·일정 변경은 전액 환불 후 신규 예약으로 처리한다. 실제 PG 테스트 시 해당 가맹점 응답 규격도 확인한다.
+
+공식 근거: [결제창](https://developers.nicepay.co.kr/docs/pg/auth/payment-window/), [승인](https://developers.nicepay.co.kr/docs/pg/auth/authorization/), [망취소](https://developers.nicepay.co.kr/docs/pg/auth/net-cancel/), [승인 취소](https://developers.nicepay.co.kr/docs/pg/auth/payment-cancel/).
+
+### 로컬 검증 결과
+
+- 홈페이지 프로덕션 빌드, ESLint, 단위 테스트 24개 통과.
+- HTTP/Playwright: 관리자 인증·CSRF·가격 재계산 위임·HttpOnly 쿠키·쿠키 없는 모바일 복귀·PC SDK 콜백·결제 결과·관리자 환불 요청·390px 화면 넘침 검사 통과. SDK와 PMS HTTP 응답은 로컬 대체 서버를 사용했다.
+- PMS 격리 서버 실행/종료와 빌드, 단위 97개 스위트·502개 테스트, e2e 54개 스위트·290개 테스트 통과. 최종 수정 후 관련 결제·판매일보·알림 e2e 42개도 재확인했다.
+- PMS의 기존 실 PostgreSQL CMS 테스트 1개 스위트·20개는 `CMS_SYNC_TEST_DATABASE_URL` 미설정으로 제외됐다. 새 결제 DB 검증은 pg-mem으로 수행했다.
+- 키오스크 단위 24개 스위트·89개 테스트, e2e 18개 스위트·46개 테스트 통과. 신규 결제 코드·테스트 ESLint 및 양쪽 변경분 공백 검사 통과.
+
+배포 전 원래 MID의 환불 가능 거래가 남아 있다면 해당 MID/키를 계속 유지한다. 이 버전은 여러 MID의 동시 운영이나 자동 키 전환을 지원하지 않는다.
+
+이하 내용은 최초 설계와 검토 근거를 보관한 것이다.
 
 웨이브 스테이지의 일반 예약에 NICEPAY 카드결제를 연결한다. 홈페이지는 결제창과 결과 화면을 제공하고, 기존 PMS 백엔드가 금액 계산, 주문 저장, 승인·취소, 재고 확보와 복구를 담당하는 구성을 권장한다. 결제 정보도 기존 PMS PostgreSQL에 저장한다.
 
@@ -176,7 +223,7 @@ PG와 DB는 하나의 원자적 트랜잭션으로 묶을 수 없다. `approving
 
 ## 8. 홈페이지 API와 PMS 계약
 
-아래 경로는 제안이며 아직 구현되지 않았다. 결제 도메인 로직은 PMS에 두고 Next.js는 제한된 경로만 전달한다.
+아래 경로는 최초 설계 제안이다. 실제 구현 경로는 문서 상단의 구현 기준 및 `WebsitePaymentController`를 따른다. 결제 도메인 로직은 PMS에 두고 Next.js는 제한된 경로만 전달한다.
 
 | Next.js 경로 | 입력과 권한 | 결과 |
 |---|---|---|
