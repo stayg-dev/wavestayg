@@ -40,7 +40,7 @@ export function OwnerCheckInCalendar({ value, today, onChange }: {
               onClick={() => { onChange(date); setOpen(false); trigger.current?.focus(); }}>{i + 1}</button>;
           })}
         </div>
-        <p>비수기는 입실 최소 14일 전에 신청해야 합니다.</p>
+        <p>입실일 기준 비수기는 최소 5일 전, 성수기(7~8월)는 최소 14일 전에 신청해야 합니다.</p>
       </div>}
     </div>
   );

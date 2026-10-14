@@ -67,7 +67,7 @@ const pms = createServer(async (req, res) => {
     const dates = [];
     for (let d = Date.parse(`${from}T00:00:00Z`); d <= Date.parse(`${to}T00:00:00Z`) && dates.length < 31; d += 86400000) {
       const date = new Date(d).toISOString().slice(0, 10);
-      dates.push({ date, ...sales.config.tariffs[0].weekday, is_open: !sales.config.blocks.some(b => b.date === date), is_owner_open: true });
+      dates.push({ date, ...(sales.config.tariffs[0]?.weekday ?? { base_amount: null, discount_amount: null, sale_amount: null }), is_open: sales.config.is_enabled && sales.config.tariffs.length > 0 && !sales.config.blocks.some(b => b.date === date), is_owner_open: true });
     }
     data = { ...sales.config, revision: sales.revision, rooms: [{ room_type_id: roomTypeId, name: "DDM", dates }] };
   }
@@ -324,7 +324,61 @@ try {
       }
       const errors = [];
       page.on("pageerror", e => errors.push(e.message));
+      // Static guides remain usable even when the live pricing API is unavailable.
+      let guidePriceRequests = 0;
+      await page.route('**/api/pms/sales/**', route => {
+        guidePriceRequests++;
+        return route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'Pricing unavailable' }) });
+      });
+      await page.route('**/api/pms/me/', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ id: project, login_id: '301', name: '안내 검증', room_type_name: 'DDM', annual_nights: 5, carryover_nights: 0 }) }));
+      await mkdir('design-reference', { recursive: true });
+      for (const path of ['/rooms/', '/owners/']) {
+        await page.goto(`${origin}${path}`);
+        const guide = page.locator('#room-rates');
+        await guide.getByRole('tab', { name: '비수기', exact: true }).waitFor();
+        assert.equal(await guide.locator('tbody tr').count(), 11);
+        const standard = guide.getByRole('row').filter({ has: page.getByRole('rowheader', { name: '스탠다드 더블 X', exact: true }) });
+        assert.equal(await standard.locator('td').first().locator('s').textContent(), '55,000');
+        assert.equal(await standard.locator('td').first().locator('strong').textContent(), '50,000');
+        assert.equal(await guide.locator('input[type=date]').count(), 0);
+        assert.doesNotMatch(await guide.innerText(), /요금 미설정|접수 중지|확인 중|Pricing unavailable/);
+        const guest = guide.locator('.service-rate-guide p').first();
+        assert.match(await guest.innerText(), path === '/owners/' ? /11,000/ : /22,000/);
+        await guide.getByRole('tab', { name: '준성수기', exact: true }).click();
+        assert.equal(await standard.locator('td').first().textContent(), '75,000');
+        await guide.getByRole('tab', { name: '성수기', exact: true }).click();
+        assert.equal(await standard.locator('td').count(), 6);
+        assert.equal(await standard.locator('td').first().textContent(), '125,000');
+        assert.equal(await standard.locator('td').nth(3).textContent(), '178,000');
+        await guide.screenshot({ path: `design-reference/static-rates-${path.includes('owners') ? 'owners' : 'rooms'}-desktop.png` });
+        await page.setViewportSize({ width: 390, height: 844 });
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'static guide has no mobile page overflow');
+        await guide.screenshot({ path: `design-reference/static-rates-${path.includes('owners') ? 'owners' : 'rooms'}-mobile.png` });
+        await page.setViewportSize({ width: 1440, height: 1000 });
+      }
+      assert.equal(guidePriceRequests, 0, 'room and owner guides do not request configured sales prices');
+      await page.unroute('**/api/pms/sales/**');
+      await page.unroute('**/api/pms/me/');
+      const savedSales = structuredClone(sales);
+      sales = { ...sales, revision: null, config: { ...sales.config, tariffs: [], is_enabled: false } };
       await page.goto(`${origin}/admin/settings/`);
+      await page.getByLabel("디럭스 더블 마운틴 주중 정상가", { exact: true }).waitFor();
+      assert.equal(await page.getByLabel("디럭스 더블 마운틴 주중 정상가", { exact: true }).inputValue(), "65000");
+      assert.equal(await page.getByLabel("디럭스 더블 마운틴 금요일 정상가", { exact: true }).inputValue(), "85000");
+      assert.equal(await page.getByLabel("디럭스 더블 마운틴 토요일·공휴일 전일 실제 판매가", { exact: true }).textContent(), "100,000원");
+      assert.equal(sales.config.tariffs.length, 0, "initial values remain an unsaved draft");
+      await page.getByLabel("변경 사유", { exact: true }).fill("금액표 초기값 설정");
+      await page.getByRole("button", { name: "PMS에 설정 저장", exact: true }).click();
+      await page.getByText("PMS에 저장했습니다. 새 견적과 예약에 바로 적용됩니다.").waitFor();
+      assert.equal(sales.config.is_enabled, false);
+      assert.deepEqual(sales.config.tariffs[0].friday, { base_amount: 85000, discount_amount: 5000, sale_amount: 80000 });
+      await page.reload();
+      await page.getByLabel("디럭스 더블 마운틴 금요일 정상가", { exact: true }).waitFor();
+      assert.equal(await page.getByLabel("디럭스 더블 마운틴 금요일 정상가", { exact: true }).inputValue(), "85000");
+      sales = savedSales;
+      await page.goto(`${origin}/admin/settings/`);
+      await page.getByLabel("디럭스 더블 마운틴 주중 할인액", { exact: true }).waitFor();
+      assert.equal(await page.getByLabel("디럭스 더블 마운틴 주중 할인액", { exact: true }).inputValue(), "0", "existing saved prices are preserved");
       await page.getByLabel("디럭스 더블 마운틴 주중 할인액", { exact: true }).fill("5000");
       assert.equal(await page.getByLabel("디럭스 더블 마운틴 주중 실제 판매가", { exact: true }).textContent(), "60,000원");
       await page.getByLabel("변경 사유", { exact: true }).fill("할인 필드 UI 검증");

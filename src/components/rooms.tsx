@@ -15,7 +15,7 @@ export function RoomInfo({ room }: { room: Room }) {
       <p className="muted room-korean">{room.korean}</p>
       <p className="room-description">{room.description}</p>
       <div className="price-row">
-        <p><RoomStartingRate room={room} /> <span className="muted">/ 1박 · 향후 31일 최저가</span></p>
+        <p><RoomStartingRate room={room} /> <span className="muted">/ 1박 · 비수기 주중 기준</span></p>
         <ReservationButton className="pill small" href={`/reservation/book/?room_type=${encodeURIComponent(room.korean)}`}>예약하기</ReservationButton>
       </div>
     </div>
@@ -85,7 +85,7 @@ export function Rooms() {
                   <p className="muted">{item.korean}</p>
                   <p>{item.description}</p>
                   <div className="price-row">
-                    <span><RoomStartingRate room={item} /></span><span>/ 1박 · 향후 31일 최저가</span>
+                    <span><RoomStartingRate room={item} /></span><span>/ 1박 · 비수기 주중 기준</span>
                     <button className="room-select" aria-label={`${item.korean} 자세히 보기`} aria-pressed={selected === item.id} aria-controls="room-detail" onClick={() => selectRoom(item.id)}>{selected === item.id ? "선택됨 ✓" : "자세히 보기 →"}</button>
                   </div>
                 </div>

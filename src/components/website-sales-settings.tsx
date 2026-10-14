@@ -6,6 +6,11 @@ import { PortalShell, bookingRequest } from "./website-booking";
 import { roomTypeLabel } from "@/lib/room-type-labels";
 import { bookingToday, shiftBookingDate } from "@/lib/owner-booking-dates";
 import {
+  fillRateTableTariffs,
+  initialSalesDraft,
+  rateTableTariff,
+} from "@/lib/website-sales-defaults";
+import {
   editSalesDates,
   salesDateRange,
   type SalesAudience,
@@ -99,7 +104,7 @@ export function WebsiteSalesSettings() {
     try {
       const data = await bookingRequest<SalesSnapshot>("admin/sales");
       setSnapshot(data);
-      setConfig(structuredClone(data.config));
+      setConfig(initialSalesDraft(data));
       pending.current = null;
       setViewType((current) => current || data.room_types?.[0]?.id || "");
       setHistory(await bookingRequest<SalesHistory[]>("admin/sales/history"));
@@ -118,7 +123,7 @@ export function WebsiteSalesSettings() {
       .then(([data, changes]) => {
         if (cancelled) return;
         setSnapshot(data);
-        setConfig(structuredClone(data.config));
+        setConfig(initialSalesDraft(data));
         setHistory(changes);
         setViewType(data.room_types?.[0]?.id ?? "");
       })
@@ -354,6 +359,31 @@ export function WebsiteSalesSettings() {
           <section className="portal-card">
             <h2>객실 기본 요금</h2>
             <p>
+              초기값은 기존 금액표의 비수기 정상가와 할인액 5,000원입니다.
+              아래에서 수정한 뒤 PMS에 저장하면 반영됩니다. 성수기 등 다른
+              기간의 요금은 날짜별 요금에서 설정해 주세요.
+            </p>
+            <button
+              type="button"
+              disabled={
+                !snapshot?.room_types?.some(
+                  (room) =>
+                    !config.tariffs.some((t) => t.room_type_id === room.id) &&
+                    rateTableTariff(room) !== null,
+                )
+              }
+              onClick={() => {
+                setConfig(
+                  fillRateTableTariffs(config, snapshot?.room_types ?? []),
+                );
+                setMessage(
+                  "미설정 객실에 금액표 초기값을 채웠습니다. 변경 사유를 입력하고 PMS에 저장해 주세요.",
+                );
+              }}
+            >
+              미설정 객실에 금액표 초기값 채우기
+            </button>
+            <p>
               정상가와 할인액을 각각 입력하세요. 실제 판매가는 정상가에서
               할인액을 빼서 자동 계산됩니다. 할인액 0원은 할인 없이 판매합니다.
               금액은 객실 1실·1박 기준이며 공휴일 전일은 토요일 요금이
@@ -434,7 +464,7 @@ export function WebsiteSalesSettings() {
                                 edit({
                                   tariffs: [
                                     ...config.tariffs,
-                                    {
+                                    rateTableTariff(room) ?? {
                                       room_type_id: room.id,
                                       name: room.name,
                                       weekday: {
@@ -547,7 +577,7 @@ export function WebsiteSalesSettings() {
             <label>
               작업
               <select
-              aria-label="작업"
+                aria-label="작업"
                 value={action}
                 onChange={(e) => setAction(e.target.value as typeof action)}
               >
@@ -708,10 +738,45 @@ export function WebsiteSalesSettings() {
           </section>
           <section className="portal-card">
             <h2>결제·취소 규정</h2>
-            <p>카드 결제 고객에게 보여줄 운영 규정을 입력하세요. 내용 변경 시 버전도 변경해 주세요. 동의한 내용은 결제 주문에 보관됩니다.</p>
-            <label>규정 버전<input maxLength={50} value={config.payment_policy?.version ?? ''} onChange={e => edit({ payment_policy: { version: e.target.value, text: config.payment_policy?.text ?? '' } })} placeholder="예: 2026-10-v1" /></label>
-            <label>결제·취소·환불 안내<textarea rows={8} maxLength={10000} value={config.payment_policy?.text ?? ''} onChange={e => edit({ payment_policy: { version: config.payment_policy?.version ?? '', text: e.target.value } })} /></label>
-            <p><Link href="/admin/payments/">온라인 결제·환불 관리</Link></p>
+            <p>
+              카드 결제 고객에게 보여줄 운영 규정을 입력하세요. 내용 변경 시
+              버전도 변경해 주세요. 동의한 내용은 결제 주문에 보관됩니다.
+            </p>
+            <label>
+              규정 버전
+              <input
+                maxLength={50}
+                value={config.payment_policy?.version ?? ""}
+                onChange={(e) =>
+                  edit({
+                    payment_policy: {
+                      version: e.target.value,
+                      text: config.payment_policy?.text ?? "",
+                    },
+                  })
+                }
+                placeholder="예: 2026-10-v1"
+              />
+            </label>
+            <label>
+              결제·취소·환불 안내
+              <textarea
+                rows={8}
+                maxLength={10000}
+                value={config.payment_policy?.text ?? ""}
+                onChange={(e) =>
+                  edit({
+                    payment_policy: {
+                      version: config.payment_policy?.version ?? "",
+                      text: e.target.value,
+                    },
+                  })
+                }
+              />
+            </label>
+            <p>
+              <Link href="/admin/payments/">온라인 결제·환불 관리</Link>
+            </p>
             <h2>부가서비스 요금</h2>
             <div className="portal-grid">
               {(
