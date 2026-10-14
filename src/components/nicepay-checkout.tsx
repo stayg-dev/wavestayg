@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { type PreparedPayment } from '@/lib/payments';
 declare global { interface Window { goPay?: (form: HTMLFormElement) => void; nicepaySubmit?: () => void; nicepayClose?: () => void; } }
@@ -13,22 +13,22 @@ function loadNicepay() {
   });
   return sdk;
 }
-export function NicepayCheckout({ prepared }: { prepared: PreparedPayment }) {
+export function NicepayCheckout({ prepared, autoOpen = false }: { prepared: PreparedPayment; autoOpen?: boolean }) {
   const form = useRef<HTMLFormElement>(null), opened = useRef(false);
   const [ready, setReady] = useState(false), [error, setError] = useState(''), [busy, setBusy] = useState(false), [launched, setLaunched] = useState(false);
+  const pay = useCallback(() => {
+    if (!form.current || !window.goPay || opened.current) return;
+    if (Date.now() >= Date.parse(prepared.expires_at)) { setError('결제 시간이 만료되었습니다. 결제 상태를 확인해 주세요.'); return; }
+    opened.current = true; setLaunched(true); setBusy(true); setError('');
+    try { window.goPay(form.current); } catch { opened.current = false; setLaunched(false); setBusy(false); setError('결제창을 열지 못했습니다. 아래 버튼으로 다시 열어 주세요.'); }
+  }, [prepared.expires_at]);
   useEffect(() => {
     let active = true;
     window.nicepaySubmit = () => { if (form.current) HTMLFormElement.prototype.submit.call(form.current); };
     window.nicepayClose = () => { if (active) { setBusy(false); setError('결제창이 닫혔습니다. 아래에서 결제 결과를 확인해 주세요.'); } };
-    loadNicepay().then(() => { if (active) setReady(true); }).catch((e: Error) => { if (active) setError(e.message); });
+    loadNicepay().then(() => { if (active) { setReady(true); if (autoOpen) pay(); } }).catch((e: Error) => { if (active) setError(e.message); });
     return () => { active = false; delete window.nicepaySubmit; delete window.nicepayClose; };
-  }, []);
-  function pay() {
-    if (!form.current || !window.goPay || opened.current) return;
-    if (Date.now() >= Date.parse(prepared.expires_at)) { setError('결제 시간이 만료되었습니다. 결제 상태를 확인해 주세요.'); return; }
-    opened.current = true; setLaunched(true); setBusy(true); setError('');
-    try { window.goPay(form.current); } catch { setBusy(false); setError('결제창을 열지 못했습니다. 결제 상태를 확인해 주세요.'); }
-  }
+  }, [autoOpen, pay]);
   return <section className="portal-card">
     <h2>카드 결제</h2><p>신청 번호: <strong className="portal-reference">{prepared.application_id}</strong></p>
     <p>{Number(prepared.fields.Amt).toLocaleString()}원 · 결제 가능 시간 {new Date(prepared.expires_at).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit' })}까지</p>

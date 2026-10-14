@@ -19,6 +19,7 @@ const roomTypeId = randomUUID();
 const paymentOrder = randomUUID(), applicationId = randomUUID(), statusToken = 's'.repeat(43), callbackToken = 'c'.repeat(43);
 let paymentStatus = 'awaiting_auth';
 let inventoryOpen = true;
+let failPaymentPrepare = false;
 const fixturePrice = () => ({ base_amount: 65000, discount_amount: 0, sale_amount: 65000 });
 let sales = { revision: randomUUID(), room_types: [{ id: roomTypeId, name: "DDM" }], config: {
   is_enabled: true, is_general_enabled: true, is_owner_enabled: true, message: "", valid_from: "2026-01-01", valid_to: "2027-12-31",
@@ -46,6 +47,12 @@ const pms = createServer(async (req, res) => {
       ? { total: 25000 }
       : { items: [], total: 0, page: 1 };
   const url = new URL(req.url, "http://127.0.0.1");
+  if (url.pathname.endsWith('/payments/prepare') && failPaymentPrepare) {
+    failPaymentPrepare = false;
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Internal database error' }));
+    return;
+  }
   if (url.pathname.endsWith('/payments/config')) data = { enabled: true, ready: true, policy_version: 'test-v1', policy_text: '테스트 취소 규정입니다.' };
   else if (url.pathname.endsWith('/payments/prepare')) data = { order_id: paymentOrder, application_id: applicationId, expires_at: new Date(Date.now() + 900000).toISOString(), status_token: statusToken, fields: { MID: 'fixture00m', Moid: 'Wfixture', Amt: '25000', PayMethod: 'CARD', ReturnURL: `${origin}/api/payments/return/?order=${paymentOrder}&token=${callbackToken}` } };
   else if (url.pathname.endsWith('/authenticate')) { paymentStatus = 'paid'; data = { order_id: paymentOrder, status_token: statusToken }; }
@@ -406,7 +413,7 @@ try {
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "mobile page has no horizontal overflow");
       assert.deepEqual(errors, []);
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.route('https://pg-web.nicepay.co.kr/v3/common/js/nicepay-pgweb.js', route => route.fulfill({ contentType: 'text/javascript', body: `window.goPay = function(form) { const field = document.createElement('input'); field.type='hidden'; field.name='AuthResultCode'; field.value='0000'; form.appendChild(field); window.nicepaySubmit(); };` }));
+      await page.route('https://pg-web.nicepay.co.kr/v3/common/js/nicepay-pgweb.js', route => route.fulfill({ contentType: 'text/javascript', body: `window.goPay = function(form) { sessionStorage.setItem('nicepayLaunches', String(Number(sessionStorage.getItem('nicepayLaunches') || 0) + 1)); const field = document.createElement('input'); field.type='hidden'; field.name='AuthResultCode'; field.value='0000'; form.appendChild(field); window.nicepaySubmit(); };` }));
       await page.goto(origin);
       await page.getByRole('link', { name: '예약&조회', exact: true }).click();
       await page.waitForURL('**/reservation/');
@@ -455,20 +462,27 @@ try {
       await page.setViewportSize({ width: 390, height: 844 });
       await reservationScreenshot('reservation-step3-mobile');
       await page.setViewportSize({ width: 1920, height: 1080 });
-      await page.getByRole('button', { name: '다음 → 결제 확인', exact: true }).click();
-      assert.equal(await page.getByRole('button', { name: '카드 결제 준비', exact: true }).isDisabled(), true);
+      assert.equal(await page.getByRole('button', { name: '결제', exact: true }).isDisabled(), true);
       await page.locator('input[name=payment_terms]').check();
-      await reservationScreenshot('reservation-step4-desktop');
+      await reservationScreenshot('reservation-payment-consent-desktop');
       await page.setViewportSize({ width: 390, height: 844 });
-      await reservationScreenshot('reservation-step4-mobile');
+      await reservationScreenshot('reservation-payment-consent-mobile');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-      await page.getByRole('button', { name: '카드 결제 준비', exact: true }).click();
-      await page.getByRole('button', { name: 'NICEPAY 카드 결제창 열기', exact: true }).waitFor();
+      failPaymentPrepare = true;
+      await page.getByRole('button', { name: '결제', exact: true }).click();
+      await page.getByRole('alert').filter({ hasText: 'PMS 처리에 실패했습니다.' }).waitFor();
+      assert.equal(await page.getByLabel('예약자 이름', { exact: true }).inputValue(), '결제 테스트');
+      assert.equal(await page.locator('input[name=payment_terms]').isChecked(), true);
+      assert.equal(await page.evaluate(() => sessionStorage.getItem('nicepayLaunches')), null);
+      const preparesBefore = calls.filter(call => call.url.endsWith('/payments/prepare')).length;
+      await page.getByRole('button', { name: '결제', exact: true }).click();
+      // One click must prepare the payment and launch the SDK, with no second checkout button.
+      await page.getByRole('heading', { name: '결제 완료 · 예약 접수', exact: true }).waitFor();
+      assert.equal(calls.filter(call => call.url.endsWith('/payments/prepare')).length, preparesBefore + 1);
+      assert.equal(await page.evaluate(() => sessionStorage.getItem('nicepayLaunches')), '1');
       const prepareCall = calls.findLast(call => call.url.endsWith('/payments/prepare'));
       assert.equal(prepareCall.body.adults, 2); assert.equal(prepareCall.body.booker_name, '결제 테스트');
       assert.equal(prepareCall.body.guest_name, '투숙 테스트'); assert.equal(prepareCall.body.pricing_revision, sales.revision);
-      await page.getByRole('button', { name: 'NICEPAY 카드 결제창 열기', exact: true }).click();
-      await page.getByRole('heading', { name: '결제 완료 · 예약 접수', exact: true }).waitFor();
       await reservationScreenshot('payment-result-mobile');
       await page.setViewportSize({ width: 1920, height: 1080 });
       await reservationScreenshot('payment-result-desktop');

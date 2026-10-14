@@ -8,6 +8,10 @@
 
 ## 구현 및 운영 적용 기준 (2026-10-13)
 
+2026-10-14 수정: 일반 예약의 예약자 정보 화면에서 개인정보·결제 금액·취소 규정에 동의한 뒤 `결제`를 누르면 결제 준비와 NICEPAY `goPay(form)` 호출을 이어서 수행한다. 별도 결제 확인/결제창 열기 클릭은 필요하지 않으며, 결제 준비 실패 시 입력과 동의를 유지한다. 수분양자의 기존 예약 흐름은 유지한다.
+
+운영 DB에서 `website_applications_status_check`가 `payment_pending`을 허용하지 않으면 결제 준비 중 PostgreSQL 오류 `23514`가 발생한다. 기존 결제 마이그레이션 적용 DB에는 `C:/dev/HIO/stayg-pms/backend/.db/patches/20261014_website_payment_status.sql`을 적용한다. 이 패치는 기존 상태를 모두 허용하면서 결제 대기 상태만 추가하고 예약 데이터는 변경하지 않는다. 신규 설치용 DDL, 최초 결제 마이그레이션과 TypeORM 엔티티도 같은 제약조건으로 맞췄다. 운영 적용은 사용자가 수행하며, 버튼/자동 열기 변경은 홈페이지 배포가 필요하다.
+
 홈페이지와 `C:/dev/HIO/stayg-pms/backend`를 함께 변경했다. 결제 영속 데이터는 PMS PostgreSQL에만 저장한다. 홈페이지 브라우저에는 주문별 조회용 HttpOnly 쿠키만 보관하고, MerchantKey·조회 토큰·인증 토큰은 공개 JSON과 로그에 노출하지 않는다. PG 결제창용 SignData와 일회성 ReturnURL은 공식 결제창 호출에 필요한 공개 요청 값이다.
 
 | 항목 | 구현 |

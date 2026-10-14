@@ -83,7 +83,7 @@ export function ReservationFrame({
 export function ReservationSteps({ step }: { step: number }) {
   return (
     <ol className={styles.steps} aria-label="예약 진행 단계">
-      {["날짜 · 인원", "객실 선택", "예약자 정보", "결제 · 확인"].map(
+      {["날짜 · 인원", "객실 선택", "예약자 정보", "결제"].map(
         (label, i) => (
           <li key={label} aria-current={step === i + 1 ? "step" : undefined}>
             <span className={styles.stepNumber}>
@@ -557,6 +557,7 @@ export function GeneralReservation({
         setRow(
           await bookingRequest<Application>("applications", "POST", input),
         );
+      go(4);
     } catch (e) {
       setError(
         `${(e as Error).message} 결과가 불분명하면 예약번호 ${requestId.current}로 먼저 조회해 주세요.`,
@@ -616,7 +617,7 @@ export function GeneralReservation({
             <div className={styles.mainColumn}>
               {prepared ? (
                 <div className={styles.checkout}>
-                  <NicepayCheckout prepared={prepared} />
+                  <NicepayCheckout prepared={prepared} autoOpen />
                 </div>
               ) : (
                 <fieldset className={styles.fieldset} disabled={busy}>
@@ -799,7 +800,7 @@ export function GeneralReservation({
                     <form
                       onSubmit={(event) => {
                         event.preventDefault();
-                        go(4);
+                        void submit();
                       }}
                     >
                       <section className={styles.panel}>
@@ -871,6 +872,28 @@ export function GeneralReservation({
                             </small>
                           </span>
                         </label>
+                        {config?.enabled && (
+                          <>
+                            {quote && <PriceDetails quote={quote} />}
+                            <details className={styles.policy} open>
+                              <summary>결제·취소 규정</summary>
+                              <p>{config.policy_text}</p>
+                            </details>
+                            <label className={styles.check}>
+                              <input
+                                name="payment_terms"
+                                type="checkbox"
+                                required
+                                checked={paymentTerms}
+                                onChange={(e) => setPaymentTerms(e.target.checked)}
+                              />
+                              결제 금액과 취소·환불 규정을 확인하고 동의합니다.
+                            </label>
+                            <p className={styles.hint}>
+                              결제를 누르면 NICEPAY 신용카드 결제창이 열립니다.
+                            </p>
+                          </>
+                        )}
                       </section>
                       <div className={styles.actions}>
                         <button
@@ -880,117 +903,12 @@ export function GeneralReservation({
                         >
                           ← 이전
                         </button>
-                        <button className={styles.primary} type="submit">
-                          다음 → 결제 확인
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                  {step === 4 && (
-                    <>
-                      <section className={styles.panel}>
-                        <h2>결제 방법</h2>
-                        <div className={styles.method}>
-                          <span aria-hidden="true">●</span>
-                          <div>
-                            <strong>
-                              {config?.enabled
-                                ? "신용카드"
-                                : config
-                                  ? "현장 정산"
-                                  : "결제 방법 확인 중…"}
-                            </strong>
-                            <small>
-                              {config?.enabled
-                                ? "NICEPAY의 안전한 결제창에서 결제합니다."
-                                : "예약 내용을 확인한 후 접수해 주세요."}
-                            </small>
-                          </div>
-                        </div>
-                      </section>
-                      <section className={styles.panel}>
-                        <h2>최종 확인</h2>
-                        <dl className={`${styles.details} ${styles.review}`}>
-                          <div>
-                            <dt>예약자</dt>
-                            <dd>{guest.booker_name}</dd>
-                          </div>
-                          <div>
-                            <dt>연락처</dt>
-                            <dd>{guest.booker_phone}</dd>
-                          </div>
-                          <div>
-                            <dt>투숙객</dt>
-                            <dd>
-                              {sameGuest ? guest.booker_name : guest.guest_name}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt>객실</dt>
-                            <dd>{roomTypeLabel(type)}</dd>
-                          </div>
-                          <div>
-                            <dt>일정</dt>
-                            <dd>
-                              {displayDate(dates.check_in)} →{" "}
-                              {displayDate(dates.check_out)}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt>인원</dt>
-                            <dd>
-                              {adults + childrenCount}명 · 추가 침구 {bedding}
-                              세트
-                            </dd>
-                          </div>
-                        </dl>
-                        {quote && <PriceDetails quote={quote} />}
-                        {config?.enabled && (
-                          <>
-                            <details className={styles.policy} open>
-                              <summary>결제·취소 규정</summary>
-                              <p>{config.policy_text}</p>
-                            </details>
-                            <label className={styles.check}>
-                              <input
-                                name="payment_terms"
-                                type="checkbox"
-                                checked={paymentTerms}
-                                onChange={(e) =>
-                                  setPaymentTerms(e.target.checked)
-                                }
-                              />
-                              결제 금액과 취소·환불 규정을 확인하고 동의합니다.
-                            </label>
-                          </>
-                        )}
-                        <p className={styles.hint}>
-                          호텔에서 접수 내용을 확인한 후 예약자에게 확정
-                          알림톡을 발송합니다.
-                        </p>
-                      </section>
-                      <div className={styles.actions}>
                         <button
-                          type="button"
-                          className={styles.secondary}
-                          onClick={() => go(3)}
-                        >
-                          ← 이전
-                        </button>
-                        <button
-                          type="button"
                           className={styles.primary}
-                          disabled={
-                            !config ||
-                            (config.enabled && (!config.ready || !paymentTerms))
-                          }
-                          onClick={submit}
+                          type="submit"
+                          disabled={!config || (config.enabled && (!config.ready || !paymentTerms))}
                         >
-                          {busy
-                            ? "처리 중…"
-                            : config?.enabled
-                              ? "카드 결제 준비"
-                              : "예약 신청"}
+                          {busy ? "처리 중…" : config?.enabled ? "결제" : "예약 신청"}
                         </button>
                       </div>
                       {config?.enabled && !config.ready && (
@@ -998,7 +916,7 @@ export function GeneralReservation({
                           온라인 결제 준비 중입니다. 프런트에 문의해 주세요.
                         </p>
                       )}
-                    </>
+                    </form>
                   )}
                 </fieldset>
               )}
