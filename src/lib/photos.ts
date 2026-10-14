@@ -54,6 +54,7 @@ export const pageBanners: Record<string, SitePhoto> = {
   "Getting Here": sitePhotos.location,
   Contact: sitePhotos.lobby[0],
   Reservation: sitePhotos.reservationBanner,
+  "Reservation Lookup": sitePhotos.reservationBanner,
 };
 
 export const momentPhotos = [

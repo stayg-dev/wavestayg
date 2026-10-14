@@ -50,6 +50,10 @@ const pms = createServer(async (req, res) => {
   else if (url.pathname.endsWith('/authenticate')) { paymentStatus = 'paid'; data = { order_id: paymentOrder, status_token: statusToken }; }
   else if (url.pathname.endsWith('/status')) { assert.equal(body.token, statusToken); data = { order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test' }; }
   else if (url.pathname.endsWith('/payments/lookup')) data = { order_id: paymentOrder, status_token: statusToken };
+  else if (url.pathname.endsWith('/lookup')) {
+    if (body.password !== 'fixture-password') { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ message: '예약번호 또는 비밀번호를 확인해 주세요.' })); return; }
+    data = { id: applicationId, kind: 'general', owner_id: null, status: 'registered', check_in: '2026-11-10', check_out: '2026-11-11', room_count: 1, room_type_name: 'DDM', guest_name: '투숙 테스트', phone: '01012345678', booker_name: '결제 테스트', booker_phone: '01012345678', guest_count: 2, quoted_amount: 25000, pricing: { room_amount: 25000, guest_fee: 0, bedding_fee: 0, total: 25000 }, note: '늦은 체크인 예정', admin_note: '', report_ids: [], is_peak: false, payment_order_id: paymentOrder };
+  }
   else if (url.pathname.endsWith('/admin/payments')) data = { page: 1, total: 1, items: [{ order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test', moid: 'Wfixture', tid: 'fixture00m01012610131200000001', last_error: null, review_note: '', refunds: [] }] };
   else if (url.pathname.endsWith('/refund')) { paymentStatus = 'refund_pending'; data = { id: randomUUID(), status: 'queued', moid: 'Rfixture' }; }
   else if (url.pathname.endsWith('/inventory')) data = [{ name: 'DDM', available: 2 }];
@@ -308,6 +312,16 @@ try {
       const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
       await context.addCookies([{ name: "wave_stayg_admin", value: adminCookie.split("=")[1], url: origin, httpOnly: true, sameSite: "Strict" }]);
       const page = await context.newPage();
+      async function reservationScreenshot(name) {
+        await page.evaluate(async () => {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          await document.fonts.ready;
+          await Promise.all([...document.images].map(image => { image.loading = 'eager'; return image.decode().catch(() => {}); }));
+        });
+        assert.deepEqual(await page.locator('main img').evaluateAll(images => images.filter(image => !image.complete || image.naturalWidth === 0).map(image => image.getAttribute('src'))), [], 'reservation images must load');
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), 'reservation has no horizontal overflow');
+        await page.screenshot({ path: `design-reference/${name}.png`, fullPage: true });
+      }
       const errors = [];
       page.on("pageerror", e => errors.push(e.message));
       await page.goto(`${origin}/admin/settings/`);
@@ -343,18 +357,83 @@ try {
       await page.goto(`${origin}/reservation/book/?check_in=2026-11-10&check_out=2026-11-11&adults=3`);
       assert.equal(await page.getByLabel('체크인', { exact: true }).inputValue(), '2026-11-10');
       assert.equal(await page.getByLabel('체크아웃', { exact: true }).inputValue(), '2026-11-11');
-      await page.getByRole('button', { name: '객실 확인', exact: true }).click();
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await reservationScreenshot('reservation-step1-desktop');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await reservationScreenshot('reservation-step1-mobile');
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.getByRole('button', { name: '다음 → 객실 선택', exact: true }).click();
+      await page.getByText('인원 초과', { exact: true }).waitFor();
+      assert.equal(await page.getByRole('button', { name: '다음 → 예약자 정보', exact: true }).isDisabled(), true);
+      await page.getByRole('button', { name: '← 이전', exact: true }).click();
+      await page.getByRole('button', { name: '성인 줄이기', exact: true }).click();
+      await page.getByRole('button', { name: '다음 → 객실 선택', exact: true }).click();
+      await page.getByRole('radio').check();
+      await reservationScreenshot('reservation-step2-desktop');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await reservationScreenshot('reservation-step2-mobile');
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.getByRole('button', { name: '다음 → 예약자 정보', exact: true }).click();
+      await page.getByRole('button', { name: '← 이전', exact: true }).click();
+      await page.getByRole('button', { name: '← 이전', exact: true }).click();
+      await page.getByRole('button', { name: '아동 늘리기', exact: true }).click();
+      assert.equal(await page.getByRole('complementary', { name: '예약 요약' }).getByText('총액', { exact: true }).count(), 0, 'changing occupancy invalidates the old quote');
+      await page.getByRole('button', { name: '아동 줄이기', exact: true }).click();
+      await page.getByRole('button', { name: '다음 → 객실 선택', exact: true }).click();
+      await page.getByRole('button', { name: '다음 → 예약자 정보', exact: true }).click();
       await page.getByLabel('예약자 이름', { exact: true }).fill('결제 테스트');
       await page.getByLabel('예약자 연락처 · 알림톡 수신', { exact: true }).fill('01012345678');
+      await page.getByRole('checkbox', { name: '예약자와 실제 투숙객이 같습니다.', exact: true }).uncheck();
       await page.getByLabel('실제 투숙객 이름', { exact: true }).fill('투숙 테스트');
       await page.getByLabel('투숙객 연락처', { exact: true }).fill('01012345678');
       await page.locator('input[name=password]').fill('fixture-password');
-      await page.locator('input[name=terms]').check(); await page.locator('input[name=payment_terms]').check();
-      await page.getByRole('button', { name: '요금 확인', exact: true }).click();
+      await page.locator('input[name=terms]').check();
+      await reservationScreenshot('reservation-step3-desktop');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await reservationScreenshot('reservation-step3-mobile');
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await page.getByRole('button', { name: '다음 → 결제 확인', exact: true }).click();
+      assert.equal(await page.getByRole('button', { name: '카드 결제 준비', exact: true }).isDisabled(), true);
+      await page.locator('input[name=payment_terms]').check();
+      await reservationScreenshot('reservation-step4-desktop');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await reservationScreenshot('reservation-step4-mobile');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
       await page.getByRole('button', { name: '카드 결제 준비', exact: true }).click();
+      await page.getByRole('button', { name: 'NICEPAY 카드 결제창 열기', exact: true }).waitFor();
+      const prepareCall = calls.findLast(call => call.url.endsWith('/payments/prepare'));
+      assert.equal(prepareCall.body.adults, 2); assert.equal(prepareCall.body.booker_name, '결제 테스트');
+      assert.equal(prepareCall.body.guest_name, '투숙 테스트'); assert.equal(prepareCall.body.pricing_revision, sales.revision);
       await page.getByRole('button', { name: 'NICEPAY 카드 결제창 열기', exact: true }).click();
       await page.getByRole('heading', { name: '결제 완료 · 예약 접수', exact: true }).waitFor();
-      await page.screenshot({ path: 'design-reference/payment-result-mobile.png', fullPage: true });
+      await reservationScreenshot('payment-result-mobile');
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await reservationScreenshot('payment-result-desktop');
+      paymentStatus = 'manual_review';
+      await page.getByRole('button', { name: '상태 새로고침', exact: true }).click();
+      await page.getByRole('heading', { name: '관리자 확인 중', exact: true }).waitFor();
+      assert.equal(await page.locator('img[src$="success-check.svg"]').count(), 0);
+      paymentStatus = 'failed';
+      await page.getByRole('button', { name: '상태 새로고침', exact: true }).click();
+      await page.getByRole('heading', { name: '결제 미완료 · 예약 취소', exact: true }).waitFor();
+      await page.getByText('해당 예약은 종료되었습니다.', { exact: true }).waitFor();
+      paymentStatus = 'paid';
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+      await page.goto(`${origin}/reservation/lookup/?id=${applicationId}`);
+      await page.setViewportSize({ width: 1920, height: 1080 });
+      await reservationScreenshot('reservation-lookup-desktop');
+      await page.getByLabel('조회 비밀번호', { exact: true }).fill('wrong-password');
+      await page.getByRole('button', { name: '예약 조회하기', exact: true }).click();
+      await page.getByRole('alert').filter({ hasText: '예약번호 또는 비밀번호' }).waitFor();
+      await page.getByLabel('조회 비밀번호', { exact: true }).fill('fixture-password');
+      await page.getByRole('button', { name: '예약 조회하기', exact: true }).click();
+      await page.getByText('결제 완료 · 예약 접수', { exact: true }).waitFor();
+      await reservationScreenshot('reservation-detail-desktop');
+      await page.setViewportSize({ width: 390, height: 844 });
+      await reservationScreenshot('reservation-detail-mobile');
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+      await page.getByRole('button', { name: '다른 예약 조회하기', exact: true }).click();
+      await reservationScreenshot('reservation-lookup-mobile');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
       await page.goto(`${origin}/admin/payments/`);
       await page.getByRole('button', { name: '전액 환불', exact: true }).click();

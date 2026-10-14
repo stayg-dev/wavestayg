@@ -1,5 +1,4 @@
-import { GeneralBookingPortal } from "@/components/website-booking";
-import "../../booking-portal.css";
+import { ReservationLookup } from "@/components/general-reservation";
 export default async function Page({
   searchParams,
 }: {
@@ -11,5 +10,5 @@ export default async function Page({
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
       ? id
       : "";
-  return <GeneralBookingPortal lookup lookupId={lookupId} />;
+  return <ReservationLookup lookupId={lookupId} />;
 }
