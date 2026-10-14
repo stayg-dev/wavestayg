@@ -454,6 +454,7 @@ export function GeneralReservation({
     const room = reservationRoom(item.name);
     return (
       item.available > 0 &&
+      (item.name !== '테스트타입' || (nights === 1 && adults + childrenCount <= 2 && bedding === 0)) &&
       item.is_open !== false &&
       !!reservationPrice(prices, item.name, dates.check_in, dates.check_out) &&
       (!room || adults + childrenCount <= room.maxOccupancy)
@@ -722,7 +723,7 @@ export function GeneralReservation({
                                   <strong>
                                     {room?.name ?? roomTypeLabel(item.name)}
                                   </strong>
-                                  <small>{roomTypeLabel(item.name)} · 잔여 {item.available}실</small>
+                                  <small>{roomTypeLabel(item.name)} · 잔여 {item.available}실{item.name === '테스트타입' ? ' · 1박·최대 2명·추가 침구 없음' : ''}</small>
                                 </span>
                                 <span
                                   className={`${styles.availability} ${available ? styles.open : ""}`}
