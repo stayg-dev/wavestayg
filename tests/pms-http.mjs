@@ -18,6 +18,7 @@ const calls = [];
 const roomTypeId = randomUUID();
 const paymentOrder = randomUUID(), applicationId = randomUUID(), statusToken = 's'.repeat(43), callbackToken = 'c'.repeat(43);
 let paymentStatus = 'awaiting_auth';
+let inventoryOpen = true;
 const fixturePrice = () => ({ base_amount: 65000, discount_amount: 0, sale_amount: 65000 });
 let sales = { revision: randomUUID(), room_types: [{ id: roomTypeId, name: "DDM" }], config: {
   is_enabled: true, is_general_enabled: true, is_owner_enabled: true, message: "", valid_from: "2026-01-01", valid_to: "2027-12-31",
@@ -56,7 +57,7 @@ const pms = createServer(async (req, res) => {
   }
   else if (url.pathname.endsWith('/admin/payments')) data = { page: 1, total: 1, items: [{ order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test', moid: 'Wfixture', tid: 'fixture00m01012610131200000001', last_error: null, review_note: '', refunds: [] }] };
   else if (url.pathname.endsWith('/refund')) { paymentStatus = 'refund_pending'; data = { id: randomUUID(), status: 'queued', moid: 'Rfixture' }; }
-  else if (url.pathname.endsWith('/inventory')) data = [{ name: 'DDM', available: 2 }];
+  else if (url.pathname.endsWith('/inventory')) data = [{ name: 'DDM', available: 2, is_open: inventoryOpen }];
   else if (url.pathname.endsWith('/quote')) data = { room_amount: 25000, upgrade_amount: 0, guest_fee: 0, bedding_fee: 0, total: 25000, owned_type: null, pricing_revision: sales.revision };
   if (url.pathname.endsWith("/admin/sales")) {
     if (req.method === "POST" && body.config?.tariffs) sales = { ...sales, config: structuredClone(body.config), revision: randomUUID() };
@@ -387,10 +388,11 @@ try {
       await page.reload();
       await page.getByLabel("디럭스 더블 마운틴 주중 할인액", { exact: true }).waitFor();
       assert.equal(await page.getByLabel("디럭스 더블 마운틴 주중 할인액", { exact: true }).inputValue(), "5000");
-      const batch = page.locator("section").filter({ has: page.getByRole("heading", { name: "날짜별 요금·방막기", exact: true }) });
+      assert.equal(await page.getByLabel('수분양자 예약 허용', { exact: true }).count(), 0);
+      const batch = page.locator("section").filter({ has: page.getByRole("heading", { name: "날짜별 판매 상태·요금", exact: true }) });
       await batch.getByRole("checkbox", { name: "디럭스 더블 마운틴", exact: true }).check();
-      await batch.getByLabel("작업", { exact: true }).selectOption("block");
-      await batch.getByLabel("방막기 사유 (관리자만 표시)", { exact: true }).fill("시설 점검");
+      await batch.getByLabel("날짜별 판매 상태", { exact: true }).selectOption("block");
+      await batch.getByLabel("판매 불가 사유 (선택)", { exact: true }).fill("시설 점검");
       await batch.getByRole("button", { name: "선택 기간에 편집 적용", exact: true }).click();
       await page.getByLabel("변경 사유", { exact: true }).fill("방막기 UI 검증");
       await page.getByRole("button", { name: "PMS에 설정 저장", exact: true }).click();
@@ -421,6 +423,13 @@ try {
       assert.equal(await page.getByRole('button', { name: '다음 → 예약자 정보', exact: true }).isDisabled(), true);
       await page.getByRole('button', { name: '← 이전', exact: true }).click();
       await page.getByRole('button', { name: '성인 줄이기', exact: true }).click();
+      inventoryOpen = false;
+      await page.getByRole('button', { name: '다음 → 객실 선택', exact: true }).click();
+      await page.getByText('판매 불가', { exact: true }).waitFor();
+      assert.equal(await page.getByRole('radio').isDisabled(), true);
+      await page.getByText('디럭스 더블 마운틴 · 잔여 2실', { exact: true }).waitFor();
+      inventoryOpen = true;
+      await page.getByRole('button', { name: '← 이전', exact: true }).click();
       await page.getByRole('button', { name: '다음 → 객실 선택', exact: true }).click();
       await page.getByRole('radio').check();
       await reservationScreenshot('reservation-step2-desktop');

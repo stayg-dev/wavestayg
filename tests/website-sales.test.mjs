@@ -1,11 +1,28 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { editSalesDates, salesDateRange } from "../src/lib/website-sales.ts";
+import { editSalesDates, editGeneralSalesStatus, salesDateRange } from "../src/lib/website-sales.ts";
 
 test("date selection uses inclusive stay-nights, validates dates and filters weekdays", () => {
   assert.deepEqual(salesDateRange("2026-10-12", "2026-10-18", [5, 6]), ["2026-10-16", "2026-10-17"]);
   for (const [from, to] of [["", ""], ["2026-02-30", "2026-03-02"], ["2026-10-02", "2026-10-01"], ["2026-01-01", "2027-02-01"]])
     assert.throws(() => salesDateRange(from, to));
+});
+
+test("general sale status clears legacy blocks while preserving owner records and prices", () => {
+  const config = { tariffs: [{ room_type_id: "A" }], overrides: [], blocks: [
+    { room_type_id: "A", date: "2026-10-20", audience: "all", reason: "old" },
+    { room_type_id: "A", date: "2026-10-20", audience: "general", reason: "old" },
+    { room_type_id: "A", date: "2026-10-20", audience: "owner", reason: "legacy owner" },
+    { room_type_id: "B", date: "2026-10-20", audience: "all", reason: "other room" },
+  ] };
+  const open = editGeneralSalesStatus(config, ["A"], ["2026-10-20"], true);
+  assert.deepEqual(open.blocks, config.blocks.slice(2));
+  assert.equal(config.blocks.length, 4);
+  const closed = editGeneralSalesStatus(open, ["A"], ["2026-10-20"], false);
+  assert.equal(closed.blocks.at(-1).audience, "general");
+  assert.equal(closed.blocks.at(-1).reason, "홈페이지 판매 불가");
+  assert.deepEqual(closed.tariffs, config.tariffs);
+  assert.deepEqual(editGeneralSalesStatus(closed, ["A"], ["2026-10-20"], false), closed);
 });
 test("reopening only clears selected scope; dates and other channels remain blocked", () => {
   const c = { valid_from: "2026-01-01", valid_to: "2027-12-31", tariffs: [{ room_type_id: "A" }], overrides: [], blocks: [

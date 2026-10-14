@@ -161,3 +161,38 @@ export function editSalesDates(
     );
   return next;
 }
+
+/** General sale switches replace legacy all/general blocks without touching owner records. */
+export function editGeneralSalesStatus(
+  config: SalesConfig,
+  ids: string[],
+  dates: string[],
+  isOpen: boolean,
+  reason = "",
+): SalesConfig {
+  if (!ids.length || !dates.length)
+    throw new Error("객실과 적용 요일을 선택해 주세요.");
+  const next = structuredClone(config);
+  next.blocks = next.blocks.filter(
+    (row) =>
+      row.audience === "owner" ||
+      !ids.includes(row.room_type_id) ||
+      !dates.includes(row.date),
+  );
+  if (!isOpen)
+    next.blocks.push(
+      ...ids.flatMap((room_type_id) =>
+        dates.map((date) => ({
+          room_type_id,
+          date,
+          audience: "general" as const,
+          reason: reason.trim() || "홈페이지 판매 불가",
+        })),
+      ),
+    );
+  if (next.blocks.length > 10000)
+    throw new Error(
+      "판매 상태 설정은 최대 10,000건입니다. 적용 기간을 줄여 주세요.",
+    );
+  return next;
+}

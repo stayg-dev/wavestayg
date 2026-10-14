@@ -454,6 +454,7 @@ export function GeneralReservation({
     const room = reservationRoom(item.name);
     return (
       item.available > 0 &&
+      item.is_open !== false &&
       !!reservationPrice(prices, item.name, dates.check_in, dates.check_out) &&
       (!room || adults + childrenCount <= room.maxOccupancy)
     );
@@ -721,18 +722,18 @@ export function GeneralReservation({
                                   <strong>
                                     {room?.name ?? roomTypeLabel(item.name)}
                                   </strong>
-                                  <small>{roomTypeLabel(item.name)}</small>
+                                  <small>{roomTypeLabel(item.name)} · 잔여 {item.available}실</small>
                                 </span>
                                 <span
                                   className={`${styles.availability} ${available ? styles.open : ""}`}
                                 >
                                   {available
                                     ? "예약 가능"
-                                    : room &&
+                                    : item.is_open === false ? "판매 불가" : room &&
                                         adults + childrenCount >
                                           room.maxOccupancy
                                       ? "인원 초과"
-                                      : "예약 마감"}
+                                      : item.available < 1 ? "예약 마감" : "요금 확인 필요"}
                                 </span>
                                 <span className={styles.roomPrice}>
                                   {price ? (

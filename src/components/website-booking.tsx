@@ -58,6 +58,7 @@ export type Owner = {
 export type Inventory = {
   name: string;
   available: number;
+  is_open?: boolean;
   room_numbers?: string[];
 };
 export type PageResult<T> = { items: T[]; total: number; page: number };
@@ -406,9 +407,9 @@ export function BookingApplicationForm({
                       <option
                         key={r.name}
                         value={r.name}
-                        disabled={!dbOnly && r.available < 1}
+                        disabled={!dbOnly && (r.available < 1 || (!owner && r.is_open === false))}
                       >
-                        {roomTypeLabel(r.name)}{!dbOnly && ` · 신청 가능 ${r.available}실`}
+                        {roomTypeLabel(r.name)}{!dbOnly && (owner ? ` · 신청 가능 ${r.available}실` : ` · 잔여 ${r.available}실${r.is_open === false ? " · 판매 불가" : ""}`)}
                       </option>
                     ))}
                   </select>
@@ -548,7 +549,7 @@ export function BookingApplicationForm({
               )}
               <button
                 disabled={
-                  !inventory.some((r) => r.name === type && (dbOnly || r.available > 0)) ||
+                  !inventory.some((r) => r.name === type && (dbOnly || (r.available > 0 && (!!owner || r.is_open !== false)))) ||
                   !quote || (!owner && (!paymentConfig || (paymentConfig.enabled && !paymentConfig.ready)))
                 }
                 type="submit"

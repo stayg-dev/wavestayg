@@ -12,8 +12,8 @@ import {
 } from "@/lib/website-sales-defaults";
 import {
   editSalesDates,
+  editGeneralSalesStatus,
   salesDateRange,
-  type SalesAudience,
   type SalesConfig,
   type SalesHistory,
   type SalesSnapshot,
@@ -28,11 +28,8 @@ const periods = [
 const serviceLabels = {
   general_guest: "일반 · 추가 인원 / 1인 1박",
   general_bedding: "일반 · 침구 / 1세트 1박",
-  owner_guest: "수분양자 · 추가 인원 / 1인 1박",
-  owner_bedding: "수분양자 · 침구 / 1세트 1박",
   extra_hour: "얼리·레이트 / 1시간",
 };
-const audienceLabels = { all: "전체", general: "일반 예약", owner: "수분양자" };
 const money = (n: number) => `${n.toLocaleString("ko-KR")}원`;
 const priceDescription = (p: {
   base_amount: number;
@@ -83,12 +80,11 @@ export function WebsiteSalesSettings() {
     [to, setTo] = useState(bookingToday);
   const [weekdays, setWeekdays] = useState([0, 1, 2, 3, 4, 5, 6]);
   const [action, setAction] = useState<"price" | "reset" | "block" | "reopen">(
-    "price",
+    "reopen",
   );
   const [base, setBase] = useState(0),
     [discount, setDiscount] = useState(0);
-  const [audience, setAudience] = useState<SalesAudience>("all"),
-    [blockReason, setBlockReason] = useState("");
+  const [blockReason, setBlockReason] = useState("");
   const [viewType, setViewType] = useState(""),
     [viewFrom, setViewFrom] = useState(bookingToday);
   const [preview, setPreview] = useState<
@@ -196,19 +192,27 @@ export function WebsiteSalesSettings() {
     try {
       const dates = salesDateRange(from, to, weekdays);
       setConfig(
-        editSalesDates(
-          config,
-          selected,
-          dates,
-          action,
-          {
-            base_amount: base,
-            discount_amount: discount,
-            sale_amount: base - discount,
-          },
-          audience,
-          blockReason,
-        ),
+        action === "block" || action === "reopen"
+          ? editGeneralSalesStatus(
+              config,
+              selected,
+              dates,
+              action === "reopen",
+              blockReason,
+            )
+          : editSalesDates(
+              config,
+              selected,
+              dates,
+              action,
+              {
+                base_amount: base,
+                discount_amount: discount,
+                sale_amount: base - discount,
+              },
+              "general",
+              blockReason,
+            ),
       );
       setError("");
       setMessage(
@@ -265,8 +269,9 @@ export function WebsiteSalesSettings() {
       className="sales-settings"
     >
       <p>
-        객실 표시 요금과 실제 예약 요금을 함께 관리합니다. 적용일은 숙박일
-        기준이며 퇴실일은 포함하지 않습니다.
+        일반 예약의 결제 요금과 판매 상태를 관리합니다. 판매 수량은 PMS의 잔여
+        객실 수량을 그대로 사용합니다. 수분양자 예약은 기존 요금·혜택·재고
+        기준을 유지하며 이 설정의 영향을 받지 않습니다.
       </p>
       <div className="sales-feedback" aria-live="polite">
         {error && (
@@ -299,35 +304,30 @@ export function WebsiteSalesSettings() {
       {config && (
         <fieldset disabled={busy} className="sales-editor">
           <section className="portal-card">
-            <h2>예약 접수</h2>
-            <label className="portal-check">
-              <input
-                type="checkbox"
-                checked={config.is_enabled}
-                onChange={(e) => edit({ is_enabled: e.target.checked })}
-              />
-              홈페이지 예약 접수 허용
+            <h2>일반 예약 판매 상태</h2>
+            <label>
+              홈페이지 판매 상태
+              <select
+                value={
+                  config.is_enabled && config.is_general_enabled
+                    ? "open"
+                    : "closed"
+                }
+                onChange={(e) =>
+                  edit({
+                    is_enabled: e.target.value === "open",
+                    is_general_enabled: e.target.value === "open",
+                  })
+                }
+              >
+                <option value="open">판매 가능</option>
+                <option value="closed">판매 불가</option>
+              </select>
             </label>
-            <div className="portal-row">
-              {(
-                [
-                  ["is_general_enabled", "일반 예약 허용"],
-                  ["is_owner_enabled", "수분양자 예약 허용"],
-                ] as const
-              ).map(([key, label]) => (
-                <label className="portal-check" key={key}>
-                  <input
-                    type="checkbox"
-                    checked={config[key]}
-                    onChange={(e) => edit({ [key]: e.target.checked })}
-                  />
-                  {label}
-                </label>
-              ))}
-            </div>
             <p>
-              접수를 중지해도 기존 예약과 예약 조회·취소는 유지됩니다. 요금이
-              없는 객실이나 유효 기간 밖의 날짜는 접수할 수 없습니다.
+              판매 가능으로 설정하면 PMS에 남아 있는 수량 내에서 예약할 수
+              있습니다. 판매 불가는 일반 예약의 신규 접수만 중지하며 PMS 객실
+              수량을 변경하지 않습니다. 결제 요금은 아래에서 별도로 설정합니다.
             </p>
             <label>
               판매 중지 안내 문구
@@ -503,11 +503,11 @@ export function WebsiteSalesSettings() {
             )}
           </section>
           <section className="portal-card">
-            <h2>날짜별 요금·방막기</h2>
+            <h2>날짜별 판매 상태·요금</h2>
             <p>
-              성수기·비성수기·특가를 기간과 요일로 지정하세요. 날짜별 요금이
-              기본 요금보다 우선합니다. 방막기는 PMS의 실물 객실 재고를 변경하지
-              않고 홈페이지 접수에 적용됩니다.
+              객실과 숙박일을 선택해 일반 예약의 판매 가능·판매 불가를
+              설정하세요. 실제 수량은 PMS에서 관리합니다. 성수기·특가 요금도
+              별도로 지정할 수 있습니다.
             </p>
             <div className="sales-room-options">
               {snapshot?.room_types?.map((room) => (
@@ -575,16 +575,45 @@ export function WebsiteSalesSettings() {
               ))}
             </div>
             <label>
-              작업
+              설정 항목
               <select
-                aria-label="작업"
+                value={
+                  action === "block" || action === "reopen" ? "status" : "price"
+                }
+                onChange={(e) =>
+                  setAction(e.target.value === "status" ? "reopen" : "price")
+                }
+              >
+                <option value="status">판매 상태</option>
+                <option value="price">요금</option>
+              </select>
+            </label>
+            <label>
+              {action === "block" || action === "reopen"
+                ? "날짜별 판매 상태"
+                : "요금 적용 방식"}
+              <select
                 value={action}
+                aria-label={
+                  action === "block" || action === "reopen"
+                    ? "날짜별 판매 상태"
+                    : "요금 적용 방식"
+                }
                 onChange={(e) => setAction(e.target.value as typeof action)}
               >
-                <option value="price">날짜별 판매 요금 지정</option>
-                <option value="reset">날짜별 요금 해제 · 기본 요금 사용</option>
-                <option value="block">방막기</option>
-                <option value="reopen">방막기 해제</option>
+                {action === "block" || action === "reopen" ? (
+                  <>
+                    <option value="reopen">판매 가능</option>
+                    <option value="block">판매 불가</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="price">날짜별 판매 요금 지정</option>
+                    <option value="reset">
+                      날짜별 요금 해제 · 기본 요금 사용
+                    </option>
+                  </>
+                )}
               </select>
             </label>
             {action === "price" && (
@@ -621,24 +650,9 @@ export function WebsiteSalesSettings() {
             )}
             {(action === "block" || action === "reopen") && (
               <>
-                <label>
-                  예약 대상
-                  <select
-                    value={audience}
-                    onChange={(e) =>
-                      setAudience(e.target.value as SalesAudience)
-                    }
-                  >
-                    {Object.entries(audienceLabels).map(([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
                 {action === "block" && (
                   <label>
-                    방막기 사유 (관리자만 표시)
+                    판매 불가 사유 (선택)
                     <input
                       value={blockReason}
                       maxLength={300}
@@ -647,8 +661,9 @@ export function WebsiteSalesSettings() {
                   </label>
                 )}
                 <p>
-                  해제는 선택한 대상의 방막기만 지웁니다. 다른 대상의 방막기나
-                  전체 접수 중지가 남아 있으면 판매가 재개되지 않습니다.
+                  판매 가능은 선택한 객실·날짜의 판매 제한을 해제합니다.
+                  홈페이지 전체가 판매 불가이면 날짜별 설정과 관계없이 일반
+                  예약을 받지 않습니다.
                 </p>
               </>
             )}
@@ -682,7 +697,7 @@ export function WebsiteSalesSettings() {
               </label>
             </div>
             <p>
-              31일간의 저장된 판매가와 현재 편집 중인 날짜 특가·방막기를
+              31일간의 저장된 판매가와 현재 편집 중인 날짜 특가·판매 상태를
               비교합니다. 기본 요금 편집 결과는 저장 후 확인할 수 있습니다.
             </p>
             <div className="sales-table-scroll">
@@ -692,7 +707,7 @@ export function WebsiteSalesSettings() {
                     <th>숙박일</th>
                     <th>저장된 판매가</th>
                     <th>날짜별 특가 (편집 중)</th>
-                    <th>방막기 (편집 중)</th>
+                    <th>일반 예약 판매 상태 (편집 중)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -705,7 +720,10 @@ export function WebsiteSalesSettings() {
                         (o) => o.room_type_id === viewType && o.date === date,
                       );
                       const blocks = config.blocks.filter(
-                        (b) => b.room_type_id === viewType && b.date === date,
+                        (b) =>
+                          b.room_type_id === viewType &&
+                          b.date === date &&
+                          b.audience !== "owner",
                       );
                       const price = preview.find(
                         (p) => p.date === date,
@@ -720,14 +738,11 @@ export function WebsiteSalesSettings() {
                               : "기본 요금"}
                           </td>
                           <td>
-                            {blocks.length
-                              ? blocks
-                                  .map(
-                                    (b) =>
-                                      `${audienceLabels[b.audience]}: ${b.reason}`,
-                                  )
-                                  .join(" / ")
-                              : "없음"}
+                            {!config.is_enabled || !config.is_general_enabled
+                              ? "판매 불가 · 홈페이지 전체"
+                              : blocks.length
+                                ? `판매 불가 · ${blocks.map((b) => b.reason).join(" / ")}`
+                                : "판매 가능"}
                           </td>
                         </tr>
                       );
@@ -804,7 +819,7 @@ export function WebsiteSalesSettings() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 maxLength={300}
-                placeholder="예: 10월 비성수기 요금 및 점검일 방막기"
+                placeholder="예: 10월 비성수기 요금 및 점검일 판매 불가"
               />
             </label>
             <button
@@ -833,7 +848,7 @@ export function WebsiteSalesSettings() {
                 예약 접수: {h.before.is_enabled ? "허용" : "중지"} →{" "}
                 {h.after.is_enabled ? "허용" : "중지"} / 날짜 특가:{" "}
                 {h.before.overrides.length} → {h.after.overrides.length}건 /
-                방막기: {h.before.blocks.length} → {h.after.blocks.length}건
+                판매 제한: {h.before.blocks.length} → {h.after.blocks.length}건
               </p>
               <div className="sales-table-scroll">
                 <table>
