@@ -29,7 +29,9 @@ export function reservationPrice(
   checkIn: string,
   checkOut: string,
 ) {
-  if (!sales?.is_enabled || !sales.is_general_enabled) return null;
+  // The PMS explicitly publishes the test product independently of normal sales.
+  // It must still be present with a complete, open nightly rate below.
+  if (!sales || (name !== "테스트타입" && (!sales.is_enabled || !sales.is_general_enabled))) return null;
   const nights = stayNights(checkIn, checkOut);
   const room = sales.rooms.find((room) => room.name === name);
   if (!room || nights < 1 || !Number.isInteger(nights)) return null;

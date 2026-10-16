@@ -69,3 +69,16 @@ test("PMS codes resolve to existing representative room photos without invented 
   assert.equal(reservationRoom("LDO").id, 8);
   assert.equal(reservationRoom("unknown"), undefined);
 });
+
+test("an explicitly open PMS test product is selectable while general sales are disabled", () => {
+  const value = { ...sales(), is_enabled: false, is_general_enabled: false };
+  value.rooms.push({ name: "테스트타입", dates: [{
+    date: "2026-11-10", base_amount: 500, discount_amount: 0, sale_amount: 500, is_open: true,
+  }] });
+  assert.equal(reservationPrice(value, "테스트타입", "2026-11-10", "2026-11-11")?.total, 500);
+  assert.equal(reservationPrice(value, "DDM", "2026-11-10", "2026-11-11"), null);
+  value.rooms[1].dates[0].is_open = false;
+  assert.equal(reservationPrice(value, "테스트타입", "2026-11-10", "2026-11-11"), null);
+  value.rooms.pop();
+  assert.equal(reservationPrice(value, "테스트타입", "2026-11-10", "2026-11-11"), null);
+});
