@@ -15,8 +15,16 @@ const secret = "local-admin-session-fixture-secret-32-characters";
 const hash = await hashAdminPassword("local-test-password");
 const project = "7b85fd96-06a0-42f3-bfb9-cbe14c55718a";
 const calls = [];
+const applications = Array.from({ length: 55 }, (_, index) => ({
+  id: randomUUID(), kind: 'general', status: 'registered',
+  check_in: `2026-11-${String(1 + index % 27).padStart(2, '0')}`,
+  check_out: `2026-11-${String(2 + index % 27).padStart(2, '0')}`,
+  room_type_name: 'DDM', room_count: 1, guest_name: `정렬 테스트 ${index}`,
+  phone: '', guest_count: 2, quoted_amount: 25000, report_ids: [],
+}));
 const roomTypeId = randomUUID();
 const paymentOrder = randomUUID(), applicationId = randomUUID(), statusToken = 's'.repeat(43), callbackToken = 'c'.repeat(43);
+const reservationNumber = 'DDM26101401';
 let paymentStatus = 'awaiting_auth';
 let inventoryOpen = true;
 let failPaymentPrepare = false;
@@ -47,6 +55,13 @@ const pms = createServer(async (req, res) => {
       ? { total: 25000 }
       : { items: [], total: 0, page: 1 };
   const url = new URL(req.url, "http://127.0.0.1");
+  if (url.pathname.endsWith('/admin/applications')) {
+    const order = url.searchParams.get('stay_order');
+    const rows = [...applications].reverse();
+    if (order) rows.sort((a, b) => a.check_in.localeCompare(b.check_in) * (order === 'asc' ? 1 : -1));
+    const page = Number(url.searchParams.get('page') ?? 1);
+    data = { items: rows.slice((page - 1) * 50, page * 50), total: rows.length, page };
+  }
   if (url.pathname.endsWith('/payments/prepare') && failPaymentPrepare) {
     failPaymentPrepare = false;
     res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -79,6 +94,8 @@ const pms = createServer(async (req, res) => {
     }
     data = { ...sales.config, revision: sales.revision, rooms: [{ room_type_id: roomTypeId, name: "DDM", dates }] };
   }
+  if (data.application_id === applicationId || data.id === applicationId) data.reservation_number = reservationNumber;
+  for (const item of data.items ?? []) if (item.application_id === applicationId) item.reservation_number = reservationNumber;
   res.writeHead(200, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ code: 200, data }));
 });
@@ -332,6 +349,32 @@ try {
       }
       const errors = [];
       page.on("pageerror", e => errors.push(e.message));
+      await page.goto(`${origin}/admin/reservations/`);
+      const reservations = page.getByRole('table', { name: '예약 신청 내역', exact: true });
+      const sortedHeader = reservations.locator('th[aria-sort]');
+      const sortButton = page.getByRole('button', { name: '숙박 일정 정렬', exact: true });
+      async function visibleStayDates() {
+        await reservations.locator('tbody tr td:nth-child(6)').first().waitFor();
+        return reservations.locator('tbody tr td:nth-child(6)').evaluateAll(cells => cells.map(cell => cell.firstChild.textContent.trim()));
+      }
+      await visibleStayDates();
+      assert.equal(await sortedHeader.getAttribute('aria-sort'), 'none');
+      await sortButton.click();
+      const firstDates = await visibleStayDates();
+      assert.equal(await sortedHeader.getAttribute('aria-sort'), 'ascending');
+      await page.getByRole('button', { name: '다음', exact: true }).click();
+      const ascendingDates = [...firstDates, ...await visibleStayDates()];
+      assert.equal(ascendingDates.length, 55);
+      assert.deepEqual(ascendingDates, applications.map(row => row.check_in).sort());
+      await sortButton.click();
+      assert.deepEqual(await visibleStayDates(), [...ascendingDates].reverse().slice(0, 50));
+      assert.equal(await sortedHeader.getAttribute('aria-sort'), 'descending');
+      assert.equal(await page.getByRole('button', { name: '이전', exact: true }).isDisabled(), true);
+      await page.getByRole('button', { name: '새로고침', exact: true }).click();
+      assert.deepEqual(await visibleStayDates(), [...ascendingDates].reverse().slice(0, 50));
+      assert.ok(calls.some(call => call.url.includes('/admin/applications?page=2&stay_order=asc')));
+      await mkdir('design-reference', { recursive: true });
+      await reservations.locator('thead').screenshot({ path: 'design-reference/admin-stay-sort.png' });
       // Static guides remain usable even when the live pricing API is unavailable.
       let guidePriceRequests = 0;
       await page.route('**/api/pms/sales/**', route => {
@@ -478,6 +521,8 @@ try {
       await page.getByRole('button', { name: '결제', exact: true }).click();
       // One click must prepare the payment and launch the SDK, with no second checkout button.
       await page.getByRole('heading', { name: '결제 완료 · 예약 접수', exact: true }).waitFor();
+      await page.getByText(reservationNumber, { exact: true }).waitFor();
+      assert.equal(await page.getByRole('link', { name: '예약 조회', exact: true }).getAttribute('href'), `/reservation/lookup/?id=${reservationNumber}`);
       assert.equal(calls.filter(call => call.url.endsWith('/payments/prepare')).length, preparesBefore + 1);
       assert.equal(await page.evaluate(() => sessionStorage.getItem('nicepayLaunches')), '1');
       const prepareCall = calls.findLast(call => call.url.endsWith('/payments/prepare'));
@@ -496,7 +541,7 @@ try {
       await page.getByText('해당 예약은 종료되었습니다.', { exact: true }).waitFor();
       paymentStatus = 'paid';
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
-      await page.goto(`${origin}/reservation/lookup/?id=${applicationId}`);
+      await page.goto(`${origin}/reservation/lookup/?id=${reservationNumber}`);
       await page.setViewportSize({ width: 1920, height: 1080 });
       await reservationScreenshot('reservation-lookup-desktop');
       await page.getByLabel('조회 비밀번호', { exact: true }).fill('wrong-password');

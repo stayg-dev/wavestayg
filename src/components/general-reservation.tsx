@@ -991,7 +991,7 @@ function ReservationDetails({
               <strong>{label}</strong>
             </div>
           </div>
-          <span>{row.id}</span>
+          <span>{row.reservation_number ?? row.id}</span>
         </div>
         <article className={styles.reservationCard}>
           <div className={styles.resultPhoto}>
@@ -1152,7 +1152,7 @@ function ReservationDetails({
         ) : (
           <Link
             className={styles.secondary}
-            href={`/reservation/lookup/?id=${row.id}`}
+            href={`/reservation/lookup/?id=${row.reservation_number ?? row.id}`}
           >
             예약 조회하기
           </Link>

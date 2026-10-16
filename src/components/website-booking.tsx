@@ -18,6 +18,7 @@ export type BookingQuote = {
   owned_type: string | null;
 };
 export type Application = {
+  reservation_number?: string;
   payment_order_id?: string | null;
   id: string;
   is_db_only?: boolean;
@@ -140,7 +141,7 @@ export function ApplicationCard({ row, children, statusLabel }: { row: Applicati
       </p>
       {row.booker_name && <p>예약자 {row.booker_name} · {row.booker_phone}</p>}
       {row.kind !== "owner" && (
-        <p className="portal-reference">신청 번호: {row.id}</p>
+        <p className="portal-reference">예약번호: {row.reservation_number ?? row.id}</p>
       )}
       <p>금액 {row.quoted_amount.toLocaleString()}원 · {row.payment_order_id ? '온라인 카드 결제' : '현장 정산'}</p>
       {row.payment_order_id && <p><Link href={`/reservation/payment/?order=${row.payment_order_id}`}>결제·환불 상태 확인</Link></p>}

@@ -59,7 +59,7 @@ async function handle(request: Request, context: Context) {
     }
     const search = new URL(request.url).searchParams;
     const query = new URLSearchParams();
-    for (const key of path === "sales" ? ["from", "to"] : ["check_in", "check_out", "page"])
+    for (const key of path === "sales" ? ["from", "to"] : path === "admin/applications" ? ["page", "stay_order"] : ["check_in", "check_out", "page"])
       if (search.has(key)) query.set(key, search.get(key)!);
     const remotePath =
       path === "owner-applications"

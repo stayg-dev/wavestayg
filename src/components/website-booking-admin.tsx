@@ -35,12 +35,13 @@ export function WebsiteBookingAdmin() {
   const [manualBooking, setManualBooking] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [stayOrder, setStayOrder] = useState<"" | "asc" | "desc">("");
   const [roomTypes, setRoomTypes] = useState<Inventory[]>([]);
   const [roster, setRoster] = useState("");
   useEffect(() => {
     let disposed = false;
     bookingRequest<PageResult<Owner> | PageResult<Application>>(
-      `admin/${tab}?page=${page}`,
+      `admin/${tab}?page=${page}${tab === "applications" && stayOrder ? `&stay_order=${stayOrder}` : ""}`,
     )
       .then((data) => {
         if (disposed) return;
@@ -58,7 +59,7 @@ export function WebsiteBookingAdmin() {
     return () => {
       disposed = true;
     };
-  }, [tab, page, revision]);
+  }, [tab, page, revision, stayOrder]);
   useEffect(() => {
     const today = new Date(Date.now() + 9 * 3600_000)
       .toISOString()
@@ -451,7 +452,22 @@ export function WebsiteBookingAdmin() {
                   <th scope="col">수분양자 호실</th>
                   <th scope="col">투숙객 / 연락처</th>
                   <th scope="col">객실</th>
-                  <th scope="col">숙박 일정</th>
+                  <th scope="col" aria-sort={stayOrder === "asc" ? "ascending" : stayOrder === "desc" ? "descending" : "none"}>
+                    <button
+                      type="button"
+                      className="admin-sort-button"
+                      aria-label="숙박 일정 정렬"
+                      title={stayOrder === "asc" ? "체크인 늦은 순으로 정렬" : "체크인 빠른 순으로 정렬"}
+                      disabled={loading}
+                      onClick={() => {
+                        setLoading(true);
+                        setPage(1);
+                        setStayOrder((order) => order === "asc" ? "desc" : "asc");
+                      }}
+                    >
+                      숙박 일정 <span aria-hidden="true">{stayOrder === "asc" ? "↑" : stayOrder === "desc" ? "↓" : "↕"}</span>
+                    </button>
+                  </th>
                   <th scope="col">인원</th>
                   <th scope="col">금액</th>
                   <th scope="col">PMS 반영</th>

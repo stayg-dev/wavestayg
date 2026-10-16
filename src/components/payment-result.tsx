@@ -72,7 +72,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
           <>
             <div className={styles.receiptNumber}>
               <small>예약번호</small>
-              <strong>{state.application_id}</strong>
+              <strong>{state.reservation_number ?? state.application_id}</strong>
             </div>
             <p>
               결제 요청 금액 {state.amount.toLocaleString()}원
@@ -114,7 +114,7 @@ export function PaymentResult({ orderId }: { orderId: string }) {
             className={styles.primary}
             href={
               state
-                ? `/reservation/lookup/?id=${state.application_id}`
+                ? `/reservation/lookup/?id=${state.reservation_number ?? state.application_id}`
                 : "/reservation/lookup/"
             }
           >
