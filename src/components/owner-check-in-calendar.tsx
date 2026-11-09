@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
-import { firstOwnerCheckIn, ownerCheckInAllowed } from "@/lib/owner-booking-dates";
+import { firstOwnerCheckIn, ownerCheckInAllowed, shiftBookingDate } from "@/lib/owner-booking-dates";
 
 export function OwnerCheckInCalendar({ value, today, onChange }: {
   value: string;
@@ -29,7 +29,7 @@ export function OwnerCheckInCalendar({ value, today, onChange }: {
         <div className="owner-date-month">
           <button type="button" aria-label="이전 달" disabled={month <= today.slice(0, 7)} onClick={() => moveMonth(-1)}>‹</button>
           <strong aria-live="polite">{year}년 {m + 1}월</strong>
-          <button type="button" aria-label="다음 달" disabled={month >= "2027-12"} onClick={() => moveMonth(1)}>›</button>
+          <button type="button" aria-label="다음 달" disabled={month >= shiftBookingDate(today, 365).slice(0, 7)} onClick={() => moveMonth(1)}>›</button>
         </div>
         <div className="owner-date-days">
           {["일", "월", "화", "수", "목", "금", "토"].map(day => <span key={day}>{day}</span>)}

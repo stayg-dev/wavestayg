@@ -47,6 +47,9 @@ export function OwnerBalanceEditor({
         <span>
           올해 {owner.annual_nights} · 이월 {owner.carryover_nights}
         </span>
+        {owner.next_benefit_year !== undefined && <span>
+          {owner.next_benefit_year}년 선사용 {owner.next_year_advance_nights} · 예약 가능 {owner.next_year_remaining_nights}
+        </span>}
         <button
           type="button"
           className="admin-secondary"

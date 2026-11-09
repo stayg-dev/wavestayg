@@ -43,6 +43,7 @@ export type Application = {
   admin_note: string;
   report_ids: string[];
   is_peak: boolean;
+  allocation?: { year: number; annual: number; carry: number; additional_years?: { year: number; annual: number; carry: number }[] } | null;
 };
 export type Owner = {
   id: string;
@@ -53,6 +54,9 @@ export type Owner = {
   annual_nights: number;
   carryover_nights: number;
   benefit_year: number;
+  next_benefit_year?: number;
+  next_year_advance_nights?: number;
+  next_year_remaining_nights?: number;
   carryover_editable: boolean;
   is_active: boolean;
 };
@@ -139,6 +143,9 @@ export function ApplicationCard({ row, children, statusLabel }: { row: Applicati
       <p>
         투숙객 {row.guest_name} · {row.phone}
       </p>
+      {row.kind === "owner" && row.allocation && <p>
+        혜택 차감: {[row.allocation, ...(row.allocation.additional_years ?? [])].map(a => `${a.year}년 ${a.annual + a.carry}박 (연간 ${a.annual}박·이월 ${a.carry}박)`).join(" / ")}
+      </p>}
       {row.booker_name && <p>예약자 {row.booker_name} · {row.booker_phone}</p>}
       {row.kind !== "owner" && (
         <p className="portal-reference">예약번호: {row.reservation_number ?? row.id}</p>
@@ -170,7 +177,8 @@ export function OwnerPolicy() {
           2026년 5박, 2027년부터 연 15박. 객실 수 × 숙박 일수만큼 신청 접수 시
           차감합니다.
         </li>
-        <li>비수기는 입실 최소 5일 전까지 신청해야 하며, 1일 1회 신청, 최대 2실·3박입니다. 반려·취소된 신청은 횟수 제한에서 제외합니다.</li>
+        <li>비수기는 입실 최소 5일 전까지 신청해야 하며, 신청 1건당 최대 2실·3박입니다. 하루 신청 횟수 제한은 없습니다.</li>
+        <li>연말·연초에 걸친 숙박은 각 숙박일의 연도에서 차감합니다. 다음 연도 예약은 신규 15박에서 최대 15박까지 선사용할 수 있으며, 아직 확정되지 않은 이월분은 미리 사용할 수 없습니다.</li>
         <li>
           성수기(7~8월)는 입실 최소 14일 전까지 신청해야 합니다. 연 1회, 1실·최대 3박이며 운영 일정은 관리자가 확인합니다.
         </li>
@@ -236,7 +244,7 @@ export function BookingApplicationForm({
   }
   const today = bookingToday();
   const validDates = !!dates.check_in && dates.check_out > dates.check_in &&
-    (adminOwnerBooking || !owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= "2028-01-01"));
+    (adminOwnerBooking || !owner || (ownerCheckInAllowed(dates.check_in, today) && dates.check_out <= shiftBookingDate(dates.check_in, 3)));
   async function preview(form: HTMLFormElement) {
     const fields = new FormData(form);
     changeBusy(true);
@@ -379,7 +387,7 @@ export function BookingApplicationForm({
                 type="date"
                 value={dates.check_out}
                 min={adminOwnerBooking ? (dates.check_in ? shiftBookingDate(dates.check_in, 1) : undefined) : owner ? shiftBookingDate(dates.check_in || firstOwnerCheckIn(today) || today, 1) : undefined}
-                max={owner && !adminOwnerBooking ? "2028-01-01" : undefined}
+                max={owner && !adminOwnerBooking && dates.check_in ? shiftBookingDate(dates.check_in, 3) : undefined}
                 onChange={(e) => {
                   setDates({ ...dates, check_out: e.target.value });
                   setInventory(null);
@@ -697,6 +705,10 @@ export function OwnerPortal() {
               {owner.annual_nights}박 / 이월 {owner.carryover_nights}박
             </p>
             <p>보유 타입: {roomTypeLabel(owner.room_type_name)}</p>
+            {owner.next_benefit_year !== undefined && <p>
+              {owner.next_benefit_year}년 선사용 {owner.next_year_advance_nights}박 · 사전 예약 가능 {owner.next_year_remaining_nights}박
+              <br />새해 신규 15박에 선사용분을 반영하며, 확정된 이월 박수는 별도로 더합니다.
+            </p>}
             <details>
               <summary>비밀번호 변경</summary>
               <form onSubmit={changePassword}>
