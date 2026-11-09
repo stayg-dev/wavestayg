@@ -26,9 +26,10 @@ test("July and August require fourteen days based on check-in month", () => {
   assert.equal(firstOwnerCheckIn("2027-08-28"), "2027-09-02");
   assert.equal(ownerCheckInAllowed("2027-09-11", "2027-08-28"), true);
 });
-test("past dates, invalid dates and the supported year limit remain blocked", () => {
+test("calendar rolls across years while retaining the 365-day booking window", () => {
   for (const date of ["", "invalid", "2027-02-30", "2026-09-21"]) assert.equal(ownerCheckInAllowed(date, "2026-09-22"), false);
-  assert.equal(ownerCheckInAllowed("2028-01-01", "2027-12-01"), false);
+  assert.equal(ownerCheckInAllowed("2028-01-01", "2027-12-01"), true);
+  assert.equal(ownerCheckInAllowed(shiftBookingDate("2027-12-01", 366), "2027-12-01"), false);
   assert.equal(firstOwnerCheckIn("2027-12-25"), "2027-12-30");
-  assert.equal(firstOwnerCheckIn("2027-12-27"), "");
+  assert.equal(firstOwnerCheckIn("2027-12-27"), "2028-01-01");
 });

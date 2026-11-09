@@ -95,6 +95,7 @@ export function AdminOwnerBooking({ onClose, onApplied }: {
       {owner && <>
         <p><strong>{owner.login_id}호 · {owner.name}</strong> / 보유 타입: {roomTypeLabel(owner.room_type_name)}</p>
         <p>{owner.benefit_year}년 잔여 {owner.annual_nights + owner.carryover_nights}박 · 올해 {owner.annual_nights}박 / 이월 {owner.carryover_nights}박</p>
+        {owner.next_benefit_year !== undefined && <p>{owner.next_benefit_year}년 선사용 {owner.next_year_advance_nights}박 · 사전 예약 가능 {owner.next_year_remaining_nights}박</p>}
         <BookingApplicationForm key={`${owner.id}:${registrationType}`} owner={owner} adminOwnerBooking dbOnly={dbOnly} preDeducted={preDeducted} onBusyChange={setBusy} onApplied={(row) => onApplied({ ...row, owner_login_id: owner.login_id, owner_name: owner.name })} />
       </>}
     </>}
