@@ -31,6 +31,8 @@ export function OwnerBalanceEditor({
           : 0,
         expected_annual_nights: owner.annual_nights,
         expected_carryover_nights: owner.carryover_nights,
+        annual_bonus_nights: Number(data.get("annual_bonus_nights")),
+        expected_annual_bonus_nights: owner.annual_bonus_nights ?? 0,
       });
       setEditing(false);
       onSaved();
@@ -50,6 +52,7 @@ export function OwnerBalanceEditor({
         {owner.next_benefit_year !== undefined && <span>
           {owner.next_benefit_year}년 선사용 {owner.next_year_advance_nights} · 예약 가능 {owner.next_year_remaining_nights}
         </span>}
+        {!!owner.annual_bonus_nights && <span>매년 추가 {owner.annual_bonus_nights}박 ({owner.next_benefit_year}년부터)</span>}
         <button
           type="button"
           className="admin-secondary"
@@ -106,6 +109,14 @@ export function OwnerBalanceEditor({
             이월 박수는 2028년부터 매년 3월 31일까지 수정할 수 있습니다.
           </p>
         )}
+        <label>
+          매년 추가 박수 ({owner.next_benefit_year}년부터)
+          <input name="annual_bonus_nights" type="number" min={0} max={350} step={1} required defaultValue={owner.annual_bonus_nights ?? 0} />
+        </label>
+        <p className="admin-muted">
+          기본 15박에 매년 더합니다. 0박이면 추가 지급하지 않습니다.
+          올해 잔여 박수는 위 입력값으로 저장되며, 추가분에도 기존 이월 규정이 적용됩니다.
+        </p>
         {error && (
           <p role="alert" className="portal-error">
             {error}
