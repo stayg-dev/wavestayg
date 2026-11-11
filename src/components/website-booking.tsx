@@ -57,6 +57,7 @@ export type Owner = {
   next_benefit_year?: number;
   next_year_advance_nights?: number;
   next_year_remaining_nights?: number;
+  annual_bonus_nights?: number;
   carryover_editable: boolean;
   is_active: boolean;
 };
@@ -178,7 +179,7 @@ export function OwnerPolicy() {
           차감합니다.
         </li>
         <li>비수기는 입실 최소 5일 전까지 신청해야 하며, 신청 1건당 최대 2실·3박입니다. 하루 신청 횟수 제한은 없습니다.</li>
-        <li>연말·연초에 걸친 숙박은 각 숙박일의 연도에서 차감합니다. 다음 연도 예약은 신규 15박에서 최대 15박까지 선사용할 수 있으며, 아직 확정되지 않은 이월분은 미리 사용할 수 없습니다.</li>
+        <li>연말·연초에 걸친 숙박은 각 숙박일의 연도에서 차감합니다. 다음 연도 예약은 기본 15박과 개인별 추가 부여분 내에서 선사용할 수 있으며, 아직 확정되지 않은 이월분은 미리 사용할 수 없습니다.</li>
         <li>
           성수기(7~8월)는 입실 최소 14일 전까지 신청해야 합니다. 연 1회, 1실·최대 3박이며 운영 일정은 관리자가 확인합니다.
         </li>
@@ -707,7 +708,7 @@ export function OwnerPortal() {
             <p>보유 타입: {roomTypeLabel(owner.room_type_name)}</p>
             {owner.next_benefit_year !== undefined && <p>
               {owner.next_benefit_year}년 선사용 {owner.next_year_advance_nights}박 · 사전 예약 가능 {owner.next_year_remaining_nights}박
-              <br />새해 신규 15박에 선사용분을 반영하며, 확정된 이월 박수는 별도로 더합니다.
+              <br />새해 기본 15박{owner.annual_bonus_nights ? ` + 추가 ${owner.annual_bonus_nights}박` : ""}에 선사용분을 반영하며, 확정된 이월 박수는 별도로 더합니다.
             </p>}
             <details>
               <summary>비밀번호 변경</summary>

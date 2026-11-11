@@ -15,6 +15,7 @@ const secret = "local-admin-session-fixture-secret-32-characters";
 const hash = await hashAdminPassword("local-test-password");
 const project = "7b85fd96-06a0-42f3-bfb9-cbe14c55718a";
 const calls = [];
+const bonusOwner = { id: project, login_id: '1614', name: '추가 박수 테스트', phone: '', room_type_name: 'DDM', is_active: true, benefit_year: 2026, annual_nights: 8, carryover_nights: 0, carryover_editable: false, next_benefit_year: 2027, next_year_advance_nights: 0, next_year_remaining_nights: 15, annual_bonus_nights: 0 };
 const applications = Array.from({ length: 55 }, (_, index) => ({
   id: randomUUID(), kind: 'general', status: 'registered',
   check_in: `2026-11-${String(1 + index % 27).padStart(2, '0')}`,
@@ -55,6 +56,11 @@ const pms = createServer(async (req, res) => {
       ? { total: 25000 }
       : { items: [], total: 0, page: 1 };
   const url = new URL(req.url, "http://127.0.0.1");
+  if (url.pathname.endsWith('/admin/owners')) data = { items: [bonusOwner], total: 1, page: 1 };
+  if (url.pathname.endsWith(`/admin/owners/${project}/balance`) && body.annual_bonus_nights !== undefined) {
+    Object.assign(bonusOwner, { annual_nights: body.annual_nights, annual_bonus_nights: body.annual_bonus_nights, next_year_remaining_nights: 15 + body.annual_bonus_nights });
+    data = bonusOwner;
+  }
   if (url.pathname.endsWith('/admin/applications')) {
     const order = url.searchParams.get('stay_order');
     const rows = [...applications].reverse();
@@ -337,6 +343,8 @@ try {
       const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
       await context.addCookies([{ name: "wave_stayg_admin", value: adminCookie.split("=")[1], url: origin, httpOnly: true, sameSite: "Strict" }]);
       const page = await context.newPage();
+      // Booking fixtures use November 2026; keep browser validation independent of the wall clock.
+      await page.clock.setFixedTime(new Date('2026-11-01T00:00:00+09:00'));
       async function reservationScreenshot(name) {
         await page.evaluate(async () => {
           window.scrollTo({ top: 0, behavior: 'instant' });
@@ -375,6 +383,22 @@ try {
       assert.ok(calls.some(call => call.url.includes('/admin/applications?page=2&stay_order=asc')));
       await mkdir('design-reference', { recursive: true });
       await reservations.locator('thead').screenshot({ path: 'design-reference/admin-stay-sort.png' });
+      await page.getByRole('button', { name: '수분양자 명부', exact: true }).click();
+      await page.getByRole('button', { name: '1614호 잔여 박수 수정', exact: true }).click();
+      const balanceForm = page.getByRole('form', { name: '1614호 잔여 박수 수정', exact: true });
+      await balanceForm.getByLabel('매년 추가 박수 (2027년부터)', { exact: true }).fill('5');
+      assert.equal(await balanceForm.getByLabel('올해', { exact: true }).inputValue(), '8');
+      await balanceForm.screenshot({ path: 'design-reference/owner-annual-bonus.png' });
+      await balanceForm.getByRole('button', { name: '저장', exact: true }).click();
+      await page.getByText('매년 추가 5박 (2027년부터)', { exact: true }).waitFor();
+      await page.getByText('2027년 선사용 0 · 예약 가능 20', { exact: true }).waitFor();
+      const bonusCall = calls.filter(call => call.url.includes(`/admin/owners/${project}/balance`)).at(-1);
+      assert.equal(bonusCall.body.annual_bonus_nights, 5);
+      assert.equal(bonusCall.body.expected_annual_bonus_nights, 0);
+      assert.equal(bonusCall.body.annual_nights, 8);
+      await page.getByRole('button', { name: '1614호 잔여 박수 수정', exact: true }).click();
+      assert.equal(await balanceForm.getByLabel('매년 추가 박수 (2027년부터)', { exact: true }).inputValue(), '5');
+      await balanceForm.getByRole('button', { name: '취소', exact: true }).click();
       // Static guides remain usable even when the live pricing API is unavailable.
       let guidePriceRequests = 0;
       await page.route('**/api/pms/sales/**', route => {
