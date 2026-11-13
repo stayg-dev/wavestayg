@@ -27,6 +27,7 @@ const roomTypeId = randomUUID();
 const paymentOrder = randomUUID(), applicationId = randomUUID(), statusToken = 's'.repeat(43), callbackToken = 'c'.repeat(43);
 const reservationNumber = 'DDM26101401';
 let paymentStatus = 'awaiting_auth';
+let inquiryState = null;
 let inventoryOpen = true;
 let failPaymentPrepare = false;
 const fixturePrice = () => ({ base_amount: 65000, discount_amount: 0, sale_amount: 65000 });
@@ -83,7 +84,8 @@ const pms = createServer(async (req, res) => {
     if (body.password !== 'fixture-password') { res.writeHead(401, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ message: '예약번호 또는 비밀번호를 확인해 주세요.' })); return; }
     data = { id: applicationId, kind: 'general', owner_id: null, status: 'registered', check_in: '2026-11-10', check_out: '2026-11-11', room_count: 1, room_type_name: 'DDM', guest_name: '투숙 테스트', phone: '01012345678', booker_name: '결제 테스트', booker_phone: '01012345678', guest_count: 2, quoted_amount: 25000, pricing: { room_amount: 25000, guest_fee: 0, bedding_fee: 0, total: 25000 }, note: '늦은 체크인 예정', admin_note: '', report_ids: [], is_peak: false, payment_order_id: paymentOrder };
   }
-  else if (url.pathname.endsWith('/admin/payments')) data = { page: 1, total: 1, items: [{ order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test', moid: 'Wfixture', tid: 'fixture00m01012610131200000001', last_error: null, review_note: '', refunds: [] }] };
+  else if (url.pathname.endsWith('/admin/payments')) data = { page: 1, total: 1, items: [{ order_id: paymentOrder, application_id: applicationId, status: paymentStatus, amount: 25000, refunded_amount: 0, expires_at: new Date().toISOString(), created_at: new Date().toISOString(), environment: 'test', provider: 'nicepay', mid: 'fixture00m', inquiry_state: inquiryState, moid: 'Wfixture', tid: 'fixture00m01012610131200000001', last_error: null, review_note: '', refunds: [] }] };
+  else if (url.pathname.endsWith('/inquiry')) { inquiryState = 'queued'; data = { id: randomUUID(), status: 'pending', moid: 'Wfixture' }; }
   else if (url.pathname.endsWith('/refund')) { paymentStatus = 'refund_pending'; data = { id: randomUUID(), status: 'queued', moid: 'Rfixture' }; }
   else if (url.pathname.endsWith('/inventory')) data = [{ name: 'DDM', available: 2, is_open: inventoryOpen }];
   else if (url.pathname.endsWith('/quote')) data = { room_amount: 25000, upgrade_amount: 0, guest_fee: 0, bedding_fee: 0, total: 25000, owned_type: null, pricing_revision: sales.revision };
@@ -334,6 +336,8 @@ try {
   assert.match(returned.headers.get('set-cookie'), /HttpOnly/i); assert.equal(calls.at(-1).body.fields.AuthToken, 'test+token');
   assert.equal(calls.at(-1).body.fields.Amt, '000000025000'); assert.equal(calls.at(-1).body.fields.AuthResultMsg, undefined);
   assert.equal((await call('admin/payments')).status, 401);
+  assert.equal((await call(`admin/payments/${paymentOrder}/inquiry`, 'POST', {})).status, 401);
+  assert.equal((await call(`admin/payments/${paymentOrder}/inquiry`, 'POST', {}, adminCookie, 'https://other.test')).status, 403);
   assert.equal((await call(`admin/payments/${paymentOrder}/refund`, 'POST', { request_id: randomUUID(), reason: '테스트' }, adminCookie, 'https://other.test')).status, 403);
   // Optional real-browser check, using an already installed Playwright runtime.
   if (process.env.SALES_PLAYWRIGHT_MODULE) {
@@ -582,6 +586,10 @@ try {
       await reservationScreenshot('reservation-lookup-mobile');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
       await page.goto(`${origin}/admin/payments/`);
+      await page.getByRole('button', { name: '거래 다시 조회', exact: true }).click();
+      await page.getByText('거래 확인: 접수 대기', { exact: true }).waitFor();
+      assert.equal(paymentStatus, 'paid');
+      assert.ok(calls.some(call => call.url.endsWith(`/admin/payments/${paymentOrder}/inquiry`)));
       await page.getByRole('button', { name: '전액 환불', exact: true }).click();
       await page.getByLabel('환불 사유', { exact: true }).fill('브라우저 환불 요청 테스트');
       page.once('dialog', dialog => dialog.accept());
