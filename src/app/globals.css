@@ -277,6 +277,18 @@ h3 {
 .footer-grid > div:last-child a {
   line-height: 1.5;
 }
+.footer-business-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 24px 0 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.footer-business-info p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
 .copyright {
   border-top: 1px solid #46515c;
   padding-top: 16px;

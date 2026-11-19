@@ -85,6 +85,12 @@ export function Footer() {
           </a>
         </div>
       </div>
+      <div className="footer-business-info" aria-label="사업자 정보">
+        <p>상호 : (주)스테이지 STAY-G Inc.</p>
+        <p>대표자 : 스테이지</p>
+        <p>사업자등록번호 : 268-88-03334</p>
+        <p>통신판매업 신고번호 : 제 2025-서울금천-0418 호</p>
+      </div>
       <div className="copyright">© 2026 Wave STAYG. All rights reserved</div>
     </footer>
     <KakaoChannelButton floating />
